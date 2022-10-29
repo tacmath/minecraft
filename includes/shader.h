@@ -11,8 +11,16 @@ class Shader
 public:
     // Reference ID of the Shader Program
     GLuint ID;
+    // default constuctor
+    Shader(void) {};
     // Constructor that build the Shader Program from 2 different shaders
     Shader(const char* vertexFile, const char* fragmentFile);
+
+    void Load(const char* vertexFile, const char* fragmentFile) {
+        Shader shader(vertexFile, fragmentFile);
+
+        this->ID = shader.ID;
+    }
 
     void Activate() {
         glUseProgram(ID);
@@ -41,28 +49,27 @@ public:
 private:
     // Checks if the different Shaders have compiled properly
     void compileErrors(unsigned int shader, const char* type);
-};
 
-static char* getShaderSource(const char *fileName) {
-    char* source;
-    std::ifstream   file;
-    size_t  size;
+    static char* getShaderSource(const char* fileName) {
+        char* source;
+        std::ifstream   file;
+        size_t  size;
 
-    file.open(fileName);
-    if (!file.is_open()) {
-        printf("Failed to open %s\n", fileName);
-        return (0);
+        file.open(fileName);
+        if (!file.is_open()) {
+            printf("Failed to open %s\n", fileName);
+            return (0);
+        }
+        file.seekg(0, std::ios::end);
+        size = file.tellg();
+        file.seekg(0);
+        source = new char[size + 1];
+        source[size] = 0;
+        file.read(source, size);
+        file.close();
+        return (source);
     }
-    file.seekg(0, std::ios::end);
-    size = file.tellg();
-    file.seekg(0);
-    source = new char[size + 1];
-    source[size] = 0;
-    file.read(source, size);
-    file.close();
-    return (source);
-}
-
+};
 
 Shader::Shader(const char *vertexShaderFile, const char *fragmentShaderFile) {
     char* vertexShaderSource = getShaderSource(vertexShaderFile);

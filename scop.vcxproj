@@ -142,9 +142,13 @@
     <ClCompile Include="srcs\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\camera.h" />
+    <ClInclude Include="includes\chunk.h" />
     <ClInclude Include="includes\cubeMap.h" />
     <ClInclude Include="includes\EBO.h" />
+    <ClInclude Include="includes\mesh.h" />
     <ClInclude Include="includes\minecraft.h" />
+    <ClInclude Include="includes\noise.h" />
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />
     <ClInclude Include="includes\VAO.h" />

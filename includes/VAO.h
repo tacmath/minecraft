@@ -9,9 +9,10 @@ class VAO
 public:
     // Reference ID of the VAO
     GLuint ID;
-    // Constructor that generates a VAO ID
-    VAO();
 
+    VAO() {};
+    // Generates a VAO ID
+    void Gen();
     // Links Attribute such as a position or color to the VAO
     void LinkAttrib(const void *data, GLuint vertexNumbers, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset);
     // Links VBO Attribute such as a position or color to the VAO
@@ -46,7 +47,7 @@ void VAO::LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLuint type,
 }
 
 
-VAO::VAO() {
+void VAO::Gen() {
     glGenVertexArrays(1, &ID);
 }
 

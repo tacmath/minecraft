@@ -9,5 +9,6 @@ uniform sampler2D dirt;
 
 void main()
 {
-    FragColor = texture(dirt, texCoord);
+    //FragColor = texelFetch(dirt, ivec2(texCoord * 16), 0);
+    FragColor = texture(dirt, texCoord); 
 }

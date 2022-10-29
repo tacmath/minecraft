@@ -3,15 +3,26 @@
 
 #include <glad/glad.h>
 #include <iostream>
+/*
+struct texture_data {
+    void* data;
+    int x;
+    int y;
+    int comp;
+};*/
 
 class CubeMap
-{
+{/*
+private:
+    texture_data textures[6];*/
+
 public:
     // Reference ID of the texture
     GLuint ID;
     // Unit where the texture is assigned 
     GLuint unit;
 
+    CubeMap() {};
     CubeMap(GLuint slot);
     CubeMap(const char** fileNames, GLuint slot);
 
