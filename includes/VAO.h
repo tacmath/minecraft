@@ -10,7 +10,10 @@ public:
     // Reference ID of the VAO
     GLuint ID;
 
-    VAO() {};
+    // Default constructor
+    VAO() {
+        ID = 0;
+    };
     // Generates a VAO ID
     void Gen();
     // Links Attribute such as a position or color to the VAO

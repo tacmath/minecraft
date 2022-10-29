@@ -11,8 +11,8 @@ struct texture_data {
     int comp;
 };*/
 
-class CubeMap
-{/*
+class CubeMap {
+/*
 private:
     texture_data textures[6];*/
 
@@ -22,13 +22,24 @@ public:
     // Unit where the texture is assigned 
     GLuint unit;
 
-    CubeMap() {};
+    // Default constructor
+    CubeMap() {
+        ID = 0;
+        unit = 0;
+    };
+
+    // Generate a cubemap texture ID and bind it to a texture unit 
     CubeMap(GLuint slot);
+    // Generate , bind to a texture unit and load a cubemap texture 
     CubeMap(const char** fileNames, GLuint slot);
 
  //   void Load(const char** fileNames);
+
+    // Bind the cubemap
     void Bind();
+    // Unbind the cubemap
     void Unbind();
+    // Delete the cubemap
     void Delete();
 };
 

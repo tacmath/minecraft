@@ -12,7 +12,14 @@ public:
 	//permutations list
 	std::vector<int> permutation;
 
+	//default constructor
+	Noise() {};
+
 	Noise(unsigned int seed) {
+		SetSeed(seed);
+	}
+
+	void SetSeed(unsigned int seed) {
 		// set size to 256
 		permutation.resize(256);
 
@@ -25,15 +32,6 @@ public:
 
 		//duplique la liste
 		permutation.insert(permutation.end(), permutation.begin(), permutation.end());
-		
-		/*
-		for (int n = 0; n < 256; n++) {
-			std::cout << permutation[n] << std::endl;
-		}
-		std::cout << "seed == " << seed << std::endl;*/
-	//	for (int n = 1000; n < 1200; n++)
-		//	std::cout << "noise == " <<	noise(n * (1.0f / 37.5f)) << std::endl;
-			
 	}
 
 	float noise(float x, float y) {

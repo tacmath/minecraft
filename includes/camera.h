@@ -18,7 +18,7 @@ private:
 
 public:
 	//speed of the camera
-	float speed = 0.2f;
+	float speed = 0.4f;
 	float mouseSensitivity = 0.1f;
 
 	//position of the camera
@@ -35,18 +35,25 @@ public:
 	// the projection matrix
 	glm::mat4 projection;
 
-	Camera() {};
+	// Default constructor
+	Camera() {
+		firstClick = true;
+		width = 0;
+		height = 0;
+		posision = glm::vec3(0.0f);
+		direction = glm::vec3(0.0f, 0.0f, -1.0f);
+		up = glm::vec3(0.0f, 1.0f, 0.0f);
+		view = glm::mat4(1.0f);
+		projection = glm::mat4(1.0f);
+	};
 
 	// init the camera
 	void Init(float windowWidth, float windowHeight, glm::vec3 pos) {
-		firstClick = true;
 		width = windowWidth;
 		height = windowHeight;
 		posision = pos;
-		direction = glm::vec3(0.0f, 0.0f, -1.0f);
-		up = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::lookAt(posision, posision + direction, up);
-		projection = glm::perspective(glm::radians(45.0f), (float)(windowWidth / windowHeight), 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(45.0f), (float)(windowWidth / windowHeight), 0.1f, 1000.0f);
 	}
 
 	// treat inputs to change the camera
@@ -98,9 +105,9 @@ private:
 		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 			posision += speed * -up;
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-			speed = 0.4f;
+			speed = 2.0f;
 		else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-			speed = 0.2f;
+			speed = 0.4f;
 	}
 
 	// treat mouse inputs to change the camera direction
@@ -111,14 +118,17 @@ private:
 
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-		if (mouseState == GLFW_PRESS && firstClick == true) {
-			glfwSetCursorPos(window, (width / 2), (height / 2));
-			firstClick = false;
-		}
+		if (firstClick == true) {
+			if (mouseState == GLFW_PRESS) {
+				glfwSetCursorPos(window, (width / 2), (height / 2));
+				firstClick = false;
+			}
+			return;
+		}/*
 		if (mouseState == GLFW_RELEASE) {
 			firstClick = true;
 			return;
-		}
+		}*/
 		glfwGetCursorPos(window, &posx, &posy);
 		rotx = (float)posy - height / 2;
 		roty = (float)posx - width / 2;

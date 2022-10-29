@@ -10,6 +10,11 @@ class EBO
 public:
 	// ID reference of Elements Buffer Object
 	GLuint ID;
+	// Default constructor
+	EBO() {
+		ID = 0;
+	}
+
 	// Constructor that generates a Elements Buffer Object and links it to indices
 	EBO(std::vector<T>& indices)
 	{

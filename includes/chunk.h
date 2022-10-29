@@ -6,11 +6,21 @@
 #include <noise.h>
 #include<vector>
 
+
+// id of air
 #define AIR 0
+#define CHUNK_SIZE 16
 
-#define PACK_VERTEX_DATA(x, y, z, textx, texty) (y | (x << 8) | (z << 12) | textx << 16 | texty << 17)
+/*
+	store multiple data in an int32 with the format :
 
-typedef unsigned char t_cubes[256][16][16];
+	0000	|	0000	|	0000	|	0	|	0	|	00000	|	00000	|	00000000
+	unused	| texatlasY	| texatlasX	| textY	| textX	|	posZ	|	posX	|	  posY
+*/
+#define PACK_VERTEX_DATA(x, y, z, textx, texty) (y | (x << 8) | (z << 13) | textx << 18 | texty << 19)
+#define PACK_ATLAS_VERTEX_DATA(texatlasX, texatlasY) ((texatlasX << 20) | (texatlasY << 24))
+
+typedef unsigned char t_cubes[256][CHUNK_SIZE][CHUNK_SIZE];
 
 #include <bitset>
 
@@ -24,8 +34,12 @@ void printVertexData(unsigned int vertex) {
 class Chunk
 {
 public:
+	int posx;
+	int posz;
+
 	// ids of all the cube in the chunk
-	t_cubes cubes;
+	t_cubes *cubes;
+
 	//the mesh is an array containing vertex position and other information in an unsigned int
 	std::vector<unsigned int> mesh;
 	// the number of all the vertices
@@ -34,26 +48,52 @@ public:
 	// vertex array object
 	VAO VAO;
 
+	// Default constructor
 	Chunk() {
-		memset(cubes, 0, sizeof(char) * 256 * 256);
 		verticesNumber = 0;
+		posx = 0;
+		posz = 0;
+		cubes = 0;
 	};
 
-	void Generate(unsigned int seed) {
-		Noise noise(seed);
+	// Destructor
+	~Chunk() {
+	//	std::cout << "chunk has been destroyed" << std::endl;
+	/*	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
+		cubes = 0;
+		if (cubes)
+			free(cubes);*/
+		
+	}
 
-		for (unsigned x = 0; x < 16; x++) {
-			for (unsigned z = 0; z < 16; z++) {
-				unsigned height = (unsigned)(1.0f + 60.0f * abs(noise.noise((20 + x) * 1.0f / 300.0f, (20 + z) * (1.0f / 300.0f))));
+	void Delete() {
+		//	std::cout << "chunk has been destroyed" << std::endl;
+	//	std::cout << "delete called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
+		free(cubes);
+	}
+
+	void Init(int x, int z) {
+		
+		cubes = (t_cubes*)calloc(1, sizeof(t_cubes));
+	//	std::cout << "constructor called  and addr = " << cubes << "x = " << posx << "z = " << posz << std::endl;
+		posx = x;
+		posz = z;
+	}
+
+	void Generate(Noise &noise) {
+
+		for (unsigned x = 0; x < CHUNK_SIZE; x++) {
+			for (unsigned z = 0; z < CHUNK_SIZE; z++) {
+				unsigned height = getHeight(noise, posx * CHUNK_SIZE + x, posz * CHUNK_SIZE + z);
 				for (unsigned y = 0; y < 256; y++)
 					if (y < height)
-						cubes[y][x][z] = 1;
+						(*cubes)[y][x][z] = 1;
 			}
 		}
 
-		createMeshData(cubes);
+		createMeshData(*cubes);
 		verticesNumber = (unsigned int)mesh.size();
-		std::cout << "size = " << mesh.size() << std::endl;
+	//	std::cout << "size = " << mesh.size() << std::endl;
 		Bind();
 
 		/*for (unsigned n = 0; n < (verticesNumber / 3); n++) {
@@ -78,37 +118,46 @@ public:
 	}
 
 	// Draw the chunk 
-	void Draw(void) {
+	void Draw(Shader &shader) {
 		VAO.Bind();
+		shader.setVec2("chunkPos", (float)(posx) * CHUNK_SIZE, (float)(posz) * CHUNK_SIZE);
 		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 	}
 
-	// Deletes the EBO
-	void Delete() {
-		VAO.Delete();
+private:
+	inline int getHeight(Noise& noise, int x, int z) {
+			return (unsigned)abs(30 + 50.0f * (
+			noise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 0.8 +
+			noise.noise(x * (1.0f / 150.0f), z * (1.0f / 150.0f)) * 0.5 +
+			noise.noise(x * (1.0f / 75.0f), z * (1.0f /75.0f)) * 0.25 /* +
+			noise.noise(x * (1.0f / 35.0f), z * (1.0f / 35.0f)) * 0.125 +
+			noise.noise(x * (1.0f / 17.5f), z * (1.0f / 17.5f)) * 0.0625*/
+		));
 	}
 
-private:
 	inline void addTopVertices(const int y, const int x, const int z) {
-		// v.insert(v.end(), std::begin(a), std::end(a)); instead of multiples push_back
-		mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
-		mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-		mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), z, 0, 0));
+		unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(1,0);
 
-		mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
-		mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-		mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
+		// v.insert(v.end(), std::begin(a), std::end(a)); instead of multiples push_back
+		mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 0));
+
+		mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
 	}
 
 	inline void addBottomVertices(const int y, const int x, const int z) {
+		unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(2, 0);
 
-		mesh.push_back(PACK_VERTEX_DATA(x, y, z, 0, 0));
-		mesh.push_back(PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
-		mesh.push_back(PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
 
-		mesh.push_back(PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-		mesh.push_back(PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
-		mesh.push_back(PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 1));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
+		mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 1));
 	}
 
 	inline void addFrontVertices(const int y, const int x, const int z) {
@@ -156,25 +205,30 @@ private:
 	}
 
 	inline void addVisibleVertices(t_cubes cubes, int x, int y, int z) {
+
 		if (y == 255 || cubes[y + 1][x][z] == AIR)
 			addTopVertices(y, x, z);
-		if (y == 0 || cubes[y - 1][x][z] == AIR)
+		if (y > 0 && cubes[y - 1][x][z] == AIR)
 			addBottomVertices(y, x, z);
-		if (x == 0 || cubes[y][x - 1][z] == AIR)
+
+		if (x == CHUNK_SIZE - 1 || z == CHUNK_SIZE - 1)
+			return;
+
+		if (x > 0 && cubes[y][x - 1][z] == AIR)
 			addFrontVertices(y, x, z);
-		if (x == 14 || cubes[y][x + 1][z] == AIR)
+		if (cubes[y][x + 1][z] == AIR)
 			addBackVertices(y, x, z);
-		if (z == 0 || cubes[y][x][z - 1] == AIR)
+		if (z > 0 && cubes[y][x][z - 1] == AIR)
 			addLeftVertices(y, x, z);
-		if (z == 14 || cubes[y][x][z + 1] == AIR)
+		if (cubes[y][x][z + 1] == AIR)
 			addRightVertices(y, x, z);
 	}
 
 	void createMeshData(t_cubes cubes) {
 
 		for (int y = 0; y < 255; y++)
-			for (int x = 0; x < 15; x++)
-				for (int z = 0; z < 15; z++)
+			for (int x = 0; x < CHUNK_SIZE; x++)
+				for (int z = 0; z < CHUNK_SIZE; z++)
 					if (cubes[y][x][z])
 						addVisibleVertices(cubes, x, y, z);
 	}

@@ -12,7 +12,9 @@ public:
     // Reference ID of the Shader Program
     GLuint ID;
     // default constuctor
-    Shader(void) {};
+    Shader() {
+        ID = 0;
+    }
     // Constructor that build the Shader Program from 2 different shaders
     Shader(const char* vertexFile, const char* fragmentFile);
 
@@ -38,6 +40,9 @@ public:
     }
     void setVec3(const char* name, float x, float y, float z) {
         glUniform3f(glGetUniformLocation(ID, name), x, y, z);
+    }
+    void setVec2(const char* name, float x, float y) {
+        glUniform2f(glGetUniformLocation(ID, name), x, y);
     }
     void setInt(const char* name, int value) {
         glUniform1i(glGetUniformLocation(ID, name), value);
