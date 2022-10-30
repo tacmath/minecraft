@@ -11,9 +11,9 @@ public:
     GLuint ID;
 
     // Default constructor
-    VAO() {
-        ID = 0;
-    };
+    VAO() { ID = 0; };
+    // Default destructor
+    ~VAO() { glDeleteVertexArrays(1, &ID); };
     // Generates a VAO ID
     void Gen();
     // Links Attribute such as a position or color to the VAO

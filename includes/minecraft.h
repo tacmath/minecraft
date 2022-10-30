@@ -34,8 +34,8 @@
 
 
 # define STARTING_RENDER_DISTANCE 5
-# define RENDER_DISTANCE 8
-# define UNLOAD_OFFSET 2
+# define RENDER_DISTANCE 5
+# define UNLOAD_OFFSET 3
 # define CHUNK_LOADED 1
 
 class Minecraft {
@@ -47,7 +47,7 @@ public:
     Camera      camera;
 
     // a chunk
-	std::vector<Chunk> chunks;
+	std::vector<Chunk*> chunks;
     
     //chunk shader
     Shader  chunkShader;
@@ -102,7 +102,7 @@ public:
         glEnable(GL_CULL_FACE);
         chunkShader.Activate();
         for (int n = 0; n < chunks.size(); n++)
-            chunks[n].Draw(chunkShader);
+            chunks[n]->Draw(chunkShader);
         glDisable(GL_CULL_FACE);
     }
 
@@ -117,10 +117,11 @@ public:
 
     //destructor
     ~Minecraft(void) {
-        skyboxShader.Delete();
-        chunkShader.Delete();
-        skybox.Delete();
-        skyboxCubemap.Delete();
+        std::cout << "Minecraft destructor has been called" << std::endl;
+        for (int n = 0; n < chunks.size(); n++)
+            delete chunks[n];
+        glfwDestroyWindow(window);
+        glfwTerminate();
     }
 
     void LoadChunks();
@@ -139,8 +140,10 @@ void Minecraft::initChunks(int radius) {
     chunks.resize(diameter * diameter);
     for (int x = 0; x < diameter; x++)
         for (int z = 0; z < diameter; z++) {
-            chunks[x * diameter + z].Init(x - radius, z - radius);
-            chunks[x * diameter + z].Generate(noise);
+            Chunk *newChunk = new Chunk;
+            newChunk->SetPosistion(x - radius, z - radius);
+            newChunk->Generate(noise);
+            chunks[x * diameter + z] = newChunk;
         }
 }
 
@@ -148,7 +151,6 @@ void Minecraft::LoadChunks() {
     char    loadedChunks[RENDER_DISTANCE << 1][RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
-
     maxChunk = RENDER_DISTANCE << 1;
     playerPosx = ((int)camera.posision.x >> 4) - RENDER_DISTANCE;
     playerPosz = ((int)camera.posision.z >> 4) - RENDER_DISTANCE;
@@ -156,13 +158,12 @@ void Minecraft::LoadChunks() {
     chunkNumber = (int)chunks.size();
     n = -1;
     while (++n < chunkNumber) {
-        x = chunks[n].posx - playerPosx;
-        z = chunks[n].posz - playerPosz;
+        x = chunks[n]->posx - playerPosx;
+        z = chunks[n]->posz - playerPosz;
 
         // check if a chunk is too far away and delete it if nessesary
         if (x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) {
-         //   std::cout << "erasing  and addr = " << chunks[n].cubes << std::endl;
-            chunks[n].Delete();
+            delete chunks[n];
             chunks.erase(chunks.begin() + n);
             n--;
             chunkNumber--;
@@ -176,9 +177,9 @@ void Minecraft::LoadChunks() {
     for (int x = 0; x < maxChunk; x++)
         for (int z = 0; z < maxChunk; z++)
             if (loadedChunks[x][z] != CHUNK_LOADED) {
-                Chunk newChunk;
-                newChunk.Init(playerPosx + x, playerPosz + z);
-                newChunk.Generate(noise);
+                Chunk *newChunk = new Chunk;     //push_back is creating a copy
+                newChunk->SetPosistion(playerPosx + x, playerPosz + z);
+                newChunk->Generate(noise);
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
             }
     /*
@@ -278,19 +279,16 @@ void Minecraft::initSkybox(void) {
     texturesName[3] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_5_Down-Y.png";
     texturesName[4] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_0_Front+Z.png";
     texturesName[5] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_1_Back-Z.png";
-    CubeMap skyboxtex(texturesName, 0);
+    
+    skyboxCubemap.Gen(0);
+    skyboxCubemap.Load(texturesName);
     delete[] texturesName;
 
-    skyboxCubemap.ID = skyboxtex.ID;
-    skyboxCubemap.unit = skyboxtex.unit;
-
     skybox.Gen();
-    
     skybox.LinkAttrib((void*)skyboxVertices, 8, 0, 3, GL_FLOAT, sizeof(float), (void*)0);
     skybox.LinkAttrib((void*)texturesUv, 8, 1, 2, GL_FLOAT, sizeof(float), (void*)0);
     skybox.Bind();
     skyboxEBO.Bind();
-    skyboxCubemap.Bind();
 }
 
 void Minecraft::initUniforms(void) {

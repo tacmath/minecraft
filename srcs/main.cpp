@@ -2,10 +2,6 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-
 int showFPS(GLFWwindow* window) {
     static double oldTime = 0;
     static double newTime;
@@ -45,20 +41,18 @@ void loop(Minecraft &minecraft) {
         }
     }
 }
-
-
+/*
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>*/
 
 int main(void) {
     Minecraft minecraft;
     
+   // _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     loop(minecraft);
- /*   minecraft.~Minecraft();
-    Chunk newa;
-    newa.Init(0, 0);
-    free(newa.cubes);
-    for (int n = 0; n < minecraft.chunks.size(); n++)
-        free(minecraft.chunks[n].cubes);*/
-    _CrtDumpMemoryLeaks();      //test les leaks
+
+    //_CrtDumpMemoryLeaks();      //test les leaks
     
 	return (0);
 }

@@ -47,40 +47,36 @@ public:
 
 	// vertex array object
 	VAO VAO;
+	// vertex buffer object ID
+	GLuint VBO;
 
 	// Default constructor
 	Chunk() {
+	//	std::cout << "constructor called" << std::endl;
 		verticesNumber = 0;
 		posx = 0;
 		posz = 0;
 		cubes = 0;
+		VBO = 0;
+		mesh.resize(0);
 	};
 
 	// Destructor
 	~Chunk() {
 	//	std::cout << "chunk has been destroyed" << std::endl;
-	/*	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
-		cubes = 0;
-		if (cubes)
-			free(cubes);*/
-		
-	}
-
-	void Delete() {
-		//	std::cout << "chunk has been destroyed" << std::endl;
-	//	std::cout << "delete called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
+	//	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
 		free(cubes);
+		glDeleteBuffers(1, &VBO);
 	}
 
-	void Init(int x, int z) {
-		
-		cubes = (t_cubes*)calloc(1, sizeof(t_cubes));
-	//	std::cout << "constructor called  and addr = " << cubes << "x = " << posx << "z = " << posz << std::endl;
+	void SetPosistion(int x, int z) {
+	//	std::cout << "SetPosistion called  and addr = " << cubes << "x = " << posx << "z = " << posz << std::endl;
 		posx = x;
 		posz = z;
 	}
 
 	void Generate(Noise &noise) {
+		cubes = (t_cubes*)calloc(1, sizeof(t_cubes));
 
 		for (unsigned x = 0; x < CHUNK_SIZE; x++) {
 			for (unsigned z = 0; z < CHUNK_SIZE; z++) {
@@ -93,9 +89,12 @@ public:
 
 		createMeshData(*cubes);
 		verticesNumber = (unsigned int)mesh.size();
-	//	std::cout << "size = " << mesh.size() << std::endl;
-		Bind();
-
+		if (verticesNumber)
+			Bind();
+		/*else {
+			std::cout << "weird chunk generated investigate" << std::endl;
+			std::cout << "posx = " << posx << " posz = " << posz << " cubes addr = " << cubes << " mesh size = " << mesh.size() << std::endl;
+		}*/
 		/*for (unsigned n = 0; n < (verticesNumber / 3); n++) {
 			std::cout << std::endl << "triangle = " << std::endl;
 			printVertexData(mesh[n * 3]);
@@ -104,8 +103,6 @@ public:
 		}*/
 	}
 	void Bind() {
-		GLuint VBO;
-
 		VAO.Gen();
 		VAO.Bind();
 		glGenBuffers(1, &VBO);

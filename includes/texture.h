@@ -20,6 +20,8 @@ public:
         ID = 0;
         unit = 0;
     }
+    // Default destructor
+    ~Texture();
     // Constructor that create and load a new texure and bind it to a texture unit
     Texture(const std::string fileName, GLuint slot);
 
@@ -39,6 +41,10 @@ private:
     // Fill mipmaps at a certain position in the texture 
     void fillMipmaps(void *data, int width, int height, int offsetx, int offsety, int levels, int comp);
 };
+
+Texture::~Texture() {
+    glDeleteTextures(1, &ID);
+}
 
 Texture::Texture(const std::string fileName, GLuint slot) {
     this->Load(fileName, slot);

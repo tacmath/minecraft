@@ -6,23 +6,18 @@
 #include<iostream>
 #include<glm/gtc/type_ptr.hpp>
 
-class Shader
-{
+class Shader {
 public:
     // Reference ID of the Shader Program
     GLuint ID;
     // default constuctor
-    Shader() {
-        ID = 0;
-    }
+    Shader() { ID = 0; }
+    // default destructor
+    ~Shader() { glDeleteProgram(ID); }
     // Constructor that build the Shader Program from 2 different shaders
-    Shader(const char* vertexFile, const char* fragmentFile);
+    Shader(const char* vertexFile, const char* fragmentFile) { Load(vertexFile, fragmentFile); };
 
-    void Load(const char* vertexFile, const char* fragmentFile) {
-        Shader shader(vertexFile, fragmentFile);
-
-        this->ID = shader.ID;
-    }
+    void Load(const char* vertexFile, const char* fragmentFile);
 
     void Activate() {
         glUseProgram(ID);
@@ -30,6 +25,7 @@ public:
 
     void Delete() {
         glDeleteProgram(ID);
+        ID = 0;
     }
     
     void setMat4(const char* name, const glm::mat4& matrix) {
@@ -76,7 +72,7 @@ private:
     }
 };
 
-Shader::Shader(const char *vertexShaderFile, const char *fragmentShaderFile) {
+void Shader::Load(const char *vertexShaderFile, const char *fragmentShaderFile) {
     char* vertexShaderSource = getShaderSource(vertexShaderFile);
     char* fragmentShaderSource = getShaderSource(fragmentShaderFile);
 
