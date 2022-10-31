@@ -16,11 +16,8 @@ private:
 	bool firstClick;
 	float width;
 	float height;
-<<<<<<< Updated upstream
 	float fov;
-=======
 	glm::vec2 oldMousePos;
->>>>>>> Stashed changes
 
 public:
 	// the frustum of the camera
@@ -154,13 +151,9 @@ private:
 
 		// Rotates the Orientation left and right
 		direction = glm::rotate(direction, glm::radians(-roty), up);
-<<<<<<< Updated upstream
 		frustum.calculate(direction, fov);
-		glfwSetCursorPos(window, (width / 2), (height / 2));
-=======
 		oldMousePos.x = posx;
 		oldMousePos.y = posy;
->>>>>>> Stashed changes
 	}
 
 };
