@@ -22,7 +22,7 @@ int showFPS(GLFWwindow* window) {
 }
 
 void loop(Minecraft &minecraft) {
-//    glfwSwapInterval(0);
+    glfwSwapInterval(0);
     while (1) {
 
         minecraft.Draw();

@@ -33,8 +33,8 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 5
-# define RENDER_DISTANCE 5
+# define STARTING_RENDER_DISTANCE 10
+# define RENDER_DISTANCE 10
 # define UNLOAD_OFFSET 3
 # define CHUNK_LOADED 1
 
@@ -204,7 +204,7 @@ void Minecraft::initWindows(void) {
     //glfwWindowHint(GLFW_SAMPLES, 4);      // no multisampling
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Pour rendre MacOS heureux ; ne devrait pas être nécessaire
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Pour rendre MacOS heureux ; ne devrait pas ï¿½tre nï¿½cessaire
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // On ne veut pas l'ancien OpenGL
     if (!(window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Minecraft", NULL, NULL))) {
         glfwTerminate();
