@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
+#    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/10/31 13:08:09 by matheme          ###   ########.fr        #
+#    Updated: 2022/10/31 17:31:53 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,8 +52,8 @@ OBJ_NAME_C		= $(NAME_SRC_C:.c=.o)
 
 OBJS = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME)) $(addprefix $(OBJ_PATH)/,$(OBJ_NAME_C))
 
-CC			= gcc
-GPP			= g++ -std=c++11
+CC			= gcc -o3
+GPP			= g++ -std=c++11 -o3
 
 
 all: $(NAME)
