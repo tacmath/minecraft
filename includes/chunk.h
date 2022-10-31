@@ -11,6 +11,23 @@
 #define AIR 0
 #define CHUNK_SIZE 16
 
+// the id of the chunk sides
+#define CHUNK_FRONT_SIDE 0				// maybe do a binary mask to be able to do multiple side at a time
+#define CHUNK_BACK_SIDE 1
+#define CHUNK_RIGHT_SIDE 2
+#define CHUNK_LEFT_SIDE 3
+
+// all the possible status of a chunk
+
+#define CHUNK_UNLOADED 0
+// CHUNK_DATA_LOADED the chunk cube data is loaded
+#define CHUNK_DATA_LOADED 1
+// CHUNK_LOADED means that the chunk mesh is done but incomplete 
+#define CHUNK_LOADED 2
+// CHUNK_FULLY_LOADED means that the chunk mesh is complete
+#define CHUNK_FULLY_LOADED 3
+
+
 /*
 	store multiple data in an int32 with the format :
 
@@ -33,12 +50,7 @@ void printVertexData(unsigned int vertex) {
 
 class Chunk
 {
-public:
-	int posx;
-	int posz;
-
-	// ids of all the cube in the chunk
-	t_cubes *cubes;
+private:
 
 	//the mesh is an array containing vertex position and other information in an unsigned int
 	std::vector<unsigned int> mesh;
@@ -50,6 +62,18 @@ public:
 	// vertex buffer object ID
 	GLuint VBO;
 
+	Chunk (*neighbour)[4];
+
+public:
+	char status;
+	// position x of the chunk
+	int posx;
+	// position z of the chunk
+	int posz;
+
+	// ids of all the cube in the chunk
+	t_cubes *cubes;
+
 	// Default constructor
 	Chunk() {
 	//	std::cout << "constructor called" << std::endl;
@@ -58,7 +82,8 @@ public:
 		posz = 0;
 		cubes = 0;
 		VBO = 0;
-		mesh.resize(0);
+		status = CHUNK_UNLOADED;
+		memset(&neighbour, 0, sizeof(Chunk*) * 4);
 	};
 
 	// Destructor
@@ -86,23 +111,16 @@ public:
 						(*cubes)[y][x][z] = 1;
 			}
 		}
+		status = CHUNK_DATA_LOADED;
 
 		createMeshData(*cubes);
-		verticesNumber = (unsigned int)mesh.size();
-		if (verticesNumber)
-			Bind();
-		/*else {
-			std::cout << "weird chunk generated investigate" << std::endl;
-			std::cout << "posx = " << posx << " posz = " << posz << " cubes addr = " << cubes << " mesh size = " << mesh.size() << std::endl;
-		}*/
-		/*for (unsigned n = 0; n < (verticesNumber / 3); n++) {
-			std::cout << std::endl << "triangle = " << std::endl;
-			printVertexData(mesh[n * 3]);
-			printVertexData(mesh[n * 3 + 1]);
-			printVertexData(mesh[n * 3 + 2]);
-		}*/
+
+		Bind();
 	}
+
 	void Bind() {
+		if (!verticesNumber)
+			return ;
 		VAO.Gen();
 		VAO.Bind();
 		glGenBuffers(1, &VBO);
@@ -221,15 +239,32 @@ private:
 			addRightVertices(y, x, z);
 	}
 
-	void createMeshData(t_cubes cubes) {
+	inline void addBorderVisibleVertices(int side) {
+		for (int y = 0; y < 255; y++)
+			for (int x = 0; x < CHUNK_SIZE; x++) {
+				if (side == CHUNK_FRONT_SIDE && (*cubes)[y][0][x] && neighbour[CHUNK_FRONT_SIDE]->cubes[y][15][x] == AIR)
+					addFrontVertices(y, 0, x);
+				if (side == CHUNK_BACK_SIDE && (*cubes)[y][15][x] && neighbour[CHUNK_BACK_SIDE]->cubes[y][0][x] == AIR)
+					addRightVertices(y, 15, x);
+				if (side == CHUNK_RIGHT_SIDE && (*cubes)[y][x][0] && neighbour[CHUNK_RIGHT_SIDE]->cubes[y][x][15] == AIR)
+					addRightVertices(y, x, 15);
+				if (side == CHUNK_LEFT_SIDE && (*cubes)[y][x][15] && neighbour[CHUNK_LEFT_SIDE]->cubes[y][x][0] == AIR)
+					addRightVertices(y, x, 0);
+			}
 
+	}
+
+	void createMeshData(t_cubes cubes) {
+		mesh.resize(0);
 		for (int y = 0; y < 255; y++)
 			for (int x = 0; x < CHUNK_SIZE; x++)
 				for (int z = 0; z < CHUNK_SIZE; z++)
 					if (cubes[y][x][z])
 						addVisibleVertices(cubes, x, y, z);
+		status = CHUNK_LOADED;
+		verticesNumber = (unsigned int)mesh.size();
 	}
-
+	
 };
 
 #endif

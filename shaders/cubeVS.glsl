@@ -1,4 +1,4 @@
-#version 330 core
+#version 400
 layout (location = 0) in uint vertex;
 
 out vec2 texCoord;

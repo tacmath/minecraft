@@ -36,7 +36,6 @@
 # define STARTING_RENDER_DISTANCE 10
 # define RENDER_DISTANCE 5
 # define UNLOAD_OFFSET 5
-# define CHUNK_LOADED 1
 
 class Minecraft {
 public:
@@ -206,8 +205,8 @@ void Minecraft::initWindows(void) {
     }
     cd(path);
     //glfwWindowHint(GLFW_SAMPLES, 4);      // no multisampling
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Pour rendre MacOS heureux ; ne devrait pas �tre n�cessaire
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // On ne veut pas l'ancien OpenGL
     if (!(window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Minecraft", NULL, NULL))) {
@@ -220,6 +219,7 @@ void Minecraft::initWindows(void) {
     gladLoadGL();
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Minecraft::initSkybox(void) {
