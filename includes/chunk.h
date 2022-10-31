@@ -123,7 +123,7 @@ public:
 
 private:
 	inline int getHeight(Noise& noise, int x, int z) {
-			return (unsigned)abs(30 + 50.0f * (
+			return (unsigned)abs(60 + 100.0f * (
 			noise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 0.8 +
 			noise.noise(x * (1.0f / 150.0f), z * (1.0f / 150.0f)) * 0.5 +
 			noise.noise(x * (1.0f / 75.0f), z * (1.0f /75.0f)) * 0.25 /* +

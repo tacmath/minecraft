@@ -2,6 +2,7 @@
 #define CAMERA_CLASS_H
 
 #include<glm/glm.hpp>
+#include "frustum.h"
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include<glm/gtx/rotate_vector.hpp>
@@ -15,8 +16,13 @@ private:
 	bool firstClick;
 	float width;
 	float height;
+	float fov;
 
 public:
+	// the frustum of the camera
+	// https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
+	Frustum frustum;
+
 	//speed of the camera
 	float speed = 0.4f;
 	float mouseSensitivity = 0.1f;
@@ -40,8 +46,11 @@ public:
 		firstClick = true;
 		width = 0;
 		height = 0;
+		fov = 90;
 		posision = glm::vec3(0.0f);
 		direction = glm::vec3(0.0f, 0.0f, -1.0f);
+		frustum.setOrigine(posision);
+		frustum.calculate(direction, fov);
 		up = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::mat4(1.0f);
 		projection = glm::mat4(1.0f);
@@ -52,8 +61,9 @@ public:
 		width = windowWidth;
 		height = windowHeight;
 		posision = pos;
+		frustum.setOrigine(posision);
 		view = glm::lookAt(posision, posision + direction, up);
-		projection = glm::perspective(glm::radians(45.0f), (float)(windowWidth / windowHeight), 0.1f, 1000.0f);
+		projection = glm::perspective(glm::radians(fov), (float)(windowWidth / windowHeight), 0.1f, 1000.0f);
 	}
 
 	// treat inputs to change the camera
@@ -86,6 +96,7 @@ public:
 
 	// change the prespective matrix
 	void ChangePerspective(float FOV, float windowWidth, float windowHeight, float near, float far) {
+		fov = FOV;
 		projection = glm::perspective(glm::radians(FOV), (float)(windowWidth / windowHeight), near, far);
 	}
 
@@ -108,6 +119,7 @@ private:
 			speed = 10.0f;
 		else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
 			speed = 0.4f;
+		frustum.setOrigine(posision);
 	}
 
 	// treat mouse inputs to change the camera direction
@@ -141,10 +153,9 @@ private:
 
 		// Rotates the Orientation left and right
 		direction = glm::rotate(direction, glm::radians(-roty), up);
-
+		frustum.calculate(direction, fov);
 		glfwSetCursorPos(window, (width / 2), (height / 2));
 	}
-
 
 };
 

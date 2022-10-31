@@ -34,8 +34,8 @@
 
 
 # define STARTING_RENDER_DISTANCE 10
-# define RENDER_DISTANCE 10
-# define UNLOAD_OFFSET 3
+# define RENDER_DISTANCE 5
+# define UNLOAD_OFFSET 5
 # define CHUNK_LOADED 1
 
 class Minecraft {
@@ -101,10 +101,14 @@ public:
 
         glEnable(GL_CULL_FACE);
         chunkShader.Activate();
-        for (int n = 0; n < chunks.size(); n++)
-            chunks[n]->Draw(chunkShader);
+        for (int n = 0; n < chunks.size(); n++) {
+            if (camera.frustum.isVisible(chunks[n]->posx << 4, chunks[n]->posz << 4, CHUNK_SIZE)) {
+                chunks[n]->Draw(chunkShader);
+            }
+        }
         glDisable(GL_CULL_FACE);
     }
+
 
     //load the view matrix in all the shaders
     void LoadViewMatrix(void) {
