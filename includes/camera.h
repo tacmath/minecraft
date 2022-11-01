@@ -133,8 +133,8 @@ private:
 		if (firstClick == true) {
 			if (mouseState == GLFW_PRESS) {
 				glfwGetCursorPos(window, &posx, &posy);
-				oldMousePos.x = posx;
-				oldMousePos.y = posy;
+				oldMousePos.x = (float)posx;
+				oldMousePos.y = (float)posy;
 				firstClick = false;
 			}
 			return;
@@ -152,8 +152,8 @@ private:
 		// Rotates the Orientation left and right
 		direction = glm::rotate(direction, glm::radians(-roty), up);
 		frustum.calculate(direction, fov);
-		oldMousePos.x = posx;
-		oldMousePos.y = posy;
+		oldMousePos.x = (float)posx;
+		oldMousePos.y = (float)posy;
 	}
 
 };

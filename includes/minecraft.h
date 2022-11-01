@@ -33,9 +33,9 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 10
-# define RENDER_DISTANCE 5
-# define UNLOAD_OFFSET 5
+# define STARTING_RENDER_DISTANCE 5
+# define RENDER_DISTANCE 10 
+# define UNLOAD_OFFSET 3
 
 class Minecraft {
 public:
@@ -101,9 +101,9 @@ public:
         glEnable(GL_CULL_FACE);
         chunkShader.Activate();
         for (int n = 0; n < chunks.size(); n++) {
-            if (camera.frustum.isVisible(chunks[n]->posx << 4, chunks[n]->posz << 4, CHUNK_SIZE)) {
+         //   if (camera.frustum.isVisible(chunks[n]->posx << 4, chunks[n]->posz << 4, CHUNK_SIZE)) {
                 chunks[n]->Draw(chunkShader);
-            }
+         //   }
         }
         glDisable(GL_CULL_FACE);
     }
@@ -151,13 +151,13 @@ void Minecraft::initChunks(int radius) {
 }
 
 void Minecraft::LoadChunks() {
-    char    loadedChunks[RENDER_DISTANCE << 1][RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
+    Chunk    *loadedChunks[RENDER_DISTANCE << 1][RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
     maxChunk = RENDER_DISTANCE << 1;
     playerPosx = ((int)camera.posision.x >> 4) - RENDER_DISTANCE;
     playerPosz = ((int)camera.posision.z >> 4) - RENDER_DISTANCE;
-    memset(loadedChunks, 0, maxChunk * maxChunk);
+    memset(loadedChunks, 0, maxChunk * maxChunk * sizeof(Chunk*));
     chunkNumber = (int)chunks.size();
     n = -1;
     while (++n < chunkNumber) {
@@ -173,18 +173,45 @@ void Minecraft::LoadChunks() {
         }
         // fill the 2d array if a chunk is in the RENDER_DISTANCE
         else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
-            loadedChunks[x][z] = CHUNK_LOADED;
+            loadedChunks[x][z] = chunks[n];
     }
 
     //add all the chunk that are not in loadedChunks
     for (int x = 0; x < maxChunk; x++)
-        for (int z = 0; z < maxChunk; z++)
-            if (loadedChunks[x][z] != CHUNK_LOADED) {
-                Chunk *newChunk = new Chunk;     //push_back is creating a copy
+        for (int z = 0; z < maxChunk; z++) {
+            if (!loadedChunks[x][z]) {
+                Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 newChunk->Generate(noise);
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
+                loadedChunks[x][z] = newChunk;
             }
+            if (loadedChunks[x][z]->status != CHUNK_FULLY_LOADED) {
+                if (loadedChunks[x][z]->neighbour[CHUNK_FRONT_SIDE] == 0 && x > 0 && loadedChunks[x - 1][z]) {
+                    loadedChunks[x][z]->addNeighbour(loadedChunks[x - 1][z], CHUNK_FRONT_SIDE);
+                    if (loadedChunks[x - 1][z]->neighbour[CHUNK_BACK_SIDE] == 0)
+                        loadedChunks[x - 1][z]->addNeighbour(loadedChunks[x][z], CHUNK_BACK_SIDE);
+                }
+                
+                if (loadedChunks[x][z]->neighbour[CHUNK_BACK_SIDE] == 0 && x < (maxChunk - 1) && loadedChunks[x + 1][z]) {
+                    loadedChunks[x][z]->addNeighbour(loadedChunks[x + 1][z], CHUNK_BACK_SIDE);
+                    if (loadedChunks[x + 1][z]->neighbour[CHUNK_FRONT_SIDE] == 0)
+                        loadedChunks[x + 1][z]->addNeighbour(loadedChunks[x][z], CHUNK_FRONT_SIDE);
+                }
+
+                if (loadedChunks[x][z]->neighbour[CHUNK_LEFT_SIDE] == 0 && z > 0 && loadedChunks[x][z - 1]) {
+                    loadedChunks[x][z]->addNeighbour(loadedChunks[x][z - 1], CHUNK_LEFT_SIDE);
+                    if (loadedChunks[x][z - 1]->neighbour[CHUNK_RIGHT_SIDE] == 0)
+                        loadedChunks[x][z - 1]->addNeighbour(loadedChunks[x][z], CHUNK_RIGHT_SIDE);
+                }
+
+                if (loadedChunks[x][z]->neighbour[CHUNK_RIGHT_SIDE] == 0 && z < (maxChunk - 1) && loadedChunks[x][z + 1]) {
+                    loadedChunks[x][z]->addNeighbour(loadedChunks[x][z + 1], CHUNK_RIGHT_SIDE);
+                    if (loadedChunks[x][z + 1]->neighbour[CHUNK_LEFT_SIDE] == 0)
+                        loadedChunks[x][z + 1]->addNeighbour(loadedChunks[x][z], CHUNK_LEFT_SIDE);
+                }
+            }
+        }
     /*
     std::cout << std::endl;
     for (unsigned x = 0; x < maxChunk; x++) {
@@ -193,6 +220,25 @@ void Minecraft::LoadChunks() {
         }
         std::cout << std::endl;
     }*/
+}
+
+void Minecraft::initUniforms(void) {
+    chunkShader.Activate();
+    chunkShader.setInt("dirt", 0);
+    chunkShader.setMat4("projection", camera.projection);
+    chunkShader.setMat4("view", camera.view);
+
+    skyboxShader.Activate();
+    skyboxShader.setInt("skybox", 0);
+    skyboxShader.setMat4("projection", camera.projection);
+    skyboxShader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
+}
+
+void Minecraft::enableGlParam(void) {
+    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
+    glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 }
 
 void Minecraft::initWindows(void) {
@@ -293,25 +339,6 @@ void Minecraft::initSkybox(void) {
     skybox.LinkAttrib((void*)texturesUv, 8, 1, 2, GL_FLOAT, sizeof(float), (void*)0);
     skybox.Bind();
     skyboxEBO.Bind();
-}
-
-void Minecraft::initUniforms(void) {
-    chunkShader.Activate();
-    chunkShader.setInt("dirt", 0);
-    chunkShader.setMat4("projection", camera.projection);
-    chunkShader.setMat4("view", camera.view);
-
-    skyboxShader.Activate();
-    skyboxShader.setInt("skybox", 0);
-    skyboxShader.setMat4("projection", camera.projection);
-    skyboxShader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
-}
-
-void Minecraft::enableGlParam(void) {
-    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
-    glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
 }
 
 #endif
