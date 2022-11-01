@@ -21,6 +21,7 @@
 #include "camera.h"
 #include "cubeMap.h"
 #include "chunk.h"
+#include "thread.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
@@ -33,9 +34,9 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 5
-# define RENDER_DISTANCE 10 
-# define UNLOAD_OFFSET 3
+# define STARTING_RENDER_DISTANCE 8
+# define RENDER_DISTANCE 8
+# define UNLOAD_OFFSET 2
 
 class Minecraft {
 public:
@@ -47,6 +48,9 @@ public:
 
     // a chunk
 	std::vector<Chunk*> chunks;
+
+    // multithreading object
+    Thread thread;
     
     //chunk shader
     Shader  chunkShader;
@@ -63,8 +67,7 @@ public:
     // seed used to generate random chunk
     unsigned int seed;
 
-    //noise using the seed
-    Noise noise;
+
 
 	Minecraft() {
         window = 0;
@@ -82,7 +85,7 @@ public:
 
         std::srand((unsigned int)std::time(nullptr));
         seed = (unsigned int)std::rand();
-        noise.SetSeed(seed);
+        global_noise.SetSeed(seed);
 
         initChunks(STARTING_RENDER_DISTANCE);
 	}
@@ -145,7 +148,9 @@ void Minecraft::initChunks(int radius) {
         for (int z = 0; z < diameter; z++) {
             Chunk *newChunk = new Chunk;
             newChunk->SetPosistion(x - radius, z - radius);
-            newChunk->Generate(noise);
+            newChunk->Generate();
+            newChunk->createMeshData();
+            newChunk->Bind();
             chunks[x * diameter + z] = newChunk;
         }
 }
@@ -165,7 +170,7 @@ void Minecraft::LoadChunks() {
         z = chunks[n]->posz - playerPosz;
 
         // check if a chunk is too far away and delete it if nessesary
-        if (x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) {
+        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->status >= CHUNK_LOADED) {
             delete chunks[n];
             chunks.erase(chunks.begin() + n);
             n--;
@@ -182,11 +187,14 @@ void Minecraft::LoadChunks() {
             if (!loadedChunks[x][z]) {
                 Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
-                newChunk->Generate(noise);
+                thread.AddChunk(newChunk);
+                /*newChunk->Generate();
+                newChunk->createMeshData();
+                newChunk->Bind();*/
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
                 loadedChunks[x][z] = newChunk;
             }
-            if (loadedChunks[x][z]->status != CHUNK_FULLY_LOADED) {
+           /* if (loadedChunks[x][z]->status != CHUNK_FULLY_LOADED) {
                 if (loadedChunks[x][z]->neighbour[CHUNK_FRONT_SIDE] == 0 && x > 0 && loadedChunks[x - 1][z]) {
                     loadedChunks[x][z]->addNeighbour(loadedChunks[x - 1][z], CHUNK_FRONT_SIDE);
                     if (loadedChunks[x - 1][z]->neighbour[CHUNK_BACK_SIDE] == 0)
@@ -210,7 +218,7 @@ void Minecraft::LoadChunks() {
                     if (loadedChunks[x][z + 1]->neighbour[CHUNK_LEFT_SIDE] == 0)
                         loadedChunks[x][z + 1]->addNeighbour(loadedChunks[x][z], CHUNK_LEFT_SIDE);
                 }
-            }
+            }*/
         }
     /*
     std::cout << std::endl;
@@ -235,7 +243,7 @@ void Minecraft::initUniforms(void) {
 }
 
 void Minecraft::enableGlParam(void) {
-    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
+   // glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);

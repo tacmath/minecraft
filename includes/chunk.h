@@ -106,23 +106,31 @@ public:
 	}
 
 	// Generate the chunk cubes data
-	void Generate(Noise &noise) {
+	void Generate() {
 		if (!(cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE)))
 			return ;
 
 		for (unsigned x = 0; x < CHUNK_SIZE; x++) {
 			for (unsigned z = 0; z < CHUNK_SIZE; z++) {
-				unsigned height = getHeight(noise, posx * CHUNK_SIZE + x, posz * CHUNK_SIZE + z);
+				unsigned height = getHeight(global_noise, posx * CHUNK_SIZE + x, posz * CHUNK_SIZE + z);
 				for (unsigned y = 0; y < 256; y++)
 					if (y < height)
 						cubes[GET_CUBE(x, y, z)] = 1;
 			}
 		}
 		status = CHUNK_DATA_LOADED;
+	}
 
-		createMeshData();
+	void createMeshData() {
 
-		Bind();
+		mesh.resize(0);
+		for (int y = 0; y < 255; y++)
+			for (int x = 0; x < CHUNK_SIZE; x++)
+				for (int z = 0; z < CHUNK_SIZE; z++)
+					if (cubes[GET_CUBE(x, y, z)])
+						addVisibleVertices(x, y, z);
+		status = CHUNK_LOADED;
+		verticesNumber = (unsigned int)mesh.size();
 	}
 
 	// generate VAO VBO, fill the VBO and bind it to the VAO
@@ -208,20 +216,7 @@ private:
 					addLeftVertices(x, y, 0);
 			}
 		verticesNumber = (unsigned int)mesh.size();
-	}
-
-	void createMeshData() {
-
-		mesh.resize(0);
-		for (int y = 0; y < 255; y++)
-			for (int x = 0; x < CHUNK_SIZE; x++)
-				for (int z = 0; z < CHUNK_SIZE; z++)
-					if (cubes[GET_CUBE(x, y, z)])
-						addVisibleVertices(x, y, z);
-		status = CHUNK_LOADED;
-		verticesNumber = (unsigned int)mesh.size();
-	}
-	
+	}	
 };
 
 inline void Chunk::addTopVertices(const int x, const int y, const int z) {

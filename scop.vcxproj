@@ -151,6 +151,7 @@
     <ClInclude Include="includes\noise.h" />
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />
+    <ClInclude Include="includes\thread.h" />
     <ClInclude Include="includes\VAO.h" />
     <ClInclude Include="includes\VBO.h" />
   </ItemGroup>
