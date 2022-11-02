@@ -34,8 +34,8 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 5
-# define RENDER_DISTANCE 10
+# define STARTING_RENDER_DISTANCE 3
+# define RENDER_DISTANCE 14
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -83,8 +83,7 @@ public:
         enableGlParam();
         initUniforms();
 
-        std::srand((unsigned int)std::time(nullptr));
-        seed = (unsigned int)std::rand();
+        seed = ((double) rand() / (RAND_MAX)) * UINT32_MAX;
         global_noise.SetSeed(seed);
 
         initChunks(STARTING_RENDER_DISTANCE);
