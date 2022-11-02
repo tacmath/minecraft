@@ -54,7 +54,7 @@ void VAO::Gen() {
     glGenVertexArrays(1, &ID);
 }
 
-void VAO::Bind() {
+inline void VAO::Bind() {
     glBindVertexArray(ID);
 }
 

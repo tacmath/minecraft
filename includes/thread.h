@@ -80,16 +80,18 @@ void DataThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 
 void MeshThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 	while (1) {
-		if (meshTread.chunkLeft > 0) {
-			for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
-				if (meshTread.chunkList[n] && meshTread.chunkList[n]->status == CHUNK_DATA_LOADED) {
-					meshTread.chunkList[n]->createMeshData();
-					meshTread.chunkLeft -= 1;
-					meshTread.chunkDone += 1;
-				}
-			}
-		//	std::cout << "mesh thread  chunk left = " << meshTread.chunkLeft << std::endl;
+		if (meshTread.chunkLeft <= 0) {
+			std::this_thread::sleep_for(std::chrono::microseconds(10000));
+			continue;
 		}
+		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
+			if (meshTread.chunkList[n] && meshTread.chunkList[n]->status == CHUNK_DATA_LOADED) {
+				meshTread.chunkList[n]->createMeshData();
+				meshTread.chunkLeft -= 1;
+				meshTread.chunkDone += 1;
+			}
+		}
+		//	std::cout << "mesh thread  chunk left = " << meshTread.chunkLeft << std::endl;
 		std::this_thread::sleep_for(std::chrono::microseconds(10000));
 	}
 }

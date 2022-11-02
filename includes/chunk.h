@@ -5,6 +5,7 @@
 #include <VAO.h>
 #include <noise.h>
 #include<vector>
+#include<map>
 
 
 // id of air
@@ -46,14 +47,9 @@
 
 typedef unsigned char t_cubes[256][CHUNK_SIZE][CHUNK_SIZE];
 
-#include <bitset>
+class Chunk;
 
-
-void printVertexData(unsigned int vertex) {
-	std::bitset<32> bit(vertex);
-	std::cout << "y = " << (vertex & 0xFFu) << " x = " << (((vertex >> 8u) & 0xFu)) << " z = " << (((vertex >> 12u) & 0xFu)) << std::endl;
-	std::cout << bit << '\n';
-}
+std::map<size_t, Chunk*> chunksMap;
 
 class Chunk
 {
@@ -71,7 +67,7 @@ private:
 
 public:
 	// pointer to every neighbour of the chunk
-	std::vector<Chunk*> neighbour;			//remove the vector if needed
+	Chunk** neighbour;			//remove the vector if needed
 	// loading status of the chunk
 	char status;
 	//the thread status of the chunk 
@@ -94,13 +90,22 @@ public:
 		VBO = 0;
 		status = CHUNK_UNLOADED;
 		threadStatus = CHUNK_NOT_PROCESSING;
-		neighbour.resize(4);
+		neighbour = (Chunk**)calloc(4, sizeof(Chunk*));
 	};
 
 	// Destructor
 	~Chunk() {
 	//	std::cout << "chunk has been destroyed" << std::endl;
 	//	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
+		chunksMap.erase(((size_t)posx << 32) | posz);
+		/*if (neighbour[CHUNK_FRONT_SIDE])
+			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = 0;
+		if (neighbour[CHUNK_BACK_SIDE])
+			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = 0;
+		if (neighbour[CHUNK_RIGHT_SIDE])
+			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = 0;
+		if (neighbour[CHUNK_LEFT_SIDE])
+			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = 0;*/
 		free(cubes);
 		glDeleteBuffers(1, &VBO);
 	}
@@ -108,8 +113,31 @@ public:
 	// Set the position of the chunk
 	void SetPosistion(int x, int z) {
 	//	std::cout << "SetPosistion called  and addr = " << cubes << "x = " << posx << "z = " << posz << std::endl;
+
 		posx = x;
 		posz = z;
+		
+		/*if ((neighbour[CHUNK_FRONT_SIDE] = chunksMap[(size_t)(x - 1) << 32 | z]))
+			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = this;
+		std::cout << "front key = " << (((size_t)(x - 1) << 32) + (size_t)z) << std::endl;
+		if (neighbour[CHUNK_FRONT_SIDE])
+			std::cout << " VAO = " << neighbour[CHUNK_FRONT_SIDE]->VAO.ID << std::endl;
+		
+		if ((neighbour[CHUNK_BACK_SIDE] = chunksMap[(size_t)(x + 1) << 32 | z]))
+			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = this;
+		std::cout << "back key = " << (((size_t)(x + 1) << 32) + (size_t)z) << std::endl ;
+		if (neighbour[CHUNK_BACK_SIDE])
+			std::cout << " VAO = " << neighbour[CHUNK_BACK_SIDE]->VAO.ID << std::endl ;
+		std::cout << std::endl;
+		if ((neighbour[CHUNK_RIGHT_SIDE] = chunksMap[(size_t)x << 32 | (z + 1)]))
+			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = this;
+		if ((neighbour[CHUNK_LEFT_SIDE] = chunksMap[(size_t)x << 32 | (z - 1)]))
+			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = this;*/
+		/*neighbour[CHUNK_FRONT_SIDE] = chunksMap[(size_t)(x - 1) << 32 | z];
+		neighbour[CHUNK_BACK_SIDE] = chunksMap[(size_t)(x + 1) << 32 | z];
+		neighbour[CHUNK_RIGHT_SIDE] = chunksMap[(size_t)x << 32 | (z + 1)];
+		neighbour[CHUNK_LEFT_SIDE] = chunksMap[(size_t)x << 32 | (z - 1)];*/
+
 	}
 
 	// Generate the chunk cubes data
@@ -156,9 +184,9 @@ public:
 	}
 
 	// Draw the chunk 
-	void Draw(Shader &shader) {
+	inline void Draw(Shader &shader) {
 		VAO.Bind();
-		shader.setVec2("chunkPos", (float)(posx) * CHUNK_SIZE, (float)(posz) * CHUNK_SIZE);
+		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
 		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 	}
 
@@ -179,7 +207,7 @@ public:
 
 private:
 	inline int getHeight(Noise& noise, int x, int z) {
-			return (unsigned)abs(40 + 100.0f * (
+			return (unsigned)abs(30 + 40.0f * (
 			noise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 0.8 +
 			noise.noise(x * (1.0f / 150.0f), z * (1.0f / 150.0f)) * 0.5 +
 			noise.noise(x * (1.0f / 75.0f), z * (1.0f /75.0f)) * 0.25  +

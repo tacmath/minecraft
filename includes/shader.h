@@ -37,8 +37,11 @@ public:
     void setVec3(const char* name, float x, float y, float z) {
         glUniform3f(glGetUniformLocation(ID, name), x, y, z);
     }
-    void setVec2(const char* name, float x, float y) {
+    inline void setVec2(const char* name, float x, float y) {
         glUniform2f(glGetUniformLocation(ID, name), x, y);
+    }
+    inline void setVec2(const char* name, int x, int y) {
+        glUniform2i(glGetUniformLocation(ID, name), x, y); //maybe change it to calculate glGetUniformLocation only once
     }
     void setInt(const char* name, int value) {
         glUniform1i(glGetUniformLocation(ID, name), value);

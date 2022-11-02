@@ -34,8 +34,8 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 3
-# define RENDER_DISTANCE 15
+# define STARTING_RENDER_DISTANCE 5
+# define RENDER_DISTANCE 8
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -88,6 +88,7 @@ public:
         global_noise.SetSeed(seed);
 
         initChunks(STARTING_RENDER_DISTANCE);
+
 	}
 
     // draw the chunks and the skybox
@@ -149,6 +150,7 @@ void Minecraft::initChunks(int radius) {
             newChunk->Generate();
             newChunk->createMeshData();
             newChunk->Bind();
+            chunksMap[((size_t)newChunk->posx << 32) | newChunk->posz] = newChunk;
             chunks[x * diameter + z] = newChunk;
         }
 }
@@ -185,6 +187,7 @@ void Minecraft::LoadChunks() {
             if (!loadedChunks[x][z]) {
                 Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
+                chunksMap[((size_t)newChunk->posx << 32) | newChunk->posz] = newChunk;
                 thread.AddChunk(newChunk);
                 /*newChunk->Generate();
                 newChunk->createMeshData();
@@ -192,7 +195,7 @@ void Minecraft::LoadChunks() {
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
                 loadedChunks[x][z] = newChunk;
             }
-            if (loadedChunks[x][z]->status == CHUNK_LOADED && loadedChunks[x][z]->threadStatus == CHUNK_NOT_PROCESSING) {
+            /*if (loadedChunks[x][z]->status == CHUNK_LOADED && loadedChunks[x][z]->threadStatus == CHUNK_NOT_PROCESSING) {
                 if (loadedChunks[x][z]->neighbour[CHUNK_FRONT_SIDE] == 0 && x > 0 && loadedChunks[x - 1][z] && loadedChunks[x - 1][z]->status == CHUNK_LOADED && loadedChunks[x - 1][z]->threadStatus == CHUNK_NOT_PROCESSING) {
                     loadedChunks[x][z]->addNeighbour(loadedChunks[x - 1][z], CHUNK_FRONT_SIDE);
                     if (loadedChunks[x - 1][z]->neighbour[CHUNK_BACK_SIDE] == 0)
@@ -216,7 +219,7 @@ void Minecraft::LoadChunks() {
                     if (loadedChunks[x][z + 1]->neighbour[CHUNK_LEFT_SIDE] == 0)
                         loadedChunks[x][z + 1]->addNeighbour(loadedChunks[x][z], CHUNK_LEFT_SIDE);
                 }
-            }
+            }*/
         }
 }
 
