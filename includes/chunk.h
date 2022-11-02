@@ -28,6 +28,10 @@
 #define CHUNK_FULLY_LOADED 3
 
 
+#define CHUNK_NOT_PROCESSING 0
+#define CHUNK_PROCESSING 1
+
+
 /*
 	store multiple data in an int32 with the format :
 
@@ -67,9 +71,11 @@ private:
 
 public:
 	// pointer to every neighbour of the chunk
-	std::vector<Chunk*> neighbour;
+	std::vector<Chunk*> neighbour;			//remove the vector if needed
 	// loading status of the chunk
 	char status;
+	//the thread status of the chunk 
+	char threadStatus;				// maybe change the way status are made
 	// position x of the chunk
 	int posx;
 	// position z of the chunk
@@ -87,6 +93,7 @@ public:
 		cubes = 0;
 		VBO = 0;
 		status = CHUNK_UNLOADED;
+		threadStatus = CHUNK_NOT_PROCESSING;
 		neighbour.resize(4);
 	};
 
@@ -145,6 +152,7 @@ public:
 		glEnableVertexAttribArray(0);
 		glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (void*)0);
 		glBindVertexArray(0);
+		threadStatus = CHUNK_NOT_PROCESSING;
 	}
 
 	// Draw the chunk 
@@ -171,7 +179,7 @@ public:
 
 private:
 	inline int getHeight(Noise& noise, int x, int z) {
-			return (unsigned)abs(30 + 20.0f * (
+			return (unsigned)abs(60 + 50.0f * (
 			noise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 0.8 +
 			noise.noise(x * (1.0f / 150.0f), z * (1.0f / 150.0f)) * 0.5 +
 			noise.noise(x * (1.0f / 75.0f), z * (1.0f /75.0f)) * 0.25  +

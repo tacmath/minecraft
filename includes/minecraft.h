@@ -34,8 +34,8 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 8
-# define RENDER_DISTANCE 15
+# define STARTING_RENDER_DISTANCE 3
+# define RENDER_DISTANCE 8
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -168,9 +168,9 @@ void Minecraft::LoadChunks() {
         z = chunks[n]->posz - playerPosz;
 
         // check if a chunk is too far away and delete it if nessesary
-        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->status >= CHUNK_LOADED) {  // create a thread status to see if it is being prosseded
-            delete chunks[n];       // !!! test de ne pas delete pour vois si le bug des chunk vide est toujours la 
-            chunks.erase(chunks.begin() + n);       // le chunk existe mais nes pas suprimmer et pas bind du coup pas passer dans les thread
+        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->threadStatus == CHUNK_NOT_PROCESSING) {
+            delete chunks[n];
+            chunks.erase(chunks.begin() + n);
             n--;
             chunkNumber--;
         }
@@ -218,14 +218,6 @@ void Minecraft::LoadChunks() {
                 }
             }*/
         }
-    /*
-    std::cout << std::endl;
-    for (unsigned x = 0; x < maxChunk; x++) {
-        for (unsigned z = 0; z < maxChunk; z++) {
-            std::cout << (int)loadedChunks[x][z] << "   ";
-        }
-        std::cout << std::endl;
-    }*/
 }
 
 void Minecraft::initUniforms(void) {

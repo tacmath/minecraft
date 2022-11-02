@@ -52,24 +52,29 @@ public:
 
 void DataThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 	while (1) {
-		if (dataTread.chunkLeft > 0) {
-			for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
-				if (dataTread.chunkList[n] && dataTread.chunkList[n]->status == CHUNK_UNLOADED) {
-					dataTread.chunkList[n]->Generate();
-					dataTread.chunkLeft -= 1;
-					for (int m = 0; m < MAX_CHUNK_PER_THREAD; m++) {
-						if (!meshTread.chunkList[m]) {
-							meshTread.chunkList[m] = dataTread.chunkList[n];
-							dataTread.chunkList[n] = 0;
-							meshTread.chunkLeft += 1;
-							break;
-						}
+
+		if (dataTread.chunkLeft <= 0) {
+			std::this_thread::sleep_for(std::chrono::microseconds(10000));
+			continue;
+		}
+
+		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
+			if (dataTread.chunkList[n] && dataTread.chunkList[n]->status == CHUNK_UNLOADED) {
+				for (int m = 0; m < MAX_CHUNK_PER_THREAD; m++) {
+					if (!meshTread.chunkList[m]) {
+						dataTread.chunkList[n]->Generate();
+						meshTread.chunkList[m] = dataTread.chunkList[n];
+						dataTread.chunkList[n] = 0;
+						dataTread.chunkLeft -= 1;
+						meshTread.chunkLeft += 1;
+						break;
 					}
 				}
+
+				
 			}
-		//	std::cout << "data thread  chunk left = " << dataTread.chunkLeft << std::endl;
 		}
-		std::this_thread::sleep_for(std::chrono::microseconds(10000));
+	//	std::cout << "data thread  chunk left = " << dataTread.chunkLeft << std::endl;
 	}
 }
 
@@ -102,11 +107,13 @@ public:
 	void AddChunk(Chunk* chunk) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (!dataTreads.chunkList[n]) {
+				chunk->threadStatus = CHUNK_PROCESSING;
 				dataTreads.chunkList[n] = chunk;
 				dataTreads.chunkLeft += 1;
 				return;
 			}
 		}
+		std::cout << "a chunk could not be assigned " << std::endl;
 	}
 
 	void BindAllChunks(std::vector<Chunk*> &chunks) {
@@ -114,10 +121,11 @@ public:
 			if (!meshTreads.chunkDone)
 				return ;
 			if (meshTreads.chunkList[n] && meshTreads.chunkList[n]->status == CHUNK_LOADED) {
-				meshTreads.chunkList[n]->Bind();
+				meshTreads.chunkList[n]->Bind();			//bind can be called after deleted (surely the cause of the seg fault)
 			//	chunks.push_back(meshTreads.chunkList[n]);
 				meshTreads.chunkList[n] = 0;
 				meshTreads.chunkDone -= 1;
+				
 			}
 		}
 	}
