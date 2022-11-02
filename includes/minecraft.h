@@ -35,7 +35,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 8
-# define RENDER_DISTANCE 8
+# define RENDER_DISTANCE 15
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -103,11 +103,9 @@ public:
 
         glEnable(GL_CULL_FACE);
         chunkShader.Activate();
-        for (int n = 0; n < chunks.size(); n++) {
-         //   if (camera.frustum.isVisible(chunks[n]->posx << 4, chunks[n]->posz << 4, CHUNK_SIZE)) {
+        for (int n = 0; n < chunks.size(); n++)
+       //     if (camera.frustum.isVisible((float)(chunks[n]->posx << 4), (float)(chunks[n]->posz << 4), CHUNK_SIZE))
                 chunks[n]->Draw(chunkShader);
-         //   }
-        }
         glDisable(GL_CULL_FACE);
     }
 
@@ -170,9 +168,9 @@ void Minecraft::LoadChunks() {
         z = chunks[n]->posz - playerPosz;
 
         // check if a chunk is too far away and delete it if nessesary
-        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->status >= CHUNK_LOADED) {
-            delete chunks[n];
-            chunks.erase(chunks.begin() + n);
+        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->status >= CHUNK_LOADED) {  // create a thread status to see if it is being prosseded
+            delete chunks[n];       // !!! test de ne pas delete pour vois si le bug des chunk vide est toujours la 
+            chunks.erase(chunks.begin() + n);       // le chunk existe mais nes pas suprimmer et pas bind du coup pas passer dans les thread
             n--;
             chunkNumber--;
         }

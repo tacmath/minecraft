@@ -6,7 +6,7 @@
 #include "chunk.h"
 #include <chrono>
 
-#define MAX_CHUNK_PER_THREAD 100
+#define MAX_CHUNK_PER_THREAD 1000
 
 class MeshTread;
 class DataTread;
@@ -15,14 +15,18 @@ void MeshThreadRoutine(DataTread& dataTread, MeshTread& meshTread);
 
 class DataTread {
 public:
-	std::vector<Chunk*> chunkList;
+	Chunk** chunkList;
 	int chunkLeft;
 
 	DataTread() {
 		chunkLeft = 0;
-		chunkList.resize(MAX_CHUNK_PER_THREAD);
-		memset(&chunkList[0], 0, sizeof(Chunk*) * MAX_CHUNK_PER_THREAD);
+		chunkList = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
 	}
+
+	~DataTread() {
+		free(chunkList);
+	}
+
 	void Launch(MeshTread& meshTread) {
 		std::thread(DataThreadRoutine, std::ref(*this), std::ref(meshTread)).detach();
 		std::thread(MeshThreadRoutine, std::ref(*this), std::ref(meshTread)).detach();
@@ -31,15 +35,18 @@ public:
 
 class MeshTread {
 public:
-	std::vector<Chunk*> chunkList;			// maybe do chunkListLeft and chunkListDone
+	Chunk** chunkList;			// maybe do chunkListLeft and chunkListDone
 	int chunkLeft;
 	int chunkDone;
 
 	MeshTread() {
 		chunkLeft = 0;
 		chunkDone = 0;
-		chunkList.resize(MAX_CHUNK_PER_THREAD);
-		memset(&chunkList[0], 0, sizeof(Chunk*) * MAX_CHUNK_PER_THREAD);
+		chunkList = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
+	}
+
+	~MeshTread() {
+		free(chunkList);
 	}
 };
 
@@ -62,7 +69,7 @@ void DataThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 			}
 		//	std::cout << "data thread  chunk left = " << dataTread.chunkLeft << std::endl;
 		}
-		std::this_thread::sleep_for(std::chrono::microseconds(50000));
+		std::this_thread::sleep_for(std::chrono::microseconds(10000));
 	}
 }
 
@@ -78,7 +85,7 @@ void MeshThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 			}
 		//	std::cout << "mesh thread  chunk left = " << meshTread.chunkLeft << std::endl;
 		}
-		std::this_thread::sleep_for(std::chrono::microseconds(50000));
+		std::this_thread::sleep_for(std::chrono::microseconds(10000));
 	}
 }
 
