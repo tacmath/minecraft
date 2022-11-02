@@ -35,7 +35,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 3
-# define RENDER_DISTANCE 8
+# define RENDER_DISTANCE 15
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -75,7 +75,7 @@ public:
         initSkybox();
         skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
         chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
-        camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 30.0f, 0.0f));
+        camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
 
         std::vector<std::string> textureNames = {"texture/grass_side.png", "texture/grass_top.png", "texture/dirt.png"};
 
@@ -191,7 +191,7 @@ void Minecraft::LoadChunks() {
                 newChunk->Bind();*/
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
                 loadedChunks[x][z] = newChunk;
-            }/*
+            }
             if (loadedChunks[x][z]->status == CHUNK_LOADED && loadedChunks[x][z]->threadStatus == CHUNK_NOT_PROCESSING) {
                 if (loadedChunks[x][z]->neighbour[CHUNK_FRONT_SIDE] == 0 && x > 0 && loadedChunks[x - 1][z] && loadedChunks[x - 1][z]->status == CHUNK_LOADED && loadedChunks[x - 1][z]->threadStatus == CHUNK_NOT_PROCESSING) {
                     loadedChunks[x][z]->addNeighbour(loadedChunks[x - 1][z], CHUNK_FRONT_SIDE);
@@ -216,13 +216,13 @@ void Minecraft::LoadChunks() {
                     if (loadedChunks[x][z + 1]->neighbour[CHUNK_LEFT_SIDE] == 0)
                         loadedChunks[x][z + 1]->addNeighbour(loadedChunks[x][z], CHUNK_LEFT_SIDE);
                 }
-            }*/
+            }
         }
 }
 
 void Minecraft::initUniforms(void) {
     chunkShader.Activate();
-    chunkShader.setInt("dirt", 0);
+    chunkShader.setInt("atlas", 0);
     chunkShader.setMat4("projection", camera.projection);
     chunkShader.setMat4("view", camera.view);
 
@@ -248,7 +248,7 @@ void Minecraft::initWindows(void) {
         exit(-1);
     }
     cd(path);
-    //glfwWindowHint(GLFW_SAMPLES, 4);      // no multisampling
+   // glfwWindowHint(GLFW_SAMPLES, 2);      // no multisampling
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Pour rendre MacOS heureux ; ne devrait pas �tre n�cessaire

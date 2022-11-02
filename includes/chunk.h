@@ -179,7 +179,7 @@ public:
 
 private:
 	inline int getHeight(Noise& noise, int x, int z) {
-			return (unsigned)abs(60 + 50.0f * (
+			return (unsigned)abs(40 + 100.0f * (
 			noise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 0.8 +
 			noise.noise(x * (1.0f / 150.0f), z * (1.0f / 150.0f)) * 0.5 +
 			noise.noise(x * (1.0f / 75.0f), z * (1.0f /75.0f)) * 0.25  +
@@ -205,9 +205,9 @@ private:
 			addFrontVertices(x, y, z);
 		if (z > 0 && cubes[GET_CUBE(x, y, (z - 1))] == AIR)
 			addLeftVertices(x, y, z);
-		if (x < CHUNK_SIZE && cubes[GET_CUBE((x + 1), y, z)] == AIR)
+		if (x < CHUNK_SIZE - 1 && cubes[GET_CUBE((x + 1), y, z)] == AIR)
 			addBackVertices(x, y, z);
-		if (z < CHUNK_SIZE && cubes[GET_CUBE(x, y, (z + 1))] == AIR)
+		if (z < CHUNK_SIZE - 1 && cubes[GET_CUBE(x, y, (z + 1))] == AIR)
 			addRightVertices(x, y, z);
 	}
 
