@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <iostream>
 
-#define TEX_ATLAS_WIDTH 3
+#define TEX_ATLAS_WIDTH 4
 #define TEX_ATLAS_HEIGHT 1
 
 #define TEXTURE_SIZE 16

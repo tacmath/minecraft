@@ -74,4 +74,7 @@ private:
 	}
 };
 
+//noise using the seed
+Noise global_noise;
+
 #endif // !NOISE_CLASS_H

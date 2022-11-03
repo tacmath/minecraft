@@ -37,8 +37,11 @@ public:
     void setVec3(const char* name, float x, float y, float z) {
         glUniform3f(glGetUniformLocation(ID, name), x, y, z);
     }
-    void setVec2(const char* name, float x, float y) {
+    inline void setVec2(const char* name, float x, float y) {
         glUniform2f(glGetUniformLocation(ID, name), x, y);
+    }
+    inline void setVec2(const char* name, int x, int y) {
+        glUniform2i(glGetUniformLocation(ID, name), x, y); //maybe change it to calculate glGetUniformLocation only once
     }
     void setInt(const char* name, int value) {
         glUniform1i(glGetUniformLocation(ID, name), value);
@@ -65,8 +68,9 @@ private:
         size = file.tellg();
         file.seekg(0);
         source = new char[size + 1];
-        source[size] = 0;
+        //source[size] = 0;
         file.read(source, size);
+        strrchr(source, '}')[1] = 0;    // to remove wierd char at the end of file on windows
         file.close();
         return (source);
     }
@@ -109,7 +113,7 @@ void Shader::compileErrors(unsigned int shader, const char* type)
     GLint hasCompiled;
     // Character array to store error message in
     char infoLog[1024];
-    if (!strncmp(type, "PROGRAM", 7))
+    if (!strcmp(type, "PROGRAM"))
     {
         glGetProgramiv(shader, GL_LINK_STATUS, &hasCompiled);
         if (hasCompiled == GL_FALSE)

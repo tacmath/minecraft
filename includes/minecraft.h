@@ -21,6 +21,7 @@
 #include "camera.h"
 #include "cubeMap.h"
 #include "chunk.h"
+#include "thread.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
@@ -33,9 +34,9 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 10
-# define RENDER_DISTANCE 5
-# define UNLOAD_OFFSET 5
+# define STARTING_RENDER_DISTANCE 5
+# define RENDER_DISTANCE 10
+# define UNLOAD_OFFSET 2
 
 class Minecraft {
 public:
@@ -47,6 +48,9 @@ public:
 
     // a chunk
 	std::vector<Chunk*> chunks;
+
+    // multithreading object
+    Thread thread;
     
     //chunk shader
     Shader  chunkShader;
@@ -63,8 +67,7 @@ public:
     // seed used to generate random chunk
     unsigned int seed;
 
-    //noise using the seed
-    Noise noise;
+
 
 	Minecraft() {
         window = 0;
@@ -72,7 +75,7 @@ public:
         initSkybox();
         skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
         chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
-        camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 30.0f, 0.0f));
+        camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
 
         std::vector<std::string> textureNames = {"texture/grass_side.png", "texture/grass_top.png", "texture/dirt.png"};
 
@@ -82,9 +85,10 @@ public:
 
         std::srand((unsigned int)std::time(nullptr));
         seed = (unsigned int)std::rand();
-        noise.SetSeed(seed);
+        global_noise.SetSeed(seed);
 
         initChunks(STARTING_RENDER_DISTANCE);
+
 	}
 
     // draw the chunks and the skybox
@@ -100,11 +104,9 @@ public:
 
         glEnable(GL_CULL_FACE);
         chunkShader.Activate();
-        for (int n = 0; n < chunks.size(); n++) {
-            if (camera.frustum.isVisible(chunks[n]->posx << 4, chunks[n]->posz << 4, CHUNK_SIZE)) {
+        for (int n = 0; n < chunks.size(); n++)
+       //     if (camera.frustum.isVisible((float)(chunks[n]->posx << 4), (float)(chunks[n]->posz << 4), CHUNK_SIZE))
                 chunks[n]->Draw(chunkShader);
-            }
-        }
         glDisable(GL_CULL_FACE);
     }
 
@@ -145,19 +147,22 @@ void Minecraft::initChunks(int radius) {
         for (int z = 0; z < diameter; z++) {
             Chunk *newChunk = new Chunk;
             newChunk->SetPosistion(x - radius, z - radius);
-            newChunk->Generate(noise);
+            chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
+            newChunk->Generate();
+            newChunk->createMeshData();
+            newChunk->Bind();
             chunks[x * diameter + z] = newChunk;
         }
 }
 
 void Minecraft::LoadChunks() {
-    char    loadedChunks[RENDER_DISTANCE << 1][RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
+    Chunk    *loadedChunks[RENDER_DISTANCE << 1][RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
     maxChunk = RENDER_DISTANCE << 1;
     playerPosx = ((int)camera.posision.x >> 4) - RENDER_DISTANCE;
     playerPosz = ((int)camera.posision.z >> 4) - RENDER_DISTANCE;
-    memset(loadedChunks, 0, maxChunk * maxChunk);
+    memset(loadedChunks, 0, maxChunk * maxChunk * sizeof(Chunk*));
     chunkNumber = (int)chunks.size();
     n = -1;
     while (++n < chunkNumber) {
@@ -165,7 +170,7 @@ void Minecraft::LoadChunks() {
         z = chunks[n]->posz - playerPosz;
 
         // check if a chunk is too far away and delete it if nessesary
-        if (x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) {
+        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->threadStatus == CHUNK_NOT_PROCESSING) {
             delete chunks[n];
             chunks.erase(chunks.begin() + n);
             n--;
@@ -173,26 +178,45 @@ void Minecraft::LoadChunks() {
         }
         // fill the 2d array if a chunk is in the RENDER_DISTANCE
         else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
-            loadedChunks[x][z] = CHUNK_LOADED;
+            loadedChunks[x][z] = chunks[n];
     }
 
     //add all the chunk that are not in loadedChunks
     for (int x = 0; x < maxChunk; x++)
-        for (int z = 0; z < maxChunk; z++)
-            if (loadedChunks[x][z] != CHUNK_LOADED) {
-                Chunk *newChunk = new Chunk;     //push_back is creating a copy
+        for (int z = 0; z < maxChunk; z++) {
+            if (!loadedChunks[x][z]) {
+                Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
-                newChunk->Generate(noise);
+                chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
+                thread.AddChunk(newChunk);
+                /*newChunk->Generate();
+                newChunk->createMeshData();
+                newChunk->Bind();*/
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
+                loadedChunks[x][z] = newChunk;
             }
-    /*
-    std::cout << std::endl;
-    for (unsigned x = 0; x < maxChunk; x++) {
-        for (unsigned z = 0; z < maxChunk; z++) {
-            std::cout << (int)loadedChunks[x][z] << "   ";
+            if (loadedChunks[x][z]->status == CHUNK_LOADED && !(loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING))
+                loadedChunks[x][z]->addNeighbours();
         }
-        std::cout << std::endl;
-    }*/
+}
+
+void Minecraft::initUniforms(void) {
+    chunkShader.Activate();
+    chunkShader.setInt("atlas", 0);
+    chunkShader.setMat4("projection", camera.projection);
+    chunkShader.setMat4("view", camera.view);
+
+    skyboxShader.Activate();
+    skyboxShader.setInt("skybox", 0);
+    skyboxShader.setMat4("projection", camera.projection);
+    skyboxShader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
+}
+
+void Minecraft::enableGlParam(void) {
+   // glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
+    glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 }
 
 void Minecraft::initWindows(void) {
@@ -204,7 +228,7 @@ void Minecraft::initWindows(void) {
         exit(-1);
     }
     cd(path);
-    //glfwWindowHint(GLFW_SAMPLES, 4);      // no multisampling
+   // glfwWindowHint(GLFW_SAMPLES, 2);      // no multisampling
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Pour rendre MacOS heureux ; ne devrait pas �tre n�cessaire
@@ -293,25 +317,6 @@ void Minecraft::initSkybox(void) {
     skybox.LinkAttrib((void*)texturesUv, 8, 1, 2, GL_FLOAT, sizeof(float), (void*)0);
     skybox.Bind();
     skyboxEBO.Bind();
-}
-
-void Minecraft::initUniforms(void) {
-    chunkShader.Activate();
-    chunkShader.setInt("dirt", 0);
-    chunkShader.setMat4("projection", camera.projection);
-    chunkShader.setMat4("view", camera.view);
-
-    skyboxShader.Activate();
-    skyboxShader.setInt("skybox", 0);
-    skyboxShader.setMat4("projection", camera.projection);
-    skyboxShader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
-}
-
-void Minecraft::enableGlParam(void) {
-    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
-    glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
 }
 
 #endif
