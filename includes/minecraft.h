@@ -85,6 +85,7 @@ public:
 
         seed = ((double) rand() / (RAND_MAX)) * UINT32_MAX;
         global_noise.SetSeed(seed);
+        globalChunkGeneration.SetSeed(seed);
 
         initChunks(STARTING_RENDER_DISTANCE);
 

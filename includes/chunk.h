@@ -73,8 +73,6 @@ private:
 	// vertex buffer object ID
 	GLuint VBO;
 
-	ChunkGeneration chunkGeneration;
-
 public:
 	// pointer to every neighbour of the chunk
 	std::vector<Chunk*> neighbour;			//remove the vector if needed
@@ -158,7 +156,7 @@ public:
 	void Generate() {
 		if (!(cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE)))
 			return ;
-		chunkGeneration.generate(CHUNK_SIZE, posx, posz, cubes);
+		globalChunkGeneration.generate(CHUNK_SIZE, posx, posz, cubes);
 		status = CHUNK_DATA_LOADED;
 	}
 

@@ -8,13 +8,19 @@
 
 class ChunkGeneration {
 
+    
+
     public:
     ChunkGeneration(){}
     ~ChunkGeneration(){}
 
-    void generateCave(int ChunkSize, unsigned char *cubes, int maxHeight, int posx, int posz) {
-        for (unsigned y = 11; y < maxHeight; y++) {
-		}
+    void generateCave(int ChunkSize, unsigned char *cubes, int maxHeight, int x, int z, int posx, int posz) {
+        float cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
+            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
+        int height = glm::abs(posx + seed) % (maxHeight + 1);
+        if (cave > 1.3 || cave < 0.7) {
+            cubes[GET_CUBE(x, height, z)] = 0;
+        }
     }
 
 
@@ -22,16 +28,22 @@ class ChunkGeneration {
 		for (unsigned x = 0; x < ChunkSize; x++) {
 			for (unsigned z = 0; z < ChunkSize; z++) {
 				unsigned height = groundHeight(global_noise, posx * ChunkSize + x, posz * ChunkSize + z);
-                if (z == 0) generateCave(ChunkSize, cubes, height, posx, posz);
 				for (unsigned y = 0; y < 256; y++) {
 					if (y < height) cubes[GET_CUBE(x, y, z)] = 1;
 				}
+                generateCave(ChunkSize, cubes, height, x,  z, posx, posz);
 			}
 		}
     }
 
+    void SetSeed(unsigned seed) {
+        this->seed = seed;
+    }
 
     private:
+
+
+    unsigned int seed;
 
 
 	inline int groundHeight(Noise& noise, int x, int z) {
@@ -62,5 +74,7 @@ class ChunkGeneration {
             + noise.noise(x * (1.0f / 75.0f), z * (1.0f / 75.0f)) * 10;
     }
 };
+
+ChunkGeneration globalChunkGeneration;
 
 #endif
