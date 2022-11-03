@@ -187,8 +187,10 @@ public:
 
 	// generate VAO VBO, fill the VBO and bind it to the VAO
 	void Bind() {
-		if (!verticesNumber)
-			return ;
+		if (!verticesNumber) {
+			threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
+			return;
+		}
 		VAO.Gen();
 		VAO.Bind();
 		glGenBuffers(1, &VBO);

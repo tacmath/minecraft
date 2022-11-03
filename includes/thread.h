@@ -122,7 +122,7 @@ public:
 		std::cout << "a chunk could not be assigned " << std::endl;
 	}
 
-	void BindAllChunks(std::vector<Chunk*> &chunks) {
+	void BindAllChunks() {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (!meshTreads.chunkDone)
 				return ;

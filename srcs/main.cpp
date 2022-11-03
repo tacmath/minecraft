@@ -6,7 +6,7 @@ int showFPS(GLFWwindow* window) {
     static double oldTime = 0;
     static double newTime;
     static int frames = 0;
-    static char title[50];
+    static char title[60];
     double timeDiff;
 
     newTime = glfwGetTime();
@@ -36,9 +36,9 @@ void loop(Minecraft &minecraft) {
                 glfwWindowShouldClose(minecraft.window) == 1)
                 return;
             minecraft.camera.Inputs(minecraft.window);
-            minecraft.LoadChunks();
-            minecraft.thread.BindAllChunks(minecraft.chunks);
             minecraft.LoadViewMatrix();
+            minecraft.LoadChunks();
+            minecraft.thread.BindAllChunks();
         }
     }
 }
