@@ -176,8 +176,13 @@ public:
 				for (int z = 0; z < CHUNK_SIZE; z++)
 					if (cubes[GET_CUBE(x, y, z)])
 						addVisibleVertices(x, y, z);
-		status = CHUNK_LOADED;
+		
 		verticesNumber = (unsigned int)mesh.size();
+		if (neighbourLoaded != CHUNK_NONE)
+			addVisibleBorderVertices(neighbourLoaded);
+		status = CHUNK_LOADED;
+		if (neighbourLoaded == CHUNK_ALL_LOADED)
+			status = CHUNK_FULLY_LOADED;		//maybe not nessesary
 	}
 
 	// generate VAO VBO, fill the VBO and bind it to the VAO
@@ -193,6 +198,8 @@ public:
 		glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (void*)0);
 		glBindVertexArray(0);
 		threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
+		if (status == CHUNK_FULLY_LOADED)
+			mesh.clear();
 	}
 
 	// Draw the chunk 
@@ -219,17 +226,6 @@ public:
 			glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
 		}
 		neighbourLoaded |= sides;
-		if (neighbourLoaded == CHUNK_ALL_LOADED) {
-			mesh.clear();
-			status = CHUNK_FULLY_LOADED;		//maybe not nessesary
-		}
-	}
-
-	
-	void initVisibleBorderVertices() {
-		if (neighbourLoaded == CHUNK_NONE)
-			return ;
-		addVisibleBorderVertices(neighbourLoaded);
 		if (neighbourLoaded == CHUNK_ALL_LOADED) {
 			mesh.clear();
 			status = CHUNK_FULLY_LOADED;		//maybe not nessesary

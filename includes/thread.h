@@ -87,7 +87,6 @@ void MeshThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (meshTread.chunkList[n] && meshTread.chunkList[n]->status == CHUNK_DATA_LOADED) {
 				meshTread.chunkList[n]->createMeshData();
-				meshTread.chunkList[n]->initVisibleBorderVertices();
 				meshTread.chunkLeft -= 1;
 				meshTread.chunkDone += 1;
 			}
