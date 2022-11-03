@@ -17,9 +17,24 @@ class ChunkGeneration {
     void generateCave(int ChunkSize, unsigned char *cubes, int maxHeight, int x, int z, int posx, int posz) {
         float cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
             + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
-        int height = glm::abs(posx + seed) % (maxHeight + 1);
-        if (cave > 1.3 || cave < 0.7) {
+        cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
+            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
+        cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
+            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
+        cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
+            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
+        int height = glm::abs(posx + seed) % maxHeight + 3;
+        if (cave > 1.1 && cave < 1.3) {
             cubes[GET_CUBE(x, height, z)] = 0;
+            cubes[GET_CUBE(x, height + 1, z)] = 0;
+            if (cave > 1.3 || cave < 0.7) {
+                cubes[GET_CUBE(x, height + 2, z)] = 0;
+                cubes[GET_CUBE(x, height - 1, z)] = 0;
+            }
+            if (cave > 1.4 || cave < 0.6) {
+                cubes[GET_CUBE(x, height + 3, z)] = 0;
+                cubes[GET_CUBE(x, height - 2, z)] = 0;
+            }
         }
     }
 
