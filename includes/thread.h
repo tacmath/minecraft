@@ -87,12 +87,12 @@ void MeshThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (meshTread.chunkList[n] && meshTread.chunkList[n]->status == CHUNK_DATA_LOADED) {
 				meshTread.chunkList[n]->createMeshData();
+				meshTread.chunkList[n]->initVisibleBorderVertices();
 				meshTread.chunkLeft -= 1;
 				meshTread.chunkDone += 1;
 			}
 		}
 		//	std::cout << "mesh thread  chunk left = " << meshTread.chunkLeft << std::endl;
-		std::this_thread::sleep_for(std::chrono::microseconds(10000));
 	}
 }
 
@@ -109,7 +109,12 @@ public:
 	void AddChunk(Chunk* chunk) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (!dataTreads.chunkList[n]) {
-				chunk->threadStatus = CHUNK_PROCESSING;
+				chunk->threadStatus |= CHUNK_PROCESSING;
+				for (int m = 0; m < 4; m++)
+					if (chunk->neighbour[m] && chunk->neighbour[m]->status >= CHUNK_DATA_LOADED) {
+						chunk->neighbour[m]->threadStatus +=1;
+						chunk->neighbourLoaded |= 1 << m;
+					}
 				dataTreads.chunkList[n] = chunk;
 				dataTreads.chunkLeft += 1;
 				return;
@@ -123,6 +128,9 @@ public:
 			if (!meshTreads.chunkDone)
 				return ;
 			if (meshTreads.chunkList[n] && meshTreads.chunkList[n]->status == CHUNK_LOADED) {
+				for (int m = 0; m < 4; m++)
+					if ((meshTreads.chunkList[n]->neighbourLoaded >> m) & 1)
+						meshTreads.chunkList[n]->neighbour[m]->threadStatus -=1;
 				meshTreads.chunkList[n]->Bind();			//bind can be called after deleted (surely the cause of the seg fault)
 			//	chunks.push_back(meshTreads.chunkList[n]);
 				meshTreads.chunkList[n] = 0;

@@ -35,7 +35,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 5
-# define RENDER_DISTANCE 8
+# define RENDER_DISTANCE 10
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -195,7 +195,7 @@ void Minecraft::LoadChunks() {
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
                 loadedChunks[x][z] = newChunk;
             }
-            if (loadedChunks[x][z]->status == CHUNK_LOADED && loadedChunks[x][z]->threadStatus == CHUNK_NOT_PROCESSING)
+            if (loadedChunks[x][z]->status == CHUNK_LOADED && !(loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING))
                 loadedChunks[x][z]->addNeighbours();
         }
 }
