@@ -34,11 +34,9 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 1
+# define STARTING_RENDER_DISTANCE 5
+# define RENDER_DISTANCE 8
 # define UNLOAD_OFFSET 2
-
-#include <bitset>
 
 class Minecraft {
 public:
@@ -88,16 +86,6 @@ public:
         std::srand((unsigned int)std::time(nullptr));
         seed = (unsigned int)std::rand();
         global_noise.SetSeed(seed);
-
-        
-        int x = -1;
-        int z = 1;
-        std::bitset<64> bit((int64_t)(x) << 32 | z);
-        std::cout << bit << '\n';
-        bit = std::bitset<64>((int64_t)(x + 1) << 32 | z);
-        std::cout << bit << '\n';
-        bit = std::bitset<64>(GET_CHUNK_ID((x - 1), z));
-        std::cout << bit << '\n';
 
         initChunks(STARTING_RENDER_DISTANCE);
 
@@ -207,31 +195,8 @@ void Minecraft::LoadChunks() {
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
                 loadedChunks[x][z] = newChunk;
             }
-            /*if (loadedChunks[x][z]->status == CHUNK_LOADED && loadedChunks[x][z]->threadStatus == CHUNK_NOT_PROCESSING) {
-                if (loadedChunks[x][z]->neighbour[CHUNK_FRONT_SIDE] == 0 && x > 0 && loadedChunks[x - 1][z] && loadedChunks[x - 1][z]->status == CHUNK_LOADED && loadedChunks[x - 1][z]->threadStatus == CHUNK_NOT_PROCESSING) {
-                    loadedChunks[x][z]->addNeighbour(loadedChunks[x - 1][z], CHUNK_FRONT_SIDE);
-                    if (loadedChunks[x - 1][z]->neighbour[CHUNK_BACK_SIDE] == 0)
-                        loadedChunks[x - 1][z]->addNeighbour(loadedChunks[x][z], CHUNK_BACK_SIDE);
-                }
-                
-                if (loadedChunks[x][z]->neighbour[CHUNK_BACK_SIDE] == 0 && x < (maxChunk - 1) && loadedChunks[x + 1][z] && loadedChunks[x + 1][z]->status == CHUNK_LOADED && loadedChunks[x + 1][z]->threadStatus == CHUNK_NOT_PROCESSING) {
-                    loadedChunks[x][z]->addNeighbour(loadedChunks[x + 1][z], CHUNK_BACK_SIDE);
-                    if (loadedChunks[x + 1][z]->neighbour[CHUNK_FRONT_SIDE] == 0)
-                        loadedChunks[x + 1][z]->addNeighbour(loadedChunks[x][z], CHUNK_FRONT_SIDE);
-                }
-
-                if (loadedChunks[x][z]->neighbour[CHUNK_LEFT_SIDE] == 0 && z > 0 && loadedChunks[x][z - 1] && loadedChunks[x][z - 1]->status == CHUNK_LOADED && loadedChunks[x][z - 1]->threadStatus == CHUNK_NOT_PROCESSING) {
-                    loadedChunks[x][z]->addNeighbour(loadedChunks[x][z - 1], CHUNK_LEFT_SIDE);
-                    if (loadedChunks[x][z - 1]->neighbour[CHUNK_RIGHT_SIDE] == 0)
-                        loadedChunks[x][z - 1]->addNeighbour(loadedChunks[x][z], CHUNK_RIGHT_SIDE);
-                }
-
-                if (loadedChunks[x][z]->neighbour[CHUNK_RIGHT_SIDE] == 0 && z < (maxChunk - 1) && loadedChunks[x][z + 1] && loadedChunks[x][z + 1]->status == CHUNK_LOADED && loadedChunks[x][z + 1]->threadStatus == CHUNK_NOT_PROCESSING) {
-                    loadedChunks[x][z]->addNeighbour(loadedChunks[x][z + 1], CHUNK_RIGHT_SIDE);
-                    if (loadedChunks[x][z + 1]->neighbour[CHUNK_LEFT_SIDE] == 0)
-                        loadedChunks[x][z + 1]->addNeighbour(loadedChunks[x][z], CHUNK_LEFT_SIDE);
-                }
-            }*/
+            if (loadedChunks[x][z]->status == CHUNK_LOADED && loadedChunks[x][z]->threadStatus == CHUNK_NOT_PROCESSING)
+                loadedChunks[x][z]->addNeighbours();
         }
 }
 

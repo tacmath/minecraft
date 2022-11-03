@@ -7,6 +7,7 @@
 #include<vector>
 #include<map>
 
+#include <bitset>
 
 // id of air
 #define AIR 0
@@ -17,6 +18,10 @@
 #define CHUNK_BACK_SIDE 1
 #define CHUNK_RIGHT_SIDE 2
 #define CHUNK_LEFT_SIDE 3
+
+// neighbour loaded status
+#define CHUNK_NONE 0
+#define CHUNK_ALL_LOADED 0xF
 
 // all the possible status of a chunk
 
@@ -47,7 +52,7 @@
 
 typedef unsigned char t_cubes[256][CHUNK_SIZE][CHUNK_SIZE];
 
-#define GET_CHUNK_ID(x, z) ((int64_t)((int64_t)x << 32 | z))
+#define GET_CHUNK_ID(x, z) ((int64_t)x << 32 | (z & UINT32_MAX))
 
 class Chunk;
 
@@ -74,6 +79,8 @@ public:
 	char status;
 	//the thread status of the chunk 
 	char threadStatus;				// maybe change the way status are made
+	//neighbour status of the chunk
+	char neighbourLoaded;
 	// position x of the chunk
 	int posx;
 	// position z of the chunk
@@ -92,7 +99,9 @@ public:
 		VBO = 0;
 		status = CHUNK_UNLOADED;
 		threadStatus = CHUNK_NOT_PROCESSING;
+		neighbourLoaded = CHUNK_NONE;
 		neighbour.resize(4);
+		memset(&neighbour[0], 0, sizeof(Chunk*) * 4);
 	};
 
 	// Destructor
@@ -100,14 +109,14 @@ public:
 	//	std::cout << "chunk has been destroyed" << std::endl;
 	//	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
 		chunksMap.erase(GET_CHUNK_ID(posx, posz));
-		/*if (neighbour[CHUNK_FRONT_SIDE])
+		if (neighbour[CHUNK_FRONT_SIDE])
 			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = 0;
 		if (neighbour[CHUNK_BACK_SIDE])
 			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = 0;
 		if (neighbour[CHUNK_RIGHT_SIDE])
 			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = 0;
 		if (neighbour[CHUNK_LEFT_SIDE])
-			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = 0;*/
+			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = 0;
 		free(cubes);
 		glDeleteBuffers(1, &VBO);
 	}
@@ -118,35 +127,25 @@ public:
 
 		posx = x;
 		posz = z;
-		
-		/*if ((neighbour[CHUNK_FRONT_SIDE] = chunksMap[(size_t)(x - 1) << 32 | z]))
-			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = this;
-		std::cout << "front key = " << (((size_t)(x - 1) << 32) + (size_t)z) << std::endl;
-		if (neighbour[CHUNK_FRONT_SIDE])
-			std::cout << " VAO = " << neighbour[CHUNK_FRONT_SIDE]->VAO.ID << std::endl;
-		
-		if ((neighbour[CHUNK_BACK_SIDE] = chunksMap[(size_t)(x + 1) << 32 | z]))
-			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = this;
-		std::cout << "back key = " << (((size_t)(x + 1) << 32) + (size_t)z) << std::endl ;
-		if (neighbour[CHUNK_BACK_SIDE])
-			std::cout << " VAO = " << neighbour[CHUNK_BACK_SIDE]->VAO.ID << std::endl ;
-		std::cout << std::endl;
-		if ((neighbour[CHUNK_RIGHT_SIDE] = chunksMap[(size_t)x << 32 | (z + 1)]))
-			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = this;
-		if ((neighbour[CHUNK_LEFT_SIDE] = chunksMap[(size_t)x << 32 | (z - 1)]))
-			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = this;*/
-		neighbour[CHUNK_FRONT_SIDE] = chunksMap[GET_CHUNK_ID((x - 1), z)];
-		std::cout << "front key = " << GET_CHUNK_ID((x - 1), z) << std::endl;
-		if (neighbour[CHUNK_FRONT_SIDE])
-			std::cout << " VAO = " << neighbour[CHUNK_FRONT_SIDE]->VAO.ID << std::endl;
-		neighbour[CHUNK_BACK_SIDE] = chunksMap[GET_CHUNK_ID((x + 1), z)];
-		std::cout << "back key = " << GET_CHUNK_ID((x + 1), z) << std::endl;
-		if (neighbour[CHUNK_BACK_SIDE])
-			std::cout << " VAO = " << neighbour[CHUNK_BACK_SIDE]->VAO.ID << std::endl;
-		std::cout << std::endl;
-		neighbour[CHUNK_RIGHT_SIDE] = chunksMap[GET_CHUNK_ID(x, (z - 1))];
-		neighbour[CHUNK_LEFT_SIDE] = chunksMap[GET_CHUNK_ID(x, (z + 1))];
+		GetNeighbour();
+	}
 
+	Chunk *GetChunk(int x, int z) {
+		auto search = chunksMap.find(GET_CHUNK_ID(x, z));
+		if (search != chunksMap.end())
+			return (search->second);
+		else
+			return (0);
+	}
+	void GetNeighbour() {
+		if ((neighbour[CHUNK_FRONT_SIDE] = GetChunk(posx - 1, posz)))
+			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = this;
+		if ((neighbour[CHUNK_BACK_SIDE] = GetChunk(posx + 1, posz)))
+			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = this;
+		if ((neighbour[CHUNK_RIGHT_SIDE] = GetChunk(posx, posz + 1)))
+			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = this;
+		if ((neighbour[CHUNK_LEFT_SIDE] = GetChunk(posx, posz - 1)))
+			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = this;
 	}
 
 	// Generate the chunk cubes data
@@ -199,18 +198,22 @@ public:
 		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 	}
 
-	void addNeighbour(Chunk *chunk, int side) {
+	void addNeighbours() {
+		char sides = 0;
 
-		neighbour[side] = chunk;
-		addVisibleBorderVertices(side);
+		for (int n = 0; n < 4;n++)
+			// if the neighbour exist and has loaded cubes and was not processed earlier
+			if (neighbour[n] && neighbour[n]->status >= CHUNK_DATA_LOADED && !((neighbourLoaded >> n) & 1))
+				sides |= 1 << n;
+		addVisibleBorderVertices(sides);
 		if (verticesNumber) {
 			glBindBuffer(GL_ARRAY_BUFFER, VBO);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
 		}
-		if (neighbour[CHUNK_FRONT_SIDE] && neighbour[CHUNK_BACK_SIDE]
-			&& neighbour[CHUNK_RIGHT_SIDE] && neighbour[CHUNK_LEFT_SIDE]) {
+		neighbourLoaded |= sides;
+		if (neighbourLoaded == CHUNK_ALL_LOADED) {
 			mesh.clear();
-			status = CHUNK_FULLY_LOADED;
+			status = CHUNK_FULLY_LOADED;		//maybe not nessesary
 		}
 	}
 
@@ -248,16 +251,16 @@ private:
 			addRightVertices(x, y, z);
 	}
 
-	inline void addVisibleBorderVertices(int side) {
+	inline void addVisibleBorderVertices(char sides) {
 		for (int y = 0; y < 255; y++)
 			for (int x = 0; x < CHUNK_SIZE; x++) {
-				if (side == CHUNK_FRONT_SIDE && cubes[GET_CUBE(0, y, x)] && neighbour[CHUNK_FRONT_SIDE]->cubes[GET_CUBE(15, y, x)] == AIR)
+				if (((sides >> CHUNK_FRONT_SIDE) & 1) && cubes[GET_CUBE(0, y, x)] && neighbour[CHUNK_FRONT_SIDE]->cubes[GET_CUBE(15, y, x)] == AIR)
 					addFrontVertices(0, y, x);
-				if (side == CHUNK_BACK_SIDE && cubes[GET_CUBE(15, y, x)] && neighbour[CHUNK_BACK_SIDE]->cubes[GET_CUBE(0, y, x)] == AIR)
+				if (((sides >> CHUNK_BACK_SIDE) & 1) && cubes[GET_CUBE(15, y, x)] && neighbour[CHUNK_BACK_SIDE]->cubes[GET_CUBE(0, y, x)] == AIR)
 					addBackVertices(15, y, x);
-				if (side == CHUNK_RIGHT_SIDE && cubes[GET_CUBE(x, y, 15)] && neighbour[CHUNK_RIGHT_SIDE]->cubes[GET_CUBE(x, y, 0)] == AIR)
+				if (((sides >> CHUNK_RIGHT_SIDE) & 1) && cubes[GET_CUBE(x, y, 15)] && neighbour[CHUNK_RIGHT_SIDE]->cubes[GET_CUBE(x, y, 0)] == AIR)
 					addRightVertices(x, y, 15);
-				if (side == CHUNK_LEFT_SIDE && cubes[GET_CUBE(x, y, 0)] && neighbour[CHUNK_LEFT_SIDE]->cubes[GET_CUBE(x, y, 15)] == AIR)
+				if (((sides >> CHUNK_LEFT_SIDE) & 1) && cubes[GET_CUBE(x, y, 0)] && neighbour[CHUNK_LEFT_SIDE]->cubes[GET_CUBE(x, y, 15)] == AIR)
 					addLeftVertices(x, y, 0);
 			}
 		verticesNumber = (unsigned int)mesh.size();
