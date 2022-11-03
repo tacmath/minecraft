@@ -2,7 +2,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-int showFPS(GLFWwindow* window) {
+int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     static double oldTime = 0;
     static double newTime;
     static int frames = 0;
@@ -14,7 +14,7 @@ int showFPS(GLFWwindow* window) {
     frames++;
     if (timeDiff < 1.0f / 30.0f)
         return (0);
-    sprintf(title, "Minecraft :  FPS = %d  ms = %f", (int)((1.0 / timeDiff) * frames), (timeDiff * 1000) / frames);
+    sprintf(title, "Minecraft :  FPS = %d  ms = %f coor = %f %f %f", (int)((1.0 / timeDiff) * frames), (timeDiff * 1000) / frames, minecraft.camera.posision.x, minecraft.camera.posision.y, minecraft.camera.posision.z);
     glfwSetWindowTitle(window, title);
     frames = 0;
     oldTime = newTime;
@@ -29,7 +29,7 @@ void loop(Minecraft &minecraft) {
      
         glfwSwapBuffers(minecraft.window);
 
-        if (showFPS(minecraft.window)) { // return 1 when at an inteval
+        if (showFPS(minecraft.window, minecraft)) { // return 1 when at an inteval
             glfwPollEvents();
 
             if (glfwGetKey(minecraft.window, GLFW_KEY_ESCAPE) == GLFW_PRESS ||

@@ -6,6 +6,7 @@
 #include <noise.h>
 #include<vector>
 #include<map>
+#include "chunk_generation.h"
 
 #include <bitset>
 
@@ -50,7 +51,7 @@
 // get the offset of a cube based on the position in the chunk
 #define GET_CUBE(x, y, z) ((y << 8) | (x << 4) | z)
 
-typedef unsigned char t_cubes[256][CHUNK_SIZE][CHUNK_SIZE];
+// typedef unsigned char t_cubes[256][CHUNK_SIZE][CHUNK_SIZE];
 
 #define GET_CHUNK_ID(x, z) ((int64_t)x << 32 | (z & UINT32_MAX))
 
@@ -71,6 +72,8 @@ private:
 	VAO VAO;
 	// vertex buffer object ID
 	GLuint VBO;
+
+	ChunkGeneration chunkGeneration;
 
 public:
 	// pointer to every neighbour of the chunk
@@ -155,17 +158,7 @@ public:
 	void Generate() {
 		if (!(cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE)))
 			return ;
-
-		for (unsigned x = 0; x < CHUNK_SIZE; x++) {
-			for (unsigned z = 0; z < CHUNK_SIZE; z++) {
-				unsigned height = getHeight(global_noise, posx * CHUNK_SIZE + x, posz * CHUNK_SIZE + z);
-				for (unsigned y = 0; y < 256; y++) {
-					if (y < height) {
-							cubes[GET_CUBE(x, y, z)] = 1;
-					}
-					}
-			}
-		}
+		chunkGeneration.generate(CHUNK_SIZE, posx, posz, cubes);
 		status = CHUNK_DATA_LOADED;
 	}
 
@@ -236,28 +229,6 @@ public:
 	}
 
 private:
-	inline int getHeight(Noise& noise, int x, int z) {
-			return 40
-			+ noise.noise(x * (1.0f / 100.0f), z * (1.0f / 100.0f)) * 50
-			+ noise.noise(x * (1.0f / 150.0f), z * (1.0f / 150.0f)) * 20
-			+ noise.noise(x * (1.0f / 40.0f), z * (1.0f / 40.0f)) * 20
-			- noise.noise(x * (1.0f / 39.0f), z * (1.0f / 39.0f)) * 20
-			- noise.noise(x * (1.0f / 180.0f), z * (1.0f / 180.0f)) * 30
-			+ noise.noise(x * (1.0f / 435.0f), z * (1.0f / 435.0f)) * 60
-			- noise.noise(x * (1.0f / 600.0f), z * (1.0f / 600.0f)) * 70
-			- noise.noise(x * (1.0f / 25.0f), z * (1.0f / 25.0f)) * 10
-			+ noise.noise(x * (1.0f / 225.0f), z * (1.0f / 225.0f)) * 45
-			+ noise.noise(x * (1.0f / 50.0f), z * (1.0f / 50.0f)) * 10
-			+ noise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 50
-			- noise.noise(x * (1.0f / 225.0f), z * (1.0f / 225.0f)) * 60
-			- noise.noise(x * (1.0f / 10.0f), z * (1.0f / 10.0f)) * 5
-			+ noise.noise(x * (1.0f / 17.0f), z * (1.0f / 17.0f)) * 5
-			+ noise.noise(x * (1.0f / 100.0f), z * (1.0f / 100.0f)) * 30
-			+ noise.noise(x * (1.0f / 1500.0f), z * (1.0f / 1500.0f)) * 100
-			- noise.noise(x * (1.0f / 630.0f), z * (1.0f / 630.0f)) * 50
-			;
-	}
-
 	inline void addTopVertices(const int y, const int x, const int z);
 	inline void addBottomVertices(const int y, const int x, const int z);
 	inline void addFrontVertices(const int y, const int x, const int z);
