@@ -47,9 +47,11 @@
 
 typedef unsigned char t_cubes[256][CHUNK_SIZE][CHUNK_SIZE];
 
+#define GET_CHUNK_ID(x, z) ((int64_t)((int64_t)x << 32 | z))
+
 class Chunk;
 
-std::map<size_t, Chunk*> chunksMap;
+std::map<int64_t, Chunk*> chunksMap;
 
 class Chunk
 {
@@ -67,7 +69,7 @@ private:
 
 public:
 	// pointer to every neighbour of the chunk
-	Chunk** neighbour;			//remove the vector if needed
+	std::vector<Chunk*> neighbour;			//remove the vector if needed
 	// loading status of the chunk
 	char status;
 	//the thread status of the chunk 
@@ -90,14 +92,14 @@ public:
 		VBO = 0;
 		status = CHUNK_UNLOADED;
 		threadStatus = CHUNK_NOT_PROCESSING;
-		neighbour = (Chunk**)calloc(4, sizeof(Chunk*));
+		neighbour.resize(4);
 	};
 
 	// Destructor
 	~Chunk() {
 	//	std::cout << "chunk has been destroyed" << std::endl;
 	//	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
-		chunksMap.erase(((size_t)posx << 32) | posz);
+		chunksMap.erase(GET_CHUNK_ID(posx, posz));
 		/*if (neighbour[CHUNK_FRONT_SIDE])
 			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = 0;
 		if (neighbour[CHUNK_BACK_SIDE])
@@ -133,10 +135,17 @@ public:
 			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = this;
 		if ((neighbour[CHUNK_LEFT_SIDE] = chunksMap[(size_t)x << 32 | (z - 1)]))
 			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = this;*/
-		/*neighbour[CHUNK_FRONT_SIDE] = chunksMap[(size_t)(x - 1) << 32 | z];
-		neighbour[CHUNK_BACK_SIDE] = chunksMap[(size_t)(x + 1) << 32 | z];
-		neighbour[CHUNK_RIGHT_SIDE] = chunksMap[(size_t)x << 32 | (z + 1)];
-		neighbour[CHUNK_LEFT_SIDE] = chunksMap[(size_t)x << 32 | (z - 1)];*/
+		neighbour[CHUNK_FRONT_SIDE] = chunksMap[GET_CHUNK_ID((x - 1), z)];
+		std::cout << "front key = " << GET_CHUNK_ID((x - 1), z) << std::endl;
+		if (neighbour[CHUNK_FRONT_SIDE])
+			std::cout << " VAO = " << neighbour[CHUNK_FRONT_SIDE]->VAO.ID << std::endl;
+		neighbour[CHUNK_BACK_SIDE] = chunksMap[GET_CHUNK_ID((x + 1), z)];
+		std::cout << "back key = " << GET_CHUNK_ID((x + 1), z) << std::endl;
+		if (neighbour[CHUNK_BACK_SIDE])
+			std::cout << " VAO = " << neighbour[CHUNK_BACK_SIDE]->VAO.ID << std::endl;
+		std::cout << std::endl;
+		neighbour[CHUNK_RIGHT_SIDE] = chunksMap[GET_CHUNK_ID(x, (z - 1))];
+		neighbour[CHUNK_LEFT_SIDE] = chunksMap[GET_CHUNK_ID(x, (z + 1))];
 
 	}
 

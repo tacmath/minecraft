@@ -34,9 +34,11 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 5
-# define RENDER_DISTANCE 8
+# define STARTING_RENDER_DISTANCE 1
+# define RENDER_DISTANCE 1
 # define UNLOAD_OFFSET 2
+
+#include <bitset>
 
 class Minecraft {
 public:
@@ -86,6 +88,16 @@ public:
         std::srand((unsigned int)std::time(nullptr));
         seed = (unsigned int)std::rand();
         global_noise.SetSeed(seed);
+
+        
+        int x = -1;
+        int z = 1;
+        std::bitset<64> bit((int64_t)(x) << 32 | z);
+        std::cout << bit << '\n';
+        bit = std::bitset<64>((int64_t)(x + 1) << 32 | z);
+        std::cout << bit << '\n';
+        bit = std::bitset<64>(GET_CHUNK_ID((x - 1), z));
+        std::cout << bit << '\n';
 
         initChunks(STARTING_RENDER_DISTANCE);
 
@@ -147,10 +159,10 @@ void Minecraft::initChunks(int radius) {
         for (int z = 0; z < diameter; z++) {
             Chunk *newChunk = new Chunk;
             newChunk->SetPosistion(x - radius, z - radius);
+            chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
             newChunk->Generate();
             newChunk->createMeshData();
             newChunk->Bind();
-            chunksMap[((size_t)newChunk->posx << 32) | newChunk->posz] = newChunk;
             chunks[x * diameter + z] = newChunk;
         }
 }
@@ -187,7 +199,7 @@ void Minecraft::LoadChunks() {
             if (!loadedChunks[x][z]) {
                 Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
-                chunksMap[((size_t)newChunk->posx << 32) | newChunk->posz] = newChunk;
+                chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
                 thread.AddChunk(newChunk);
                 /*newChunk->Generate();
                 newChunk->createMeshData();
