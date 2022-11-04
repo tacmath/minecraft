@@ -35,7 +35,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 15
+# define RENDER_DISTANCE 20
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -122,12 +122,9 @@ public:
 
     //destructor
     ~Minecraft(void) {
-        std::cout << "Minecraft destructor has been called" << std::endl;
-        for (int n = 0; n < chunks.size(); n++) {
-            if (chunks[n]->status == CHUNK_NOT_PROCESSING) {
-                delete chunks[n];
-            }
-        }
+        //std::cout << "Minecraft destructor has been called" << std::endl;
+        for (int n = 0; n < chunks.size(); n++)
+            delete chunks[n];
         glfwDestroyWindow(window);
         glfwTerminate();
     }

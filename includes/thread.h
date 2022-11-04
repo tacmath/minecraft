@@ -21,11 +21,11 @@ class DataTread {
 public:
 	Chunk** chunkList;
 	int chunkLeft;
-	char isAlive;
+	char status;
 
 	DataTread() {
 		chunkLeft = 0;
-		isAlive = THREAD_ALIVE;
+		status = THREAD_ALIVE;
 		chunkList = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
 	}
 
@@ -41,25 +41,28 @@ public:
 
 class MeshTread {
 public:
-	Chunk** chunkList;			// maybe do chunkListLeft and chunkListDone
+	Chunk** chunkListLeft;
+	Chunk** chunkListDone;
 	int chunkLeft;
 	int chunkDone;
-	char isAlive;
+	char status;
 
 	MeshTread() {
 		chunkLeft = 0;
 		chunkDone = 0;
-		isAlive = THREAD_ALIVE;
-		chunkList = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
+		status = THREAD_ALIVE;
+		chunkListLeft = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*)); // maybe do a buffer double the size instead of 2 buffers
+		chunkListDone = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
 	}
 
 	~MeshTread() {
-		free(chunkList);
+		free(chunkListLeft);
+		free(chunkListDone);
 	}
 };
 
 void DataThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
-	while (dataTread.isAlive) {
+	while (dataTread.status) {
 
 		if (dataTread.chunkLeft <= 0) {
 			std::this_thread::sleep_for(std::chrono::microseconds(10000));
@@ -67,11 +70,11 @@ void DataThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 		}
 
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
-			if (dataTread.chunkList[n] && dataTread.chunkList[n]->status == CHUNK_UNLOADED) {
+			if (dataTread.chunkList[n]) {
 				for (int m = 0; m < MAX_CHUNK_PER_THREAD; m++) {
-					if (!meshTread.chunkList[m]) {
+					if (!meshTread.chunkListLeft[m]) {
 						dataTread.chunkList[n]->Generate();
-						meshTread.chunkList[m] = dataTread.chunkList[n];
+						meshTread.chunkListLeft[m] = dataTread.chunkList[n];
 						dataTread.chunkList[n] = 0;
 						dataTread.chunkLeft -= 1;
 						meshTread.chunkLeft += 1;
@@ -84,27 +87,34 @@ void DataThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
 		}
 	//	std::cout << "data thread  chunk left = " << dataTread.chunkLeft << std::endl;
 	}
-	dataTread.isAlive = THREAD_DEAD;
-	std::cout << "data thread is dead"<< std::endl;
+	dataTread.status = THREAD_DEAD;
+//	std::cout << "data thread is dead"<< std::endl;
 }
 
 void MeshThreadRoutine(DataTread& dataTread, MeshTread& meshTread) {
-	while (meshTread.isAlive) {
+	while (meshTread.status) {
 		if (meshTread.chunkLeft <= 0) {
 			std::this_thread::sleep_for(std::chrono::microseconds(10000));
 			continue;
 		}
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
-			if (meshTread.chunkList[n] && meshTread.chunkList[n]->status == CHUNK_DATA_LOADED) {
-				meshTread.chunkList[n]->createMeshData();
-				meshTread.chunkLeft -= 1;
-				meshTread.chunkDone += 1;
+			if (meshTread.chunkListLeft[n]) {
+				for (int m = 0; m < MAX_CHUNK_PER_THREAD; m++) {
+					if (!meshTread.chunkListDone[m]) {
+						meshTread.chunkListLeft[n]->createMeshData();
+						meshTread.chunkListDone[m] = meshTread.chunkListLeft[n];
+						meshTread.chunkListLeft[n] = 0;
+						meshTread.chunkLeft -= 1;
+						meshTread.chunkDone += 1;
+						break;
+					}
+				}
 			}
 		}
 		//	std::cout << "mesh thread  chunk left = " << meshTread.chunkLeft << std::endl;
 	}
-	meshTread.isAlive = THREAD_DEAD;
-	std::cout << "mesh thread is dead" << std::endl;
+	meshTread.status = THREAD_DEAD;
+//	std::cout << "mesh thread is dead" << std::endl;
 }
 
 class Thread {
@@ -118,9 +128,9 @@ public:
 	}
 
 	void StopThread() {
-		meshTreads.isAlive = THREAD_DYING;
-		dataTreads.isAlive = THREAD_DYING;
-		while (meshTreads.isAlive != THREAD_DEAD || dataTreads.isAlive != THREAD_DEAD)
+		meshTreads.status = THREAD_DYING;
+		dataTreads.status = THREAD_DYING;
+		while (meshTreads.status != THREAD_DEAD || dataTreads.status != THREAD_DEAD)
 			std::this_thread::sleep_for(std::chrono::microseconds(1000));
 	}
 
@@ -145,17 +155,14 @@ public:
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (!meshTreads.chunkDone)
 				return ;
-			if (meshTreads.chunkList[n] && meshTreads.chunkList[n]->status == CHUNK_LOADED) {
-
-				//meshTreads.chunkList[n]->threadStatus &= 0xF;
-				meshTreads.chunkList[n]->Bind();			//bind can be called after deleted (surely the cause of the seg fault)
+			if (meshTreads.chunkListDone[n]) {
+				meshTreads.chunkListDone[n]->Bind();			//bind can be called after deleted (surely the cause of the seg fault)
 				for (int m = 0; m < 4; m++)
-					if ((meshTreads.chunkList[n]->neighbourLoaded >> m) & 1)
-						meshTreads.chunkList[n]->neighbour[m]->threadStatus -=1;
+					if ((meshTreads.chunkListDone[n]->neighbourLoaded >> m) & 1)
+						meshTreads.chunkListDone[n]->neighbour[m]->threadStatus -=1;
 			//	chunks.push_back(meshTreads.chunkList[n]);
-				meshTreads.chunkList[n] = 0;
+				meshTreads.chunkListDone[n] = 0;
 				meshTreads.chunkDone -= 1;
-				
 			}
 		}
 	}
