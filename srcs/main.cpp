@@ -6,7 +6,7 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     static double oldTime = 0;
     static double newTime;
     static int frames = 0;
-    static char title[60];
+    static char title[100];
     double timeDiff;
 
     newTime = glfwGetTime();
@@ -52,8 +52,7 @@ int main(void) {
     
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     loop(minecraft);
-
     //_CrtDumpMemoryLeaks();      //test les leaks
-    
+    minecraft.thread.StopThread();
 	return (0);
 }

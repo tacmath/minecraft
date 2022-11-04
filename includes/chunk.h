@@ -31,8 +31,6 @@
 #define CHUNK_DATA_LOADED 1
 // CHUNK_LOADED means that the chunk mesh is done but incomplete 
 #define CHUNK_LOADED 2
-// CHUNK_FULLY_LOADED means that the chunk mesh is complete
-#define CHUNK_FULLY_LOADED 3
 
 
 #define CHUNK_NOT_PROCESSING 0
@@ -173,8 +171,6 @@ public:
 		if (neighbourLoaded != CHUNK_NONE)
 			addVisibleBorderVertices(neighbourLoaded);
 		status = CHUNK_LOADED;
-		if (neighbourLoaded == CHUNK_ALL_LOADED)
-			status = CHUNK_FULLY_LOADED;		//maybe not nessesary
 	}
 
 	// generate VAO VBO, fill the VBO and bind it to the VAO
@@ -192,7 +188,7 @@ public:
 		glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (void*)0);
 		glBindVertexArray(0);
 		threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
-		if (status == CHUNK_FULLY_LOADED)
+		if (neighbourLoaded == CHUNK_ALL_LOADED)
 			mesh.clear();
 	}
 
@@ -220,10 +216,8 @@ public:
 			glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
 		}
 		neighbourLoaded |= sides;
-		if (neighbourLoaded == CHUNK_ALL_LOADED) {
+		if (neighbourLoaded == CHUNK_ALL_LOADED)
 			mesh.clear();
-			status = CHUNK_FULLY_LOADED;		//maybe not nessesary
-		}
 	}
 
 private:

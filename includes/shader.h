@@ -67,10 +67,10 @@ private:
         file.seekg(0, std::ios::end);
         size = file.tellg();
         file.seekg(0);
-        source = new char[size + 1];
-        //source[size] = 0;
+        source = (char*)malloc(size + 1);
+        source[size] = 0;
         file.read(source, size);
-        strrchr(source, '}')[1] = 0;    // to remove wierd char at the end of file on windows
+        //strrchr(source, '}')[1] = 0;    // to remove wierd char at the end of file on windows
         file.close();
         return (source);
     }
@@ -100,8 +100,8 @@ void Shader::Load(const char *vertexShaderFile, const char *fragmentShaderFile) 
 	glLinkProgram(programShader);
     compileErrors(programShader, "PROGRAM");
 
-    delete vertexShaderSource;
-    delete fragmentShaderSource;
+    free(vertexShaderSource);
+    free(fragmentShaderSource);
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
     ID = programShader;
