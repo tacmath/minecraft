@@ -363,7 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Remove librairies
-librairies/lib/glfw3lib
+libraries/lib/glfw3lib
 
 .vscode
 
