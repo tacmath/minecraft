@@ -53,6 +53,6 @@ int main(void) {
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     loop(minecraft);
     //_CrtDumpMemoryLeaks();      //test les leaks
-    minecraft.thread.StopThread();
+    minecraft.thread.StopThreads();
 	return (0);
 }
