@@ -70,7 +70,12 @@ private:
         source = (char*)malloc(size + 1);
         source[size] = 0;
         file.read(source, size);
-        //strrchr(source, '}')[1] = 0;    // to remove wierd char at the end of file on windows
+        for (int i = size - 1; i > 0; i--) {
+            if (source[i] == '}') {
+                source[i + 1] = 0;
+                break ;
+            }
+        }
         file.close();
         return (source);
     }

@@ -364,3 +364,9 @@ FodyWeavers.xsd
 
 # Remove librairies
 librairies/lib/glfw3lib
+
+.vscode
+
+.objs
+
+vox

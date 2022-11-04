@@ -34,8 +34,8 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 3
-# define RENDER_DISTANCE 10
+# define STARTING_RENDER_DISTANCE 1
+# define RENDER_DISTANCE 15
 # define UNLOAD_OFFSET 2
 
 class Minecraft {

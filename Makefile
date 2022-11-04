@@ -6,7 +6,7 @@
 #    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/04 11:06:17 by matheme          ###   ########.fr        #
+#    Updated: 2022/11/04 14:00:15 by matheme          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -90,5 +90,9 @@ else
 endif
 
 re: fclean all
+
+
+test: all
+	@./vox
 
 .PHONY: all re clean fclean lib silent

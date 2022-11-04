@@ -8,33 +8,24 @@
 
 class ChunkGeneration {
 
-    
-
     public:
     ChunkGeneration(){}
     ~ChunkGeneration(){}
 
+
+    void propagateCavePoint(unsigned char *cubes, int x, int y, int z) {
+
+    }
+
     void generateCave(int ChunkSize, unsigned char *cubes, int maxHeight, int x, int z, int posx, int posz) {
-        float cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
-            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
-        cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
-            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
-        cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
-            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
-        cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 20.0f), (posz * ChunkSize + z) * (1.0f / 20.0f))
-            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f));
-        int height = glm::abs(posx + seed) % maxHeight + 3;
+        float cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 50.0f), (posz * ChunkSize + z) * (1.0f / 50.0f))
+            + global_noise.noise((posx * ChunkSize + x) * (1.0f / 25.0f), (posz * ChunkSize + z) * (1.0f / 25.0f));
+
+        int height = glm::abs(posx + posz + seed) % maxHeight + 3;
+        int radius = glm::abs(posx + posz + seed) % 7;
         if (cave > 1.1 && cave < 1.3) {
             cubes[GET_CUBE(x, height, z)] = 0;
-            cubes[GET_CUBE(x, (height + 1), z)] = 0;
-            if (cave > 1.3 || cave < 0.7) {
-                cubes[GET_CUBE(x, (height + 2), z)] = 0;
-                cubes[GET_CUBE(x, (height - 1), z)] = 0;
-            }
-            if (cave > 1.4 || cave < 0.6) {
-                cubes[GET_CUBE(x, (height + 3), z)] = 0;
-                cubes[GET_CUBE(x, (height - 2), z)] = 0;
-            }
+            propagateCavePoint(cubes, x, height, z);
         }
     }
 
@@ -44,7 +35,7 @@ class ChunkGeneration {
 			for (unsigned z = 0; z < ChunkSize; z++) {
 				unsigned height = groundHeight(global_noise, posx * ChunkSize + x, posz * ChunkSize + z);
 				for (unsigned y = 0; y < 256; y++) {
-					if (y < height) cubes[GET_CUBE(x, y, z)] = 1;
+                    if (y < height) cubes[GET_CUBE(x, y, z)] = 1;
 				}
                 generateCave(ChunkSize, cubes, height, x,  z, posx, posz);
 			}
