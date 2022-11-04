@@ -26,14 +26,14 @@ class ChunkGeneration {
         int height = glm::abs(posx + seed) % maxHeight + 3;
         if (cave > 1.1 && cave < 1.3) {
             cubes[GET_CUBE(x, height, z)] = 0;
-            cubes[GET_CUBE(x, height + 1, z)] = 0;
+            cubes[GET_CUBE(x, (height + 1), z)] = 0;
             if (cave > 1.3 || cave < 0.7) {
-                cubes[GET_CUBE(x, height + 2, z)] = 0;
-                cubes[GET_CUBE(x, height - 1, z)] = 0;
+                cubes[GET_CUBE(x, (height + 2), z)] = 0;
+                cubes[GET_CUBE(x, (height - 1), z)] = 0;
             }
             if (cave > 1.4 || cave < 0.6) {
-                cubes[GET_CUBE(x, height + 3, z)] = 0;
-                cubes[GET_CUBE(x, height - 2, z)] = 0;
+                cubes[GET_CUBE(x, (height + 3), z)] = 0;
+                cubes[GET_CUBE(x, (height - 2), z)] = 0;
             }
         }
     }
