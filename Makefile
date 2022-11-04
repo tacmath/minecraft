@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
+#    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/10/31 17:31:53 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/11/04 11:06:17 by matheme          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,8 +52,8 @@ OBJ_NAME_C		= $(NAME_SRC_C:.c=.o)
 
 OBJS = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME)) $(addprefix $(OBJ_PATH)/,$(OBJ_NAME_C))
 
-CC			= gcc -o3
-GPP			= g++ -std=c++11 -o3
+CC			= gcc -fsanitize=address
+GPP			= g++ -fsanitize=address -std=c++11
 
 
 all: $(NAME)
@@ -62,13 +62,13 @@ $(NAME) : $(OBJS)
 	@$(GPP) $^ -o $@ $(FRAMEWORK)
 	@echo "	\033[2K\r$(DARK_BLUE)$(NAME):\t\t$(GREEN)loaded\033[0m"
 
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp $(HEADER)
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp $(HEADER) Makefile
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
 	@$(GPP) -I $(INC_PATH) -I $(FRAMEWORK_INC) -c $< -o $@
 	@$(eval I=$(shell echo $$(($(I)+1))))
 	@printf "\033[2K\r${G}$(DARK_BLUE)>>\t\t\t\t$(I)/$(shell echo $(NAME_SRC_LEN)) ${N}$(BLUE)$<\033[36m \033[0m"
 
-$(OBJ_PATH)/%.o: %.c $(HEADER)
+$(OBJ_PATH)/%.o: %.c $(HEADER) Makefile
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
 	@$(CC) -I $(FRAMEWORK_INC) -c $< -o $@
 
