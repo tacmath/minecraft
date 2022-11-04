@@ -7,6 +7,7 @@
 #include<vector>
 #include<map>
 #include "chunk_generation.h"
+#include "blocks.h"
 
 #include <bitset>
 
@@ -261,7 +262,7 @@ private:
 };
 
 inline void Chunk::addTopVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(1, 0);
+	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].top, 0);
 
 	// v.insert(v.end(), std::begin(a), std::end(a)); instead of multiples push_back
 	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
@@ -274,7 +275,7 @@ inline void Chunk::addTopVertices(const int x, const int y, const int z) {
 }
 
 inline void Chunk::addBottomVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(2, 0);
+	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].bottom, 0);
 
 	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
 	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
@@ -286,47 +287,52 @@ inline void Chunk::addBottomVertices(const int x, const int y, const int z) {
 }
 
 inline void Chunk::addFrontVertices(const int x, const int y, const int z) {
-	mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
+	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
+
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
 
 
-	mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-	mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 1));
 }
 
 inline void Chunk::addBackVertices(const int x, const int y, const int z) {
+	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
 
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), y, z, 0, 0));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
 
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
 }
 
 inline void Chunk::addRightVertices(const int x, const int y, const int z) {
+	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
 
-	mesh.push_back(PACK_VERTEX_DATA(x, y, (z + 1), 0, 0));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 0, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
 
-	mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
 }
 
 inline void Chunk::addLeftVertices(const int x, const int y, const int z) {
+	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
 
-	mesh.push_back(PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
 
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
-	mesh.push_back(PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(PACK_VERTEX_DATA((x + 1), (y + 1), z, 1, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
+	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 1, 1));
 }
 
 #endif

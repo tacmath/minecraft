@@ -176,7 +176,6 @@ public:
 					for (int m = 0; m < 4; m++)
 						if ((meshThreads[thread].chunkListDone[n]->neighbourLoaded >> m) & 1)
 							meshThreads[thread].chunkListDone[n]->neighbour[m]->threadStatus -=1;
-				//	chunks.push_back(meshThreads[t].chunkList[n]);
 					meshThreads[thread].chunkListDone[n] = 0;
 					meshThreads[thread].chunkDone -= 1;
 				}

@@ -144,7 +144,9 @@
   <ItemGroup>
     <ClInclude Include="includes\camera.h" />
     <ClInclude Include="includes\chunk.h" />
+    <ClInclude Include="includes\chunk_generation.h" />
     <ClInclude Include="includes\cubeMap.h" />
+    <ClInclude Include="includes\blocks.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\frustum.h" />
     <ClInclude Include="includes\minecraft.h" />

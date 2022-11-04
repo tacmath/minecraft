@@ -9,7 +9,9 @@
 class ChunkGeneration {
 
     public:
-    ChunkGeneration(){}
+    ChunkGeneration(){
+        seed = 0;
+    }
     ~ChunkGeneration(){}
 
 
@@ -43,6 +45,7 @@ class ChunkGeneration {
 				unsigned height = groundHeight(global_noise, posx * ChunkSize + x, posz * ChunkSize + z);
 				for (unsigned y = 0; y < height; y++) {
                     if (y < height) cubes[GET_CUBE(x, y, z)] = 1;
+                    if (y < height - 5) cubes[GET_CUBE(x, y, z)] = 3;
 				}
                 generateCave(ChunkSize, cubes, height, x,  z, posx, posz);
 			}

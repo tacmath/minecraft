@@ -77,13 +77,17 @@ public:
         chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
         camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
 
-        std::vector<std::string> textureNames = {"texture/grass_side.png", "texture/grass_top.png", "texture/dirt.png"};
+        std::vector<std::string> textureNames = {"texture/grass_side.png", "texture/grass_top.png", "texture/dirt.png", "texture/stone.png"};
 
         texAtlas.LoadAtlas(textureNames, 0);
         enableGlParam();
         initUniforms();
 
-        seed = ((double) rand() / (RAND_MAX)) * UINT32_MAX;
+        blocks[1].SetTextures(1, 0, 2);
+        blocks[2].SetTextures(2, 2, 2);
+        blocks[3].SetTextures(3, 3, 3);
+
+        seed = (int)((double) rand() / (RAND_MAX)) * UINT32_MAX;
         global_noise.SetSeed(seed);
         globalChunkGeneration.SetSeed(seed);
 

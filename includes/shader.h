@@ -70,7 +70,7 @@ private:
         source = (char*)malloc(size + 1);
         source[size] = 0;
         file.read(source, size);
-        for (int i = size - 1; i > 0; i--) {
+        for (size_t i = size - 1; i > 0; i--) {
             if (source[i] == '}') {
                 source[i + 1] = 0;
                 break ;
