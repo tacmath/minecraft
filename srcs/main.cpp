@@ -1,6 +1,15 @@
+#include <glm/gtx/string_cast.hpp>
+
+#define STB_IMAGE_IMPLEMENTATION
 #include "minecraft.h"
 
-#include <glm/gtx/string_cast.hpp>
+
+// all the globals needed
+Block blocks[256];
+ChunkGeneration globalChunkGeneration;
+std::map<int64_t, Chunk*> chunksMap;
+Noise global_noise;
+
 
 int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     static double oldTime = 0;

@@ -20,7 +20,4 @@ struct Block {
 	}
 };
 
-
-Block blocks[256];
-
 #endif

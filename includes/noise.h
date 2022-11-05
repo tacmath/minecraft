@@ -111,6 +111,6 @@ float dotGridGradient(int ix, int iy, float x, float y) {
 };
 
 //noise using the seed
-Noise global_noise;
+extern Noise global_noise;
 
 #endif // !NOISE_CLASS_H

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
+#    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/04 17:02:11 by matheme          ###   ########.fr        #
+#    Updated: 2022/11/05 15:16:55 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,6 +40,15 @@ FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib
 FRAMEWORK_INC = libraries/include
 
 NAME_SRC=main.cpp \
+			init.cpp \
+			cubeMap.cpp\
+			VBO.cpp\
+			VAO.cpp\
+			texture.cpp\
+			shader.cpp\
+			thread.cpp\
+			minecraft.cpp\
+			
 
 NAME_SRC_C=glad.c \
 
@@ -52,8 +61,10 @@ OBJ_NAME_C		= $(NAME_SRC_C:.c=.o)
 
 OBJS = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME)) $(addprefix $(OBJ_PATH)/,$(OBJ_NAME_C))
 
-CC			= gcc -fsanitize=address
-GPP			= g++ -fsanitize=address -std=c++11
+OPTIMISATION_FLAG = #-o3 #-ofast  pas d'interet pour l'instant
+
+CC			= gcc $(OPTIMISATION_FLAG)
+GPP			= g++ -std=c++11 $(OPTIMISATION_FLAG)
 
 
 all: $(NAME)

@@ -91,6 +91,6 @@ class ChunkGeneration {
     }
 };
 
-ChunkGeneration globalChunkGeneration;
+extern ChunkGeneration globalChunkGeneration;
 
 #endif

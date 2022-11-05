@@ -1,13 +1,16 @@
 #ifndef CHUNK_CLASS_H
 #define CHUNK_CLASS_H
 
-#include<glad/glad.h>
+#include <glad/glad.h>
 #include <VAO.h>
 #include <noise.h>
-#include<vector>
-#include<map>
+#include <vector>
+#include <map>
 #include "chunk_generation.h"
 #include "blocks.h"
+#include "shader.h"
+
+extern Block blocks[256];
 
 #include <bitset>
 
@@ -56,7 +59,7 @@
 
 class Chunk;
 
-std::map<int64_t, Chunk*> chunksMap;
+extern std::map<int64_t, Chunk*> chunksMap;
 
 class Chunk
 {
