@@ -10,9 +10,13 @@
 #include<glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#define NORMAL_PERSPECTIVE 0
+#define UP_PERSPECTIVE 1
+
 class Camera
 {
 private:
+	bool perspective;
 	bool firstClick;
 	float width;
 	float height;

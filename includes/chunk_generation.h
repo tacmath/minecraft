@@ -52,11 +52,11 @@ class ChunkGeneration {
             + global_noise.noise((posx * ChunkSize + x) * (1.0f / 33.0f), (posz * ChunkSize + z) * (1.0f / 33.0f));
 
         if (cave > 1.15) {
-            int y = global_noise.noise((posx * ChunkSize + x) * (1.0f / 130.0f), (posz * ChunkSize + z) * (1.0f / 130.0f))
+            int y = (int)(global_noise.noise((posx * ChunkSize + x) * (1.0f / 130.0f), (posz * ChunkSize + z) * (1.0f / 130.0f))
                 * (maxHeight * 2)
                 + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f)) * 10
                 - global_noise.noise((posx * ChunkSize + x) * (1.0f / 53.0f), (posz * ChunkSize + z) * (1.0f / 53.0f)) * 6
-                - maxHeight / 2;
+                - maxHeight / 2);
             if (y < 11) y = 11;
             caveExcavator(cubes, x, y, z, ChunkSize, 2);
         }
@@ -69,10 +69,10 @@ class ChunkGeneration {
             + global_noise.noise((posx * ChunkSize + x) * (1.0f / 17.0f), (posz * ChunkSize + z) * (1.0f / 17.0f));
 
         if ((isDirtPocket > 1.2 && isDirtPocket < 1.25) || (isDirtPocket > 0.7 && isDirtPocket < 0.75) || (isDirtPocket > 0.9 && isDirtPocket < 0.92)) {
-            int y = global_noise.noise((posx * ChunkSize + x) * (1.0f / 130.0f), (posz * ChunkSize + z) * (1.0f / 130.0f)) * (maxHeight * 1.8)
+            int y = (int)(global_noise.noise((posx * ChunkSize + x) * (1.0f / 130.0f), (posz * ChunkSize + z) * (1.0f / 130.0f)) * (maxHeight * 1.8)
                 + global_noise.noise((posx * ChunkSize + x) * (1.0f / 45.0f), (posz * ChunkSize + z) * (1.0f / 45.0f)) * 10
                 - global_noise.noise((posx * ChunkSize + x) * (1.0f / 53.0f), (posz * ChunkSize + z) * (1.0f / 53.0f)) * 6
-                - maxHeight / 2;
+                - maxHeight / 2);
             if (y < 7) y = 7;
             if (y > maxHeight - 7) y = maxHeight - 7;
             dirtPockateExcavator(cubes, x, y, z, ChunkSize, 3);
@@ -81,10 +81,10 @@ class ChunkGeneration {
     }
 
     void generate(int ChunkSize, int posx, int posz, unsigned char *cubes) {
-		for (unsigned x = 0; x < ChunkSize; x++) {
-			for (unsigned z = 0; z < ChunkSize; z++) {
-				unsigned height = groundHeight(global_noise, posx * ChunkSize + x, posz * ChunkSize + z);
-				for (unsigned y = 0; y < height; y++) {
+		for (int x = 0; x < ChunkSize; x++) {
+			for (int z = 0; z < ChunkSize; z++) {
+                int height = groundHeight(global_noise, posx * ChunkSize + x, posz * ChunkSize + z);
+				for (int y = 0; y < height; y++) {
                     if (cubes[GET_CUBE(x, y, z)] == -1) cubes[GET_CUBE(x, y, z)] = 0;
                     else if (cubes[GET_CUBE(x, y, z)] == -2) cubes[GET_CUBE(x, y, z)] = 2;
                     else if (y == height - 1) cubes[GET_CUBE(x, y, z)] = 1;

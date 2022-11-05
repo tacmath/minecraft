@@ -16,7 +16,6 @@ private:
     glm::vec4 near;
     glm::vec4 far;
 
-
 public:
 	Frustum(){};
     ~Frustum(){};
@@ -40,8 +39,8 @@ public:
             far[i]    = mat[i][3] - mat[i][2];
         }
         
-        std::cout << "Left:" << left[0] << " " << left[1] << " " << left[2] << " " << left[3] << std::endl;
-        std::cout << "right:" << right[0] << " " << right[1] << " " << right[2] << " " << right[3] << std::endl;
+        /*std::cout << "Left:" << left[0] << " " << left[1] << " " << left[2] << " " << left[3] << std::endl;
+        std::cout << "right:" << right[0] << " " << right[1] << " " << right[2] << " " << right[3] << std::endl;*/
     /*    std::cout << "bottom:" << bottom[0] << " " << bottom[1] << " " << bottom[2] << " " << bottom[3] << std::endl;
         std::cout << "top:" << top[0] << " " << top[1] << " " << top[2] << " " << top[3] << std::endl;
         std::cout << "near:" << near[0] << " " << near[1] << " " << near[2] << " " << near[3] << std::endl;
@@ -49,9 +48,20 @@ public:
         
     }
 
-    inline bool isVisible(float x, float z, float size) {
+    bool isOnOrForwardPlan(glm::vec4 &plan, glm::vec3 &point) const
+    {
+        const float r = 8 * std::abs(plan.x) +
+            128 * std::abs(plan.y) + 8 * std::abs(plan.z);
+        return glm::dot(glm::vec3(plan), point) - -plan.w >= -r;
+    }
 
-        return (true);
+    inline bool isVisible(float x, float z, float size) {
+        glm::vec3 pos(x + 8, 128, z + 8);
+
+        if (isOnOrForwardPlan(right, pos) &&
+            isOnOrForwardPlan(left, pos))
+            return (true);
+        return (false);
     }
 
 };

@@ -2,7 +2,9 @@
 
 // Default constructor
 Camera::Camera() {
+	perspective = NORMAL_PERSPECTIVE;
 	firstClick = true;
+	oldMousePos = glm::vec2(0.0f);
 	width = 0;
 	height = 0;
 	fov = 90;
@@ -29,6 +31,8 @@ void Camera::Inputs(GLFWwindow* window) {
 	this->MouseInputs(window);
 	view = glm::lookAt(posision, posision + direction, up);
 	frustum.calculate(projection * view);
+	if (perspective == UP_PERSPECTIVE)
+		view = glm::lookAt(posision + glm::vec3(-10, 200, 0), posision, up);
 }
 
 // set the position of the camera with 3 float
@@ -77,6 +81,11 @@ void Camera::KeyInputs(GLFWwindow* window) {
 		speed = 10.0f;
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
 		speed = 0.4f;
+
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+		perspective = UP_PERSPECTIVE;
+	else
+		perspective = NORMAL_PERSPECTIVE;
 }
 
 // treat mouse inputs to change the camera direction

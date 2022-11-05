@@ -38,8 +38,8 @@ void Minecraft::Draw(void) {
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
     for (int n = 0; n < chunks.size(); n++)
-        //     if (camera.frustum.isVisible((float)(chunks[n]->posx << 4), (float)(chunks[n]->posz << 4), CHUNK_SIZE))
-        chunks[n]->Draw(chunkShader);
+        if (camera.frustum.isVisible((float)(chunks[n]->posx << 4), (float)(chunks[n]->posz << 4), CHUNK_SIZE))
+            chunks[n]->Draw(chunkShader);
     glDisable(GL_CULL_FACE);
 }
 
