@@ -1,15 +1,16 @@
 #ifndef CHUNK_CLASS_H
 #define CHUNK_CLASS_H
 
-#include<glad/glad.h>
+#include <glad/glad.h>
 #include <VAO.h>
 #include <noise.h>
-#include<vector>
-#include<map>
+#include <vector>
+#include <map>
 #include "chunk_generation.h"
 #include "blocks.h"
+#include "shader.h"
 
-#include <bitset>
+extern Block blocks[256];
 
 // id of air
 #define AIR 0
@@ -56,7 +57,7 @@
 
 class Chunk;
 
-std::map<int64_t, Chunk*> chunksMap;
+extern std::map<int64_t, Chunk*> chunksMap;
 
 class Chunk
 {
@@ -89,250 +90,51 @@ public:
 	// ids of all the cube in the chunk
 	unsigned char *cubes;
 
+
+
+
+
 	// Default constructor
-	Chunk() {
-	//	std::cout << "constructor called" << std::endl;
-		verticesNumber = 0;
-		posx = 0;
-		posz = 0;
-		cubes = 0;
-		VBO = 0;
-		status = CHUNK_UNLOADED;
-		threadStatus = CHUNK_NOT_PROCESSING;
-		neighbourLoaded = CHUNK_NONE;
-		neighbour.resize(4);
-		memset(&neighbour[0], 0, sizeof(Chunk*) * 4);
-	};
+	Chunk();
 
 	// Destructor
-	~Chunk() {
-	//	std::cout << "chunk has been destroyed" << std::endl;
-	//	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
-		chunksMap.erase(GET_CHUNK_ID(posx, posz));
-		if (neighbour[CHUNK_FRONT_SIDE])
-			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = 0;
-		if (neighbour[CHUNK_BACK_SIDE])
-			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = 0;
-		if (neighbour[CHUNK_RIGHT_SIDE])
-			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = 0;
-		if (neighbour[CHUNK_LEFT_SIDE])
-			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = 0;
-		free(cubes);
-		glDeleteBuffers(1, &VBO);
-	}
+	~Chunk();
 
 	// Set the position of the chunk
-	void SetPosistion(int x, int z) {
-	//	std::cout << "SetPosistion called  and addr = " << cubes << "x = " << posx << "z = " << posz << std::endl;
-
-		posx = x;
-		posz = z;
-		GetNeighbour();
-	}
+	void SetPosistion(int x, int z);
 
 	// return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
-	Chunk *GetChunk(int x, int z) {
-		auto search = chunksMap.find(GET_CHUNK_ID(x, z));
-		if (search != chunksMap.end())
-			return (search->second);
-		else
-			return (0);
-	}
+	Chunk* GetChunk(int x, int z);
 
 	// get all the neighbours of the chunk
-	void GetNeighbour() {
-		if ((neighbour[CHUNK_FRONT_SIDE] = GetChunk(posx - 1, posz)))
-			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = this;
-		if ((neighbour[CHUNK_BACK_SIDE] = GetChunk(posx + 1, posz)))
-			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = this;
-		if ((neighbour[CHUNK_RIGHT_SIDE] = GetChunk(posx, posz + 1)))
-			neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = this;
-		if ((neighbour[CHUNK_LEFT_SIDE] = GetChunk(posx, posz - 1)))
-			neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = this;
-	}
+	void GetNeighbour();
 
 	// Generate the chunk cubes data
-	void Generate() {
-		if (!(cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE)))
-			return ;
-		globalChunkGeneration.generate(CHUNK_SIZE, posx, posz, cubes);
-		status = CHUNK_DATA_LOADED;
-	}
+	void Generate();
 
 	// generate a mesh based on the chunk cube data 
-	void createMeshData() {
-		mesh.resize(0);
-		for (int y = 0; y < 255; y++)
-			for (int x = 0; x < CHUNK_SIZE; x++)
-				for (int z = 0; z < CHUNK_SIZE; z++)
-					if (cubes[GET_CUBE(x, y, z)])
-						addVisibleVertices(x, y, z);
-		
-		verticesNumber = (unsigned int)mesh.size();
-		if (neighbourLoaded != CHUNK_NONE)
-			addVisibleBorderVertices(neighbourLoaded);
-		status = CHUNK_LOADED;
-	}
+	void createMeshData();
 
 	// generate VAO VBO, fill the VBO and bind it to the VAO
-	void Bind() {
-		if (!verticesNumber) {
-			threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
-			return;
-		}
-		VAO.Gen();
-		VAO.Bind();
-		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (void*)0);
-		glBindVertexArray(0);
-		threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
-		if (neighbourLoaded == CHUNK_ALL_LOADED)
-			mesh.clear();
-	}
+	void Bind();
 
 	// Draw the chunk 
-	inline void Draw(Shader &shader) {
-		VAO.Bind();
-		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
-		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
-	}
+	void Draw(Shader& shader);
 
 	//add the mesh between a chunk and its neighbours
-	void addNeighbours() {
-		char sides = 0;
-
-		for (int n = 0; n < 4;n++)
-			// if the neighbour exist and has loaded cubes and was not processed earlier
-			if (neighbour[n] && neighbour[n]->status >= CHUNK_DATA_LOADED && !((neighbourLoaded >> n) & 1))
-				sides |= 1 << n;
-		// if no new side has been found quit
-		if (sides == CHUNK_NONE)
-			return ;
-		addVisibleBorderVertices(sides);
-		if (verticesNumber) {
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
-		}
-		neighbourLoaded |= sides;
-		if (neighbourLoaded == CHUNK_ALL_LOADED)
-			mesh.clear();
-	}
+	void addNeighbours();
 
 private:
-	inline void addTopVertices(const int y, const int x, const int z);
-	inline void addBottomVertices(const int y, const int x, const int z);
-	inline void addFrontVertices(const int y, const int x, const int z);
-	inline void addBackVertices(const int y, const int x, const int z);
-	inline void addRightVertices(const int y, const int x, const int z);
-	inline void addLeftVertices(const int y, const int x, const int z);
+	void addTopVertices(const int y, const int x, const int z);
+	void addBottomVertices(const int y, const int x, const int z);
+	void addFrontVertices(const int y, const int x, const int z);
+	void addBackVertices(const int y, const int x, const int z);
+	void addRightVertices(const int y, const int x, const int z);
+	void addLeftVertices(const int y, const int x, const int z);
 
-	inline void addVisibleVertices(int x, int y, int z) {
-
-		if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)
-			addTopVertices(x, y, z);
-		if (y > 0 && cubes[GET_CUBE(x, (y - 1), z)] == AIR)
-			addBottomVertices(x, y, z);
-		if (x > 0 && cubes[GET_CUBE((x - 1), y, z)] == AIR)
-			addFrontVertices(x, y, z);
-		if (z > 0 && cubes[GET_CUBE(x, y, (z - 1))] == AIR)
-			addLeftVertices(x, y, z);
-		if (x < CHUNK_SIZE - 1 && cubes[GET_CUBE((x + 1), y, z)] == AIR)
-			addBackVertices(x, y, z);
-		if (z < CHUNK_SIZE - 1 && cubes[GET_CUBE(x, y, (z + 1))] == AIR)
-			addRightVertices(x, y, z);
-	}
-
-	inline void addVisibleBorderVertices(char sides) {
-		for (int y = 0; y < 255; y++)
-			for (int x = 0; x < CHUNK_SIZE; x++) {
-				if (((sides >> CHUNK_FRONT_SIDE) & 1) && cubes[GET_CUBE(0, y, x)] && neighbour[CHUNK_FRONT_SIDE]->cubes[GET_CUBE(15, y, x)] == AIR)
-					addFrontVertices(0, y, x);
-				if (((sides >> CHUNK_BACK_SIDE) & 1) && cubes[GET_CUBE(15, y, x)] && neighbour[CHUNK_BACK_SIDE]->cubes[GET_CUBE(0, y, x)] == AIR)
-					addBackVertices(15, y, x);
-				if (((sides >> CHUNK_RIGHT_SIDE) & 1) && cubes[GET_CUBE(x, y, 15)] && neighbour[CHUNK_RIGHT_SIDE]->cubes[GET_CUBE(x, y, 0)] == AIR)
-					addRightVertices(x, y, 15);
-				if (((sides >> CHUNK_LEFT_SIDE) & 1) && cubes[GET_CUBE(x, y, 0)] && neighbour[CHUNK_LEFT_SIDE]->cubes[GET_CUBE(x, y, 15)] == AIR)
-					addLeftVertices(x, y, 0);
-			}
-		verticesNumber = (unsigned int)mesh.size();
-	}	
+	void addVisibleVertices(int x, int y, int z);
+	void addVisibleBorderVertices(char sides);
 };
 
-inline void Chunk::addTopVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].top, 0);
-
-	// v.insert(v.end(), std::begin(a), std::end(a)); instead of multiples push_back
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 0));
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
-}
-
-inline void Chunk::addBottomVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].bottom, 0);
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 1));
-}
-
-inline void Chunk::addFrontVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 1));
-}
-
-inline void Chunk::addBackVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
-}
-
-inline void Chunk::addRightVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
-}
-
-inline void Chunk::addLeftVertices(const int x, const int y, const int z) {
-	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
-
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 1, 1));
-}
 
 #endif

@@ -60,7 +60,7 @@ public:
 		ix1 = interpolate(n0, n1, sx);
 
 		value = interpolate(ix0, ix1, sy);
-		return value * 0.5 + 0.5; // Will return in range -1 to 1. To make it in range 0 to 1, multiply by 0.5 and add 0.5
+		return value * 0.5f + 0.5f; // Will return in range -1 to 1. To make it in range 0 to 1, multiply by 0.5 and add 0.5
 
 
 	}
@@ -90,7 +90,7 @@ private:
     a *= 3284157443; b ^= a << s | a >> (w - s);
     b *= 1911520717; a ^= b << s | b >> (w - s);
     a *= 2048419325;
-    float random = a * (3.14159265 / ~(~0u >> 1)); // in [0, 2*Pi]
+    float random = a * (3.14159265f / ~(~0u >> 1)); // in [0, 2*Pi]
     glm::vec2 v;
     v.x = cos(random); v.y = sin(random);
     return v;
@@ -111,6 +111,6 @@ float dotGridGradient(int ix, int iy, float x, float y) {
 };
 
 //noise using the seed
-Noise global_noise;
+extern Noise global_noise;
 
 #endif // !NOISE_CLASS_H

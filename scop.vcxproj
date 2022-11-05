@@ -139,7 +139,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="srcs\camera.cpp" />
+    <ClCompile Include="srcs\chunk.cpp" />
+    <ClCompile Include="srcs\cubeMap.cpp" />
+    <ClCompile Include="srcs\init.cpp" />
     <ClCompile Include="srcs\main.cpp" />
+    <ClCompile Include="srcs\cubeMesh.cpp" />
+    <ClCompile Include="srcs\minecraft.cpp" />
+    <ClCompile Include="srcs\shader.cpp" />
+    <ClCompile Include="srcs\texture.cpp" />
+    <ClCompile Include="srcs\thread.cpp" />
+    <ClCompile Include="srcs\VAO.cpp" />
+    <ClCompile Include="srcs\VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\camera.h" />
