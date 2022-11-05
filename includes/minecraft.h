@@ -188,6 +188,8 @@ void Minecraft::LoadChunks() {
     //add all the chunk that are not in loadedChunks
     for (int x = 0; x < maxChunk; x++)
         for (int z = 0; z < maxChunk; z++) {
+
+            // load new chunks if it is not in the render distance
             if (!loadedChunks[x][z]) {
                 Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
@@ -198,9 +200,16 @@ void Minecraft::LoadChunks() {
                 newChunk->Bind();*/
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
                 loadedChunks[x][z] = newChunk;
+                continue;
             }
+
+            // load the chunk border if it is not being processed and has cube data
             if (loadedChunks[x][z]->neighbourLoaded != CHUNK_ALL_LOADED && loadedChunks[x][z]->status >= CHUNK_DATA_LOADED && !(loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING))
                 loadedChunks[x][z]->addNeighbours();
+
+            // add chunks to thread that where not able to be processed
+            if (loadedChunks[x][z]->status == CHUNK_UNLOADED && !(loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING))
+                thread.AddChunk(loadedChunks[x][z]);
         }
 }
 
