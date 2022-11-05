@@ -1,17 +1,6 @@
 #ifndef MINECRAFT_H
 # define MINECRAFT_H
 
-    #ifdef _WIN32
-    #include <direct.h>
-    // MSDN recommends against using getcwd & chdir names
-    #define cwd _getcwd
-    #define cd _chdir
-    #else
-    #include "unistd.h"
-    #define cwd getcwd
-    #define cd chdir
-    #endif
-
 #include "stb_image.h"
 #include "shader.h"
 #include "VAO.h"
@@ -67,47 +56,18 @@ public:
     unsigned int seed;
 
 
-
+    // constuctor
 	Minecraft(void);
+    // destructor
+    ~Minecraft(void);
 
     // draw the chunks and the skybox
-    void Draw(void) {
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-        glDepthFunc(GL_LEQUAL);
-        skyboxShader.Activate();
-        skybox.Bind();
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        glDepthFunc(GL_LESS);
-
-
-        glEnable(GL_CULL_FACE);
-        chunkShader.Activate();
-        for (int n = 0; n < chunks.size(); n++)
-       //     if (camera.frustum.isVisible((float)(chunks[n]->posx << 4), (float)(chunks[n]->posz << 4), CHUNK_SIZE))
-                chunks[n]->Draw(chunkShader);
-        glDisable(GL_CULL_FACE);
-    }
-
+    void Draw(void);
 
     //load the view matrix in all the shaders
-    void LoadViewMatrix(void) {
-        chunkShader.Activate();
-        chunkShader.setMat4("view", camera.view);
+    void LoadViewMatrix(void);
 
-        skyboxShader.Activate();
-        skyboxShader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
-    }
-
-    //destructor
-    ~Minecraft(void) {
-        //std::cout << "Minecraft destructor has been called" << std::endl;
-        for (int n = 0; n < chunks.size(); n++)
-            delete chunks[n];
-        glfwDestroyWindow(window);
-        glfwTerminate();
-    }
-
+    // create and delete chunks based on the render distance
     void LoadChunks();
 
 private:

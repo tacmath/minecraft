@@ -1,30 +1,15 @@
 #include "minecraft.h"
 
-Minecraft::Minecraft(void) {
-    window = 0;
-    initWindows();
-    initSkybox();
-    skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
-    chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
-    camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
-
-    std::vector<std::string> textureNames = {"texture/grass_side.png", "texture/grass_top.png", "texture/dirt.png", "texture/stone.png"};
-
-    texAtlas.LoadAtlas(textureNames, 0);
-    enableGlParam();
-    initUniforms();
-
-    blocks[1].SetTextures(1, 0, 2);
-    blocks[2].SetTextures(2, 2, 2);
-    blocks[3].SetTextures(3, 3, 3);
-
-    seed = (int)((double) rand() / (RAND_MAX)) * UINT32_MAX;
-    global_noise.SetSeed(seed);
-    globalChunkGeneration.SetSeed(seed);
-
-    initChunks(STARTING_RENDER_DISTANCE);
-
-}
+#ifdef _WIN32
+#include <direct.h>
+// MSDN recommends against using getcwd & chdir names
+#define cwd _getcwd
+#define cd _chdir
+#else
+#include "unistd.h"
+#define cwd getcwd
+#define cd chdir
+#endif
 
 void Minecraft::initChunks(int radius) {
     long diameter = radius * 2;

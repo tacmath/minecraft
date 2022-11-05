@@ -1,5 +1,32 @@
 #include "shader.h"
 
+
+char* Shader::getShaderSource(const char* fileName) {
+    char* source;
+    std::ifstream   file;
+    size_t  size;
+
+    file.open(fileName);
+    if (!file.is_open()) {
+        printf("Failed to open %s\n", fileName);
+        return (0);
+    }
+    file.seekg(0, std::ios::end);
+    size = file.tellg();
+    file.seekg(0);
+    source = (char*)malloc(size + 1);
+    source[size] = 0;
+    file.read(source, size);
+    for (size_t i = size - 1; i > 0; i--) {
+        if (source[i] == '}') {
+            source[i + 1] = 0;
+            break;
+        }
+    }
+    file.close();
+    return (source);
+}
+
 void Shader::Load(const char *vertexShaderFile, const char *fragmentShaderFile) {
     char* vertexShaderSource = getShaderSource(vertexShaderFile);
     char* fragmentShaderSource = getShaderSource(fragmentShaderFile);
