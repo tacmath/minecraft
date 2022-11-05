@@ -22,8 +22,8 @@
 # define WINDOW_HEIGHT  900
 
 
-# define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 10
+# define STARTING_RENDER_DISTANCE 10
+# define RENDER_DISTANCE 15
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -33,6 +33,9 @@ public:
 
     // the camera
     Camera      camera;
+
+    // the camera
+    Camera      cameraFrustum;
 
     // a chunk
 	std::vector<Chunk*> chunks;
