@@ -45,6 +45,7 @@ void loop(Minecraft &minecraft) {
                 glfwWindowShouldClose(minecraft.window) == 1)
                 return;
             minecraft.camera.Inputs(minecraft.window);
+            minecraft.setChunksVisibility(); // do it when the position of the player or its direction change
             minecraft.LoadViewMatrix();
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();

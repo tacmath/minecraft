@@ -38,8 +38,7 @@ void Minecraft::Draw(void) {
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
     for (int n = 0; n < chunks.size(); n++)
-        if (camera.frustum.isVisible((float)(chunks[n]->posx << 4), (float)(chunks[n]->posz << 4), CHUNK_SIZE))
-            chunks[n]->Draw(chunkShader);
+        chunks[n]->Draw(chunkShader);
     glDisable(GL_CULL_FACE);
 }
 
@@ -62,7 +61,7 @@ Minecraft::~Minecraft(void) {
     glfwTerminate();
 }
 
-void Minecraft::LoadChunks() {
+void Minecraft::LoadChunks(void) {
     Chunk    *loadedChunks[RENDER_DISTANCE << 1][RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
@@ -93,7 +92,7 @@ void Minecraft::LoadChunks() {
         for (int z = 0; z < maxChunk; z++) {
 
             // load new chunks if it is in the render distance but didn't exist
-            if (!loadedChunks[x][z]) {
+            if (!loadedChunks[x][z] /* && camera.frustum.chunkIsVisible(playerPosx + x, playerPosz + z)*/) {    //change the order of generation to start from the middle to the side
                 Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
@@ -106,12 +105,20 @@ void Minecraft::LoadChunks() {
                 continue;
             }
 
+            if (!loadedChunks[x][z] || loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING)
+                continue;
+
             // load the chunk border if it is not being processed and has cube data
-            if (loadedChunks[x][z]->neighbourLoaded != CHUNK_ALL_LOADED && loadedChunks[x][z]->status >= CHUNK_DATA_LOADED && !(loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING))
+            if (loadedChunks[x][z]->neighbourLoaded != CHUNK_ALL_LOADED && loadedChunks[x][z]->status >= CHUNK_DATA_LOADED)
                 loadedChunks[x][z]->addNeighbours();
 
             // add chunks to thread that where not able to be processed
-            if (loadedChunks[x][z]->status == CHUNK_UNLOADED && !(loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING))
+            if (loadedChunks[x][z]->status == CHUNK_UNLOADED)
                 thread.AddChunk(loadedChunks[x][z]);
         }
+}
+
+void Minecraft::setChunksVisibility(void) {
+    for (unsigned n = 0; n < chunks.size(); n++)
+        chunks[n]->isVisible = camera.frustum.chunkIsVisible(chunks[n]->posx, chunks[n]->posz);
 }

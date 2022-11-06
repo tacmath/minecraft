@@ -20,15 +20,6 @@ public:
 	Frustum(){};
     ~Frustum(){};
 
-    /*
-        Left:0.75 0 -1 0
-        right:-0.75 0 -1 0
-        bottom:0 1 -1 -60
-        top:0 -1 -1 60
-        near:0 0 -2.0002 -0.20002
-        far:0 0 0.000199914 0.20002
-    */
-
     void calculate(glm::mat4 mat) {
         for (int i = 4; i--; ) {
             left[i]   = mat[i][3] + mat[i][0];
@@ -48,18 +39,20 @@ public:
         
     }
 
-    bool isOnOrForwardPlan(glm::vec4 &plan, glm::vec3 &point) const
+    inline bool isOnOrForwardPlan(glm::vec4 &plan, glm::vec3 &point) const
     {
-        const float r = 8 * std::abs(plan.x) +
-            128 * std::abs(plan.y) + 8 * std::abs(plan.z);
+        const float r = 8 * (std::abs(plan.x) + std::abs(plan.z)) +
+            128 * std::abs(plan.y);
         return glm::dot(glm::vec3(plan), point) - -plan.w >= -r;
     }
 
-    inline bool isVisible(float x, float z, float size) {
-        glm::vec3 pos(x + 8, 128, z + 8);
+    inline bool chunkIsVisible(int x, int z) {
+        glm::vec3 pos((x << 4) + 8, 128, (z << 4) + 8);
 
         if (isOnOrForwardPlan(right, pos) &&
-            isOnOrForwardPlan(left, pos))
+            isOnOrForwardPlan(left, pos) &&
+            isOnOrForwardPlan(top, pos) &&
+            isOnOrForwardPlan(bottom, pos))
             return (true);
         return (false);
     }

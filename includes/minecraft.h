@@ -23,7 +23,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 15
+# define RENDER_DISTANCE 50
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
@@ -68,7 +68,10 @@ public:
     void LoadViewMatrix(void);
 
     // create and delete chunks based on the render distance
-    void LoadChunks();
+    void LoadChunks(void);
+
+    // set the visibility of each chunk
+    void setChunksVisibility(void);
 
 private:
     void initWindows(void);
