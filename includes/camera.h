@@ -16,24 +16,17 @@
 class Camera
 {
 private:
-	bool perspective;
-	bool firstClick;
 	float width;
 	float height;
 	float fov;
-	glm::vec2 oldMousePos;
 
 public:
 	// the frustum of the camera
 	// https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
 	Frustum frustum;
 
-	//speed of the camera
-	float speed = 0.4f;
-	float mouseSensitivity = 0.1f;
-
 	//position of the camera
-	glm::vec3 posision;
+	glm::vec3 position;
 
 	//direction where the camera is looking
 	glm::vec3 direction;
@@ -54,8 +47,6 @@ public:
 	// init the camera
 	void Init(float windowWidth, float windowHeight, glm::vec3 pos);
 
-	// treat inputs to change the camera
-	void Inputs(GLFWwindow* window);
 	// set the position of the camera with 3 float
 	void SetPosition(float x, float y, float z);
 
@@ -65,16 +56,10 @@ public:
 	//set the divection of the camera
 	void SetDirection(glm::vec3 direction);
 
-
 	// change the prespective matrix
 	void ChangePerspective(float FOV, float windowWidth, float windowHeight, float near, float far);
 
-private:
-	// treat key inputs to change the camera position
-	void KeyInputs(GLFWwindow* window);
-
-	// treat mouse inputs to change the camera direction
-	void MouseInputs(GLFWwindow* window);
+	void Update(char perspective);
 
 };
 

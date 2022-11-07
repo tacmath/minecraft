@@ -142,6 +142,7 @@
     <ClCompile Include="srcs\camera.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
     <ClCompile Include="srcs\cubeMap.cpp" />
+    <ClCompile Include="srcs\entity.cpp" />
     <ClCompile Include="srcs\event.cpp" />
     <ClCompile Include="srcs\init.cpp" />
     <ClCompile Include="srcs\main.cpp" />
@@ -160,9 +161,12 @@
     <ClInclude Include="includes\cubeMap.h" />
     <ClInclude Include="includes\blocks.h" />
     <ClInclude Include="includes\EBO.h" />
+    <ClInclude Include="includes\entity.h" />
+    <ClInclude Include="includes\event.h" />
     <ClInclude Include="includes\frustum.h" />
     <ClInclude Include="includes\minecraft.h" />
     <ClInclude Include="includes\noise.h" />
+    <ClInclude Include="includes\player.h" />
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />
     <ClInclude Include="includes\thread.h" />

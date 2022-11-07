@@ -69,8 +69,8 @@ void Minecraft::LoadChunks(void) {
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
     maxChunk = RENDER_DISTANCE << 1;
-    playerPosx = ((int)camera.posision.x >> 4) - RENDER_DISTANCE;
-    playerPosz = ((int)camera.posision.z >> 4) - RENDER_DISTANCE;
+    playerPosx = ((int)camera.position.x >> 4) - RENDER_DISTANCE;
+    playerPosz = ((int)camera.position.z >> 4) - RENDER_DISTANCE;
     memset(loadedChunks, 0, maxChunk * maxChunk * sizeof(Chunk*));
     chunkNumber = (int)chunks.size();
     n = -1;

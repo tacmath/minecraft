@@ -4,6 +4,7 @@
 #include "minecraft.h"
 #include "chunk_generation.h"
 #include "blocks.h"
+#include "event.h"
 
 // all the globals needed
 Block blocks[256];
@@ -25,7 +26,7 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     frames++;
     if (timeDiff < 1.0f / 30.0f)
         return (0);
-    sprintf(title, "Minecraft :  FPS = %d  ms = %f coor = %f %f %f", (int)((1.0 / timeDiff) * frames), (timeDiff * 1000) / frames, minecraft.camera.posision.x, minecraft.camera.posision.y, minecraft.camera.posision.z);
+    sprintf(title, "Minecraft :  FPS = %d  ms = %f coor = %f %f %f", (int)((1.0 / timeDiff) * frames), (timeDiff * 1000) / frames, minecraft.camera.position.x, minecraft.camera.position.y, minecraft.camera.position.z);
     glfwSetWindowTitle(window, title);
     frames = 0;
     oldTime = newTime;
@@ -33,6 +34,9 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
 }
 
 void loop(Minecraft &minecraft) {
+    Event event;
+
+    event.Init(minecraft.window);
     glfwSwapInterval(0);
     while (1) {
 
@@ -41,15 +45,14 @@ void loop(Minecraft &minecraft) {
         glfwSwapBuffers(minecraft.window);
 
         if (showFPS(minecraft.window, minecraft)) { // return 1 when at an inteval
-            glfwPollEvents();
-
+            event.GetEvents(minecraft.camera);
             if (glfwGetKey(minecraft.window, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
                 glfwWindowShouldClose(minecraft.window) == 1)
                 return;
-            minecraft.camera.Inputs(minecraft.window);
-            getMouseEvent(minecraft.window, minecraft.camera);
-            minecraft.setChunksVisibility(); // do it when the position of the player or its direction change
-            minecraft.LoadViewMatrix();
+            if (event.lookChanged || event.positionChanged) {
+                minecraft.setChunksVisibility();
+                minecraft.LoadViewMatrix();
+            }
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();
         }
