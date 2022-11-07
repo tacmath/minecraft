@@ -1,4 +1,7 @@
 #include "chunk.h"
+#include "blocks.h"
+
+extern Block blocks[256];
 
 void Chunk::addVisibleVertices(int x, int y, int z) {
 

@@ -142,6 +142,7 @@
     <ClCompile Include="srcs\camera.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
     <ClCompile Include="srcs\cubeMap.cpp" />
+    <ClCompile Include="srcs\event.cpp" />
     <ClCompile Include="srcs\init.cpp" />
     <ClCompile Include="srcs\main.cpp" />
     <ClCompile Include="srcs\cubeMesh.cpp" />

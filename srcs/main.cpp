@@ -2,7 +2,8 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "minecraft.h"
-
+#include "chunk_generation.h"
+#include "blocks.h"
 
 // all the globals needed
 Block blocks[256];
@@ -10,6 +11,7 @@ ChunkGeneration globalChunkGeneration;
 std::map<int64_t, Chunk*> chunksMap;
 Noise global_noise;
 
+void getMouseEvent(GLFWwindow* window, Camera& camera);
 
 int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     static double oldTime = 0;
@@ -45,6 +47,7 @@ void loop(Minecraft &minecraft) {
                 glfwWindowShouldClose(minecraft.window) == 1)
                 return;
             minecraft.camera.Inputs(minecraft.window);
+            getMouseEvent(minecraft.window, minecraft.camera);
             minecraft.setChunksVisibility(); // do it when the position of the player or its direction change
             minecraft.LoadViewMatrix();
             minecraft.LoadChunks();

@@ -28,4 +28,8 @@ public:
     void Delete();
 };
 
+inline void VAO::Bind() {
+    glBindVertexArray(ID);
+}
+
 #endif

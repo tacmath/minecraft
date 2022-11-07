@@ -32,7 +32,7 @@ void Camera::Inputs(GLFWwindow* window) {
 	view = glm::lookAt(posision, posision + direction, up);
 	frustum.calculate(projection * view);
 	if (perspective == UP_PERSPECTIVE)
-		view = glm::lookAt(posision + glm::vec3(-10, 200, 0), posision, up);
+		view = glm::lookAt(posision + glm::vec3(-10, 500, 0), posision, up);
 }
 
 // set the position of the camera with 3 float
@@ -111,8 +111,8 @@ void Camera::MouseInputs(GLFWwindow* window) {
 	glm::vec3 newOrientation = glm::rotate(direction, glm::radians(-rotx), glm::normalize(glm::cross(direction, up)));
 
 	// Decides whether or not the next vertical Orientation is legal or not
-	if (abs(glm::angle(newOrientation, up) - glm::radians(90.0f)) <= glm::radians(85.0f))
-		direction = newOrientation;
+	if (abs(glm::angle(newOrientation, up) - glm::radians(90.0f)) <= glm::radians(85.0f)) //change the system
+		direction = glm::normalize(newOrientation);
 
 	// Rotates the Orientation left and right
 	direction = glm::rotate(direction, glm::radians(-roty), up);

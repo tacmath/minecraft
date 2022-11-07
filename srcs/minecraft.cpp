@@ -1,4 +1,7 @@
 #include "minecraft.h"
+#include "blocks.h"
+
+extern Block blocks[256];
 
 Minecraft::Minecraft(void) {
     window = 0;
@@ -92,7 +95,7 @@ void Minecraft::LoadChunks(void) {
         for (int z = 0; z < maxChunk; z++) {
 
             // load new chunks if it is in the render distance but didn't exist
-            if (!loadedChunks[x][z] /* && camera.frustum.chunkIsVisible(playerPosx + x, playerPosz + z)*/) {    //change the order of generation to start from the middle to the side
+            if (!loadedChunks[x][z]/* && camera.frustum.chunkIsVisible(playerPosx + x, playerPosz + z)*/) {    //change the order of generation to start from the middle to the side
                 Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;

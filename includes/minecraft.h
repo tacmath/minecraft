@@ -4,7 +4,6 @@
 #include "stb_image.h"
 #include "shader.h"
 #include "VAO.h"
-#include "EBO.h"
 #include "texture.h"
 #include "camera.h"
 #include "cubeMap.h"
@@ -23,7 +22,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 50
+# define RENDER_DISTANCE 10
 # define UNLOAD_OFFSET 2
 
 class Minecraft {

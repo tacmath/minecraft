@@ -26,10 +26,6 @@ void VAO::Gen() {
     glGenVertexArrays(1, &ID);
 }
 
-void VAO::Bind() {
-    glBindVertexArray(ID);
-}
-
 void VAO::Unbind() {
     glBindVertexArray(0);
 }

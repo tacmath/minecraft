@@ -6,11 +6,7 @@
 #include <noise.h>
 #include <vector>
 #include <map>
-#include "chunk_generation.h"
-#include "blocks.h"
 #include "shader.h"
-
-extern Block blocks[256];
 
 // id of air
 #define AIR 0
@@ -105,9 +101,6 @@ public:
 	// Set the position of the chunk
 	void SetPosistion(int x, int z);
 
-	// return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
-	Chunk* GetChunk(int x, int z);
-
 	// get all the neighbours of the chunk
 	void GetNeighbour();
 
@@ -126,6 +119,19 @@ public:
 	//add the mesh between a chunk and its neighbours
 	void addNeighbours();
 
+	//reload the chunk by recreating the mesh and changing the VBO
+	void Update();
+
+	//reload everything nessesary to update a cube
+	void UpdateCube(int x, int z);
+
+	//get the id of the cube at a certain position
+	unsigned char GetCube(int x, int y, int z);
+	//get the id of the cube at a certain position
+	unsigned char GetCube(glm::ivec3 pos);
+	//set the id of the cube at a certain position
+	void SetCube(unsigned char cubeId, int x, int y, int z);
+
 private:
 	void addTopVertices(const int y, const int x, const int z);
 	void addBottomVertices(const int y, const int x, const int z);
@@ -138,5 +144,19 @@ private:
 	void addVisibleBorderVertices(char sides);
 };
 
+// return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
+Chunk* GetChunk(int x, int z);
+
+inline unsigned char Chunk::GetCube(int x, int y, int z) {
+	return (cubes[GET_CUBE(x, y, z)]);
+}
+
+inline unsigned char Chunk::GetCube(glm::ivec3 pos) {
+	return (cubes[GET_CUBE(pos.x, pos.y, pos.z)]);
+}
+
+inline void Chunk::SetCube(unsigned char cubeId, int x, int y, int z) {
+	cubes[GET_CUBE(x, y, z)] = cubeId;
+}
 
 #endif

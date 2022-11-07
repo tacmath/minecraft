@@ -1,4 +1,6 @@
 #include "minecraft.h"
+#include "EBO.h"
+
 
 #ifdef _WIN32
 #include <direct.h>

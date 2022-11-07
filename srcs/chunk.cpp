@@ -1,4 +1,5 @@
 #include "chunk.h"
+#include "chunk_generation.h"
 
 // Default constructor
 Chunk::Chunk() {
@@ -40,15 +41,6 @@ void Chunk::SetPosistion(int x, int z) {
 	posx = x;
 	posz = z;
 	GetNeighbour();
-}
-
-// return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
-Chunk* Chunk::GetChunk(int x, int z) {
-	auto search = chunksMap.find(GET_CHUNK_ID(x, z));
-	if (search != chunksMap.end())
-		return (search->second);
-	else
-		return (0);
 }
 
 // get all the neighbours of the chunk
@@ -133,4 +125,37 @@ void Chunk::addNeighbours() {
 	neighbourLoaded |= sides;
 	if (neighbourLoaded == CHUNK_ALL_LOADED)
 		mesh.clear();
+}
+
+void Chunk::Update() {
+	if (threadStatus & CHUNK_PROCESSING) // almost never needed be we nerver know
+		return;
+	mesh.clear();
+	createMeshData();
+	addVisibleBorderVertices(neighbourLoaded);
+	if (verticesNumber) {
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
+	}
+}
+
+void Chunk::UpdateCube(int x, int z) {
+	Update();
+	if (x == 0 && neighbour[CHUNK_FRONT_SIDE])
+		neighbour[CHUNK_FRONT_SIDE]->Update();
+	if (x == 15 && neighbour[CHUNK_BACK_SIDE])
+		neighbour[CHUNK_BACK_SIDE]->Update();
+	if (z == 0 && neighbour[CHUNK_LEFT_SIDE])
+		neighbour[CHUNK_LEFT_SIDE]->Update();
+	if (z == 15 && neighbour[CHUNK_RIGHT_SIDE])
+		neighbour[CHUNK_RIGHT_SIDE]->Update();
+}
+
+// return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
+Chunk* GetChunk(int x, int z) {
+	auto search = chunksMap.find(GET_CHUNK_ID(x, z));
+	if (search != chunksMap.end())
+		return (search->second);
+	else
+		return (0);
 }
