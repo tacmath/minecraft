@@ -31,7 +31,6 @@ Minecraft::Minecraft(void) {
 
 void Minecraft::Draw(void) {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    glDisable(GL_MULTISAMPLE);
 
     glDepthFunc(GL_LEQUAL);
     skyboxShader.Activate();
