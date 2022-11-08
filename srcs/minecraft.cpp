@@ -7,6 +7,7 @@ Minecraft::Minecraft(void) {
     window = 0;
     initWindows();
     initSkybox();
+    enableGlParam();
     skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
     chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
     camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
@@ -14,7 +15,7 @@ Minecraft::Minecraft(void) {
     std::vector<std::string> textureNames = { "texture/grass_side.png", "texture/grass_top.png", "texture/dirt.png", "texture/stone.png" };
 
     texAtlas.LoadAtlas(textureNames, 0);
-    enableGlParam();
+    
     initUniforms();
 
     blocks[1].SetTextures(1, 0, 2);
@@ -30,6 +31,7 @@ Minecraft::Minecraft(void) {
 
 void Minecraft::Draw(void) {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glDisable(GL_MULTISAMPLE);
 
     glDepthFunc(GL_LEQUAL);
     skyboxShader.Activate();

@@ -113,6 +113,9 @@
     <ClInclude Include="includes\event.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\UI.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -125,6 +128,12 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\skyBoxVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\highlightVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\highlightFS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

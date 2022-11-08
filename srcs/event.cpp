@@ -6,30 +6,34 @@
 
 glm::ivec3 getPointedCube(Camera &camera) {     //test the function
     Chunk* chunk;
-    glm::vec3 origin = camera.position - 0.5f;
+    glm::vec3 origin = camera.position;
+    origin.x -= 0.9f;
+    origin.z -= 0.9f;
 
     for (int n = 0; n < PLAYER_RANGE; n++) {
         chunk = GetChunk((int)origin.x >> 4, (int)origin.z >> 4);   // change later to prevent getting the chunk on every block
-        if (chunk && chunk->GetCube((int)origin.x & 0xF, (int)origin.y & 0xFF, (int)origin.z & 0xF) != AIR)
+        if (chunk && chunk->GetCube((int)origin.x & 0xF, (int)origin.y & 0xFF, (int)origin.z & 0xF) != AIR) {
             return (glm::ivec3(origin));
+        }
         origin += camera.direction;
     }
     return (glm::ivec3(-1));
 }
 
-static void removePointedCube(Camera& camera) {
+void Event::removePointedCube(Camera& camera) {
     Chunk* chunk;
-    glm::ivec3 cubeCood = getPointedCube(camera);
-    if (cubeCood.y < 0)
+    if (selectedCube.y < 0)
         return;
-    chunk = GetChunk(cubeCood.x >> 4, cubeCood.z >> 4);
-    chunk->SetCube(AIR, cubeCood.x & 0xF, cubeCood.y & 0xFF, cubeCood.z & 0xF);
-    chunk->UpdateCube(cubeCood.x & 0xF, cubeCood.z & 0xF);
+    chunk = GetChunk(selectedCube.x >> 4, selectedCube.z >> 4);
+    chunk->SetCube(AIR, selectedCube.x & 0xF, selectedCube.y & 0xFF, selectedCube.z & 0xF);
+    chunk->UpdateCube(selectedCube.x & 0xF, selectedCube.z & 0xF);
+    selectedCube = getPointedCube(camera);
 }
 
 Event::Event() {
     window = 0;
     mousePos = glm::dvec2(0);
+    selectedCube = glm::ivec3(-1);
     memset(keyPressed, 0, 256);
     positionChanged = false;
     lookChanged = false;
@@ -37,7 +41,6 @@ Event::Event() {
     perspective = NORMAL_PERSPECTIVE;
     speed = 0.4f;
     mouseSensitivity = 0.1f;
-    std::cout << "construct" << std::endl;
 }
 
 void Event::Init(GLFWwindow* window) {
@@ -84,10 +87,6 @@ void Event::MouseEvent(Camera &camera) {
     float rotx, roty;
 
     mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-    if (mouseState == GLFW_PRESS)
-        removePointedCube(camera);
-
-    mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     if (inMenu == true) {
         if (mouseState == GLFW_PRESS) {
             glfwGetCursorPos(window, &mousePos.x, &mousePos.y);
@@ -121,6 +120,10 @@ void Event::GetEvents(Camera& camera) {
     MovementEvent(camera);
     KeyEvent();
     MouseEvent(camera);
-    if (positionChanged || lookChanged)
+    if (positionChanged || lookChanged) {
         camera.Update(perspective);
+        selectedCube = getPointedCube(camera);
+    }
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        removePointedCube(camera);
 }

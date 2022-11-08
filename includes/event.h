@@ -23,6 +23,8 @@ class Event {
 public:
 	bool positionChanged;
 	bool lookChanged;
+	glm::ivec3 selectedCube;
+	
 	Event();
 
 	void Init(GLFWwindow* window);
@@ -30,6 +32,8 @@ public:
 	void MouseEvent(Camera& camera);
 	void KeyEvent();
 	void GetEvents(Camera &camera);
+private:
+	void removePointedCube(Camera& camera);
 }; 
 
 #endif

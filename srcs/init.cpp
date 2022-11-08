@@ -42,7 +42,7 @@ void Minecraft::initUniforms(void) {
 }
 
 void Minecraft::enableGlParam(void) {
-   // glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
+//    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
@@ -57,7 +57,7 @@ void Minecraft::initWindows(void) {
         exit(-1);
     }
     cd(path);
-   // glfwWindowHint(GLFW_SAMPLES, 2);      // no multisampling
+//    glfwWindowHint(GLFW_SAMPLES, 4);      // no multisampling
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Pour rendre MacOS heureux ; ne devrait pas �tre n�cessaire

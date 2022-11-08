@@ -170,10 +170,13 @@
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />
     <ClInclude Include="includes\thread.h" />
+    <ClInclude Include="includes\UI.h" />
     <ClInclude Include="includes\VAO.h" />
     <ClInclude Include="includes\VBO.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\highlightFS.glsl" />
+    <None Include="shaders\highlightVS.glsl" />
     <None Include="shaders\skyBoxFS.glsl" />
     <None Include="shaders\skyBoxVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />
