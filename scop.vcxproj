@@ -155,6 +155,8 @@
     <ClCompile Include="srcs\thread.cpp" />
     <ClCompile Include="srcs\VAO.cpp" />
     <ClCompile Include="srcs\VBO.cpp" />
+    <ClCompile Include="srcs\textDisplay.cpp" />
+    <ClCompile Include="srcs\debug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\camera.h" />
@@ -175,10 +177,14 @@
     <ClInclude Include="includes\UI.h" />
     <ClInclude Include="includes\VAO.h" />
     <ClInclude Include="includes\VBO.h" />
+    <ClInclude Include="includes\textDisplay.h" />
+    <ClInclude Include="includes\debug.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\highlightFS.glsl" />
     <None Include="shaders\highlightVS.glsl" />
+    <None Include="shaders\textFS.glsl" />
+    <None Include="shaders\textVS.glsl" />
     <None Include="shaders\skyBoxFS.glsl" />
     <None Include="shaders\skyBoxVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />

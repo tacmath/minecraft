@@ -2,29 +2,38 @@
 # define MINECRAFT_H
 
 #include "stb_image.h"
+
 #include "shader.h"
 #include "VAO.h"
 #include "texture.h"
 #include "camera.h"
 #include "cubeMap.h"
 #include "chunk.h"
+#include "chunk_generation.h"
+#include "blocks.h"
+#include "event.h"
 #include "thread.h"
 #include "player.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <string>
 #include <ctime>
-#include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
+
+#include <glad/glad.h>
+#include "textDisplay.h"
+
 
 # define   PI           3.14159265358979323846
 # define WINDOW_WIDTH   1200
 # define WINDOW_HEIGHT  900
+# define MAX_FPS        500
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 10
-# define DATA_RENDER_DISTANCE (RENDER_DISTANCE + 1)
+# define RENDER_DISTANCE 20
 # define UNLOAD_OFFSET 2
 
 class Minecraft {

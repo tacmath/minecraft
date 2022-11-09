@@ -60,6 +60,12 @@
     <ClCompile Include="srcs\entity.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+	  <ClCompile Include="srcs\textDisplay.cpp">
+		  <Filter>Fichiers sources</Filter>
+	  </ClCompile>
+	  <ClCompile Include="srcs\debug.cpp">
+		  <Filter>Fichiers sources</Filter>
+	  </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\minecraft.h">
@@ -116,6 +122,12 @@
     <ClInclude Include="includes\UI.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+	  <ClInclude Include="srcs\textDisplay.h">
+		  <Filter>Fichiers sources</Filter>
+	  </ClInclude>
+	  <ClInclude Include="srcs\debug.h">
+		  <Filter>Fichiers sources</Filter>
+	  </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -134,6 +146,10 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\highlightFS.glsl">
+    <None Include="shaders\textVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\textFS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

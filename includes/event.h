@@ -7,7 +7,7 @@
 #include<glm/gtx/rotate_vector.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
-
+#include "camera.h"
 
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
@@ -24,7 +24,8 @@ class Event {
 public:
 	bool positionChanged;
 	bool lookChanged;
-	
+	glm::ivec3 selectedCube;
+	float frequence;
 	Event();
 
 	void Init(GLFWwindow* window);

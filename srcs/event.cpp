@@ -107,6 +107,7 @@ void Event::placeCube(Camera& camera, Player& player) {
 
 Event::Event() {
     window = 0;
+    frequence = 1.0f;
     mousePos = glm::dvec2(0);
     memset(keyPressed, 0, 256);
     positionChanged = false;
@@ -124,15 +125,15 @@ void Event::Init(GLFWwindow* window) {
 glm::vec3  Event::spectatorMovement(Camera& camera, Player& player) {
     glm::vec3 newPos = glm::vec3(0);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        newPos += speed * camera.direction;
+        newPos += (speed * frequence) * camera.direction;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        newPos += speed * -glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += (speed * frequence) * -glm::normalize(glm::cross(camera.direction, camera.up));
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        newPos += speed * -camera.direction;
+        newPos += (speed * frequence) * -camera.direction;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        newPos += speed * glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += (speed * frequence) * glm::normalize(glm::cross(camera.direction, camera.up));
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        newPos += speed * camera.up;
+        newPos += (speed * frequence) * camera.up;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
         newPos += speed * -camera.up;
     return newPos;

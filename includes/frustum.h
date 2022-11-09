@@ -19,7 +19,14 @@ private:
     glm::vec4 far;
 
 public:
-	Frustum(){};
+	Frustum(){
+        left = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        right = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        top = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        bottom = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        near = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        far = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    };
     ~Frustum(){};
 
     void calculate(glm::mat4 mat) {
