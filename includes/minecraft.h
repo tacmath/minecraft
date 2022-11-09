@@ -29,7 +29,7 @@
 # define   PI           3.14159265358979323846
 # define WINDOW_WIDTH   1200
 # define WINDOW_HEIGHT  900
-# define MAX_FPS        500
+# define MAX_FPS        150
 
 
 # define STARTING_RENDER_DISTANCE 1

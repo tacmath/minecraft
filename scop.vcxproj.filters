@@ -146,6 +146,8 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\highlightFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
     <None Include="shaders\textVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
