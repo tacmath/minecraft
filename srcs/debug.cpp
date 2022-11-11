@@ -53,9 +53,9 @@ void Debug::display(float time, float latence, Minecraft &minecraft) {
 
     sprintf(target, "target: %d %d %d", minecraft.event.selectedCube.x, minecraft.event.selectedCube.y, minecraft.event.selectedCube.z);
 
-    double y = minecraft.windowsSize.y - 15;
-    double scale = y / 600 / 5;
-    double space = scale * 100.0f;
+    float y = minecraft.windowsSize.y - 15;
+    float scale = y / 600 / 5;
+    float space = scale * 100.0f;
     text.display("Vox Version 0.1", 5.0f, y, scale, glm::vec3(1.0, 1.0f, 1.0f));
     text.display(fps, 5.0f, y - space * 1, scale, glm::vec3(1.0, 1.0f, 1.0f));
     text.display(xyz, 5.0f, y - space * 2, scale, glm::vec3(1.0, 1.0f, 1.0f));
