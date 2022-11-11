@@ -50,7 +50,7 @@ void loop(Minecraft &minecraft) {
         glfwSwapBuffers(minecraft.window);
 
         if (showFPS(minecraft.window, minecraft)) { // return 1 when at an inteval
-            event.GetEvents(minecraft.camera);
+            event.GetEvents(minecraft.camera, minecraft.player);
             if (glfwGetKey(minecraft.window, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
                 glfwWindowShouldClose(minecraft.window) == 1)
                 return;

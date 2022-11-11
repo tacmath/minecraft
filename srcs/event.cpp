@@ -4,6 +4,7 @@
 
 #define PLAYER_RANGE 5
 
+//http://www.cse.yorku.ca/~amana/research/grid.pdf
 glm::ivec3 getPointedCube(Camera &camera) {     //test the function
     Chunk* chunk;
     glm::vec3 origin = camera.position;
@@ -47,8 +48,8 @@ void Event::Init(GLFWwindow* window) {
     this->window = window;
 }
 
-void Event::MovementEvent(Camera& camera) {
-    glm::vec3 newPos = camera.position;
+glm::vec3  Event::spectatorMovement(Camera& camera, Player& player) {
+    glm::vec3 newPos = glm::vec3(0);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         newPos += speed * camera.direction;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -61,13 +62,36 @@ void Event::MovementEvent(Camera& camera) {
         newPos += speed * camera.up;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
         newPos += speed * -camera.up;
-    if (newPos != camera.position) {
-        camera.position = newPos;
+    return newPos;
+}
+
+void Event::MovementEvent(Camera& camera, Player& player) {
+    glm::vec3 newPos = glm::vec3(0);
+    if (!player.hasCollision)
+        newPos = spectatorMovement(camera, player);
+    else {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            newPos += speed * camera.direction;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            newPos += speed * -glm::normalize(glm::cross(camera.direction, camera.up));
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            newPos += speed * -camera.direction;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            newPos += speed * glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos.y = 0;
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            newPos.y = speed;
+        if (!newPos.y)
+            newPos.y -= 1.0f;
+    }
+    player.Move(newPos);
+    if (player.position != camera.position) {
+        camera.position = player.position;
         positionChanged = true;
     }
 }
 
-void Event::KeyEvent() {
+void Event::KeyEvent(Player& player) {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 10.0f;
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
@@ -79,6 +103,12 @@ void Event::KeyEvent() {
     }
     else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
         keyPressed[GLFW_KEY_P] = 1;
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_RELEASE && keyPressed[GLFW_KEY_C]) {
+        player.hasCollision = !player.hasCollision;
+        keyPressed[GLFW_KEY_C] = 0;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+        keyPressed[GLFW_KEY_C] = 1;
 }
 
 void Event::MouseEvent(Camera &camera) {
@@ -113,12 +143,12 @@ void Event::MouseEvent(Camera &camera) {
     mousePos.y = posy;
 }
 
-void Event::GetEvents(Camera& camera) {
+void Event::GetEvents(Camera& camera, Player& player) {
     lookChanged = false;
     positionChanged = false;
     glfwPollEvents();
-    MovementEvent(camera);
-    KeyEvent();
+    MovementEvent(camera, player);
+    KeyEvent(player);
     MouseEvent(camera);
     if (positionChanged || lookChanged) {
         camera.Update(perspective);

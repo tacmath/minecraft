@@ -9,6 +9,7 @@
 #include "cubeMap.h"
 #include "chunk.h"
 #include "thread.h"
+#include "player.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
@@ -32,6 +33,9 @@ public:
 
     // the camera
     Camera      camera;
+
+    // the player
+    Player      player;
 
     // a chunk
 	std::vector<Chunk*> chunks;

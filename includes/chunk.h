@@ -125,9 +125,9 @@ public:
 	//reload everything nessesary to update a cube
 	void UpdateCube(int x, int z);
 
-	//get the id of the cube at a certain position
+	//get the id of the cube at a certain position in the chunk
 	unsigned char GetCube(int x, int y, int z);
-	//get the id of the cube at a certain position
+	//get the id of the cube at a certain position in the chunk
 	unsigned char GetCube(glm::ivec3 pos);
 	//set the id of the cube at a certain position
 	void SetCube(unsigned char cubeId, int x, int y, int z);
@@ -147,7 +147,21 @@ private:
 // return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
 Chunk* GetChunk(int x, int z);
 
-inline unsigned char Chunk::GetCube(int x, int y, int z) {
+// return a the id of a cube based on its world coordonate 
+inline unsigned char GetCubeAt(float x, float y, float z) { //peux ètre couteux si appeler trop de fois
+	Chunk* chunk;
+	int ix, iy, iz;
+
+	ix = (int)x - (x < (int)x); //maybe replace by floor
+	iy = (int)y - (y < (int)y);
+	iz = (int)z - (z < (int)z);
+	chunk = GetChunk(ix >> 4, iz >> 4);										//faire un get cube relatif a un chunk pour évité trop d'appel a GetChunk
+	if (!chunk || chunk->status < CHUNK_DATA_LOADED || iy < 0 || iy > 255)
+		return (0);
+	return (chunk->GetCube(ix & 0xF, iy, iz & 0xF));
+}
+
+inline unsigned char Chunk::GetCube(int x, int y, int z) {	//faire un getCube qui peux sortire des limites 0 a 15
 	return (cubes[GET_CUBE(x, y, z)]);
 }
 

@@ -1,6 +1,7 @@
 #ifndef EVENT_CLASS_H
 #define EVENT_CLASS_H
 
+#include "player.h"
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtx/rotate_vector.hpp>
@@ -28,12 +29,13 @@ public:
 	Event();
 
 	void Init(GLFWwindow* window);
-	void MovementEvent(Camera& camera);
+	void MovementEvent(Camera& camera, Player& player);
 	void MouseEvent(Camera& camera);
-	void KeyEvent();
-	void GetEvents(Camera &camera);
+	void KeyEvent(Player& player);
+	void GetEvents(Camera &camera, Player &player);
 private:
 	void removePointedCube(Camera& camera);
+	glm::vec3 spectatorMovement(Camera& camera, Player& player);
 }; 
 
 #endif
