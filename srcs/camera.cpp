@@ -22,6 +22,15 @@ void Camera::Init(float windowWidth, float windowHeight, glm::vec3 pos) {
 	frustum.calculate(projection * view);
 }
 
+// init the camera
+void Camera::updateSize(float windowWidth, float windowHeight) {
+	width = windowWidth;
+	height = windowHeight;
+	view = glm::lookAt(position, position + direction, up);
+	projection = glm::perspective(glm::radians(fov), (float)(windowWidth / windowHeight), 0.1f, 1000.0f);
+	frustum.calculate(projection * view);
+}
+
 // treat inputs to change the camera
 void Camera::Update(char perspective) {
 	view = glm::lookAt(position, position + direction, up);

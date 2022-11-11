@@ -27,19 +27,22 @@
 
 
 # define   PI           3.14159265358979323846
-# define WINDOW_WIDTH   1200
-# define WINDOW_HEIGHT  900
-# define MAX_FPS        150
+# define DEFAULT_WINDOW_WIDTH   1200
+# define DEFAULT_WINDOW_HEIGHT  900
+# define MAX_FPS        1000
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 20
+# define RENDER_DISTANCE 48
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
 public:
     // the window context
     GLFWwindow* window;
+
+    // event
+    Event event;
 
     // the camera
     Camera      camera;
@@ -55,6 +58,7 @@ public:
     
     //chunk shader
     Shader  chunkShader;
+
     // texture atlas
     Texture texAtlas;
 
@@ -67,6 +71,8 @@ public:
     
     // seed used to generate random chunk
     unsigned int seed;
+
+    glm::vec2 windowsSize;
 
 
     // constuctor
@@ -86,12 +92,14 @@ public:
     // set the visibility of each chunk
     void setChunksVisibility(void);
 
+
 private:
     void initWindows(void);
     void initSkybox(void);
     void initChunks(int radius);
     void initUniforms(void);
     void enableGlParam(void);
+    GLFWwindowsizefun window_size_callback(GLFWwindow* window, int width, int height);
 };
 
 #endif

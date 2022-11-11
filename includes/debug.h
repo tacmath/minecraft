@@ -10,13 +10,18 @@ class Debug {
     float diff;
     char fps[100];
     char xyz[100];
+    char xz[100];
+    char target[100];
+
     TextDisplay text;
     bool visible;
 
 
 public:
 
-	Debug();
+    Debug(float width, float height);
+
+    void setProjection(float width, float height);
 
     void enable();
 

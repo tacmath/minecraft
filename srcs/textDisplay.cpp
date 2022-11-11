@@ -1,10 +1,16 @@
 ﻿#include "textDisplay.h"
+#include "minecraft.H"
 
+void TextDisplay::setProjection(float width, float height) {
+    textShader.Activate();
+    glm::mat4 projection = glm::ortho(0.0f, width, 0.0f, height);
+    textShader.setMat4("projection", projection);
+}
 
-void TextDisplay::Init() {
+void TextDisplay::Init(float width, float height) {
     textShader.Load("shaders/textVS.glsl", "shaders/textFS.glsl");
     textShader.Activate();
-    glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+    glm::mat4 projection = glm::ortho(0.0f, width, 0.0f, height);
     textShader.setMat4("projection", projection);
 
     FT_Library ft;
@@ -65,7 +71,6 @@ void TextDisplay::Init() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -86,6 +91,7 @@ void TextDisplay::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sca
     textShader.setInt("text", 1);
     glActiveTexture(GL_TEXTURE1);
     glBindVertexArray(VAO);
+    glEnable(GL_BLEND);
     // Boucle sur tous les caract�res
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++)
@@ -116,6 +122,7 @@ void TextDisplay::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sca
         x += (ch.Advance >> 6) * scale; // D�calage � droite de 6 pour obtenir la valeur en pixels
     }
     glBindVertexArray(0);
+    glDisable(GL_BLEND);
     //  glBindTexture(GL_TEXTURE_2D, 0);
 }
 

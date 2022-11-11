@@ -20,33 +20,26 @@ ChunkGeneration globalChunkGeneration;
 std::map<int64_t, Chunk*> chunksMap;
 Noise global_noise;
 
-void loop(Minecraft &minecraft) {
-    Event event;
-    UserInterface UI;
-    Debug debug;
-    
+Minecraft minecraft;
+Debug debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
+UserInterface UI = UserInterface(minecraft.windowsSize.x, minecraft.windowsSize.y);
 
+void loop(Minecraft &minecraft) {
     float previousLoopTime = 0;
     float previousFrameTime = 0;
     float diff = 0;
     float time = 0;
     float latence = 0;
     float maxfps = (1.0f / MAX_FPS);
-
-    UI.InitUniforms(minecraft.camera.projection);
-    UI.SetViewMatrix(minecraft.camera.view);
-    event.Init(minecraft.window);
-    glfwSetWindowTitle(minecraft.window, "Minecraft");
-    glfwSwapInterval(0);     
     while  (glfwGetKey(minecraft.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(minecraft.window) != 1) {
         time = (float)glfwGetTime();
         diff = time - previousLoopTime;
         if (diff >= maxfps) {
             latence = ((time - previousFrameTime) * 1000);
 
-            event.frequence = latence / 33.33f;
-            event.GetEvents(minecraft.camera);
-            if (event.lookChanged || event.positionChanged) {
+            minecraft.event.frequence = latence / 33.33f;
+            minecraft.event.GetEvents(minecraft.camera);
+            if (minecraft.event.lookChanged || minecraft.event.positionChanged) {
                 minecraft.setChunksVisibility();
                 minecraft.LoadViewMatrix();
                 UI.SetViewMatrix(minecraft.camera.view);
@@ -57,7 +50,8 @@ void loop(Minecraft &minecraft) {
             minecraft.Draw();
             UI.SetHighlight(minecraft.player.selectedCube);
             UI.DrawHighlight();
-           // debug.display(time, latence, minecraft);
+            UI.DrawCross(minecraft.windowsSize.x / 2, minecraft.windowsSize.y / 2);
+            debug.display(time, latence, minecraft);
 
             glfwSwapBuffers(minecraft.window);
             previousFrameTime = time;
@@ -69,16 +63,27 @@ void loop(Minecraft &minecraft) {
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-*/
-int main(void) {
-    Minecraft minecraft;
-//    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+*/   
 
+
+int main(void) {
+    glfwSetWindowSizeCallback(minecraft.window, [](GLFWwindow* window, int width, int height)
+    {
+            std::cout << "RESIZE" << std::endl;
+            minecraft.windowsSize = glm::vec2((float)width, (float)height);
+            minecraft.camera.updateSize((float)width, (float)height);
+            debug.setProjection((float)width, (float)height);
+            UI.setTextProjection((float)width, (float)height);
+            glViewport(0, 0, (int)minecraft.windowsSize.x,  (int)minecraft.windowsSize.y);
+    });
+
+//    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    UI.InitUniforms(minecraft.camera.projection);
+    UI.SetViewMatrix(minecraft.camera.view);
+    minecraft.event.Init(minecraft.window);
+    glfwSetWindowTitle(minecraft.window, "Minecraft");
+    glfwSwapInterval(0);
     loop(minecraft);
     minecraft.thread.StopThreads();
 	return (0);
 }
-
-
-
-

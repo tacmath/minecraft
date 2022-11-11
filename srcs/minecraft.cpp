@@ -1,16 +1,19 @@
 #include "minecraft.h"
 #include "blocks.h"
+#include <UI.h>
+#include <debug.h>
 
 extern Block blocks[256];
 
 Minecraft::Minecraft(void) {
     window = 0;
+    windowsSize = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
     initWindows();
     initSkybox();
     enableGlParam();
     skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
     chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
-    camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
+    camera.Init(windowsSize.x, windowsSize.y, glm::vec3(0.0f, 60.0f, 0.0f));
 
     std::vector<std::string> textureNames = { "texture/grass_side.png", "texture/grass_top.png", "texture/dirt.png", "texture/stone.png" };
 
@@ -26,8 +29,8 @@ Minecraft::Minecraft(void) {
     global_noise.SetSeed(seed);
 
     initChunks(STARTING_RENDER_DISTANCE);
-
 }
+
 
 void Minecraft::Draw(void) {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

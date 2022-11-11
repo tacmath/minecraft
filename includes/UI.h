@@ -4,18 +4,25 @@
 #include "shader.h"
 #include "VAO.h"
 #include "player.h"
+#include "textDisplay.h"
 
 class UserInterface {
 	Shader highlightShader;
+    TextDisplay text;
 	VAO highlight;
 public:
     bool hasHighlight;
 
 
-	UserInterface() {
+	UserInterface(float width, float height) {
         initHighlight();
+        text.Init(width, height);
         hasHighlight = false;
 	}
+
+   void  setTextProjection(float width, float height) {
+       text.setProjection(width, height);
+    }
 
     void InitUniforms(glm::mat4& projection) {
         highlightShader.Activate();
@@ -43,6 +50,10 @@ public:
         highlightShader.Activate();
         highlight.Bind();
         glDrawArrays(GL_LINES, 0, 24);
+    }
+
+    void DrawCross(float x, float z) {
+        text.display("+", x, z, 0.4f, glm::vec3(1.0, 1.0f, 1.0f));
     }
 
 private:

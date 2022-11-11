@@ -61,6 +61,8 @@ public:
 
 	void Update(char perspective);
 
+	void updateSize(float windowWidth, float windowHeight);
+
 };
 
 #endif

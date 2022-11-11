@@ -21,7 +21,6 @@ class TextDisplay {
 	Shader  textShader;
 
 	void RenderText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
-
 	public:
 
 
@@ -29,7 +28,8 @@ class TextDisplay {
 		void display(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 		void display(const char* text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 		void display(std::string text, glm::vec2 position, GLfloat scale, glm::vec3 color);
-		void Init();
+		void Init(float width, float height);
+		void setProjection(float width, float height);
 };
 
 #endif
