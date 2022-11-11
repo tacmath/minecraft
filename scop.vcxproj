@@ -150,6 +150,7 @@
     <ClCompile Include="srcs\main.cpp" />
     <ClCompile Include="srcs\cubeMesh.cpp" />
     <ClCompile Include="srcs\minecraft.cpp" />
+    <ClCompile Include="srcs\simplex_noise.cpp" />
     <ClCompile Include="srcs\shader.cpp" />
     <ClCompile Include="srcs\texture.cpp" />
     <ClCompile Include="srcs\thread.cpp" />
@@ -169,7 +170,8 @@
     <ClInclude Include="includes\event.h" />
     <ClInclude Include="includes\frustum.h" />
     <ClInclude Include="includes\minecraft.h" />
-    <ClInclude Include="includes\noise.h" />
+    <ClInclude Include="includes\perlin_noise.h" />
+    <ClInclude Include="includes\simplex_noise.h" />
     <ClInclude Include="includes\player.h" />
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />

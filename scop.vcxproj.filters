@@ -66,6 +66,9 @@
 	  <ClCompile Include="srcs\debug.cpp">
 		  <Filter>Fichiers sources</Filter>
 	  </ClCompile>
+	  <ClCompile Include="srcs\simplex_noise.cpp">
+		  <Filter>Fichiers sources</Filter>
+	  </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\minecraft.h">
@@ -93,9 +96,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="includes\chunk.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\noise.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="includes\frustum.h">
@@ -126,6 +126,12 @@
 		  <Filter>Fichiers sources</Filter>
 	  </ClInclude>
 	  <ClInclude Include="srcs\debug.h">
+		  <Filter>Fichiers sources</Filter>
+	  </ClInclude>
+	  <ClInclude Include="srcs\simplex_noise.h">
+		  <Filter>Fichiers sources</Filter>
+	  </ClInclude>
+	  <ClInclude Include="srcs\perlin_noise.h">
 		  <Filter>Fichiers sources</Filter>
 	  </ClInclude>
   </ItemGroup>

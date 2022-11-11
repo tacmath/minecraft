@@ -1,7 +1,7 @@
 #ifndef CHUNK_GENERATION_CLASS_H
 #define CHUNK_GENERATION_CLASS_H
 
-#include "noise.h"
+#include "perlin_noise.h"
 
 // get the offset of a cube based on the position in the chunk
 #define GET_CUBE(x, y, z) ((y << 8) | (x << 4) | z)

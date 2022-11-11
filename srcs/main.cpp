@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "minecraft.h"
 #include "chunk_generation.h"
+#include "perlin_noise.h"
 #include "blocks.h"
 #include "event.h"
 #include "UI.h"
