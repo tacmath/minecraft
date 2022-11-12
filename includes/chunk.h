@@ -38,8 +38,8 @@
 /*
 	store multiple data in an int32 with the format :
 
-	0000	|	0000	|	0000	|	0	|	0	|	00000	|	00000	|	00000000
-	unused	| texatlasY	| texatlasX	| textY	| textX	|	posZ	|	posX	|	  posY
+	0000		|	0000	|	0000	|	0	|	0	|	00000	|	00000	|	00000000
+	luminosity	| texatlasY	| texatlasX	| textY	| textX	|	posZ	|	posX	|	  posY
 */
 #define PACK_VERTEX_DATA(x, y, z, textx, texty) (y | (x << 8) | (z << 13) | textx << 18 | texty << 19)
 #define PACK_ATLAS_VERTEX_DATA(texatlasX, texatlasY) ((texatlasX << 20) | (texatlasY << 24))
@@ -125,7 +125,7 @@ public:
 	//reload everything nessesary to update a cube
 	void UpdateCube(int x, int z);
 
-	//get the id of the cube at a certain position in the chunk
+	//get the id of the cube at a certain position from the chunk
 	unsigned char GetCube(int x, int y, int z);
 	//get the id of the cube at a certain position in the chunk
 	unsigned char GetCube(glm::ivec3 pos);
@@ -133,12 +133,15 @@ public:
 	void SetCube(unsigned char cubeId, int x, int y, int z);
 
 private:
-	void addTopVertices(const int y, const int x, const int z);
-	void addBottomVertices(const int y, const int x, const int z);
-	void addFrontVertices(const int y, const int x, const int z);
-	void addBackVertices(const int y, const int x, const int z);
-	void addRightVertices(const int y, const int x, const int z);
-	void addLeftVertices(const int y, const int x, const int z);
+	void addTopVertices(const int x, const int y, const int z);
+	void addBottomVertices(const int x, const int y, const int z);
+	void addFrontVertices(const int x, const int y, const int z);
+	void addBackVertices(const int x, const int y, const int z);
+	void addRightVertices(const int x, const int y, const int z);
+	void addLeftVertices(const int x, const int y, const int z);
+
+	//store in result the AO value of each corner of a side
+	void getSideAO(int x, int y, int z, int *result, int pivot);
 
 	void addVisibleVertices(int x, int y, int z);
 	void addVisibleBorderVertices(char sides);
@@ -158,11 +161,39 @@ inline unsigned char GetCubeAt(float x, float y, float z) { //peux ètre couteux 
 	chunk = GetChunk(ix >> 4, iz >> 4);										//faire un get cube relatif a un chunk pour évité trop d'appel a GetChunk
 	if (!chunk || chunk->status < CHUNK_DATA_LOADED || iy < 0 || iy > 255)
 		return (0);
-	return (chunk->GetCube(ix & 0xF, iy, iz & 0xF));
+	return (chunk->cubes[GET_CUBE(ix & 0xF, iy, iz & 0xF)]);
 }
 
 inline unsigned char Chunk::GetCube(int x, int y, int z) {	//faire un getCube qui peux sortire des limites 0 a 15
-	return (cubes[GET_CUBE(x, y, z)]);
+	Chunk* chunk;
+
+	if (y < 0 || y > 255)
+		return 0;
+	chunk = this;
+	while (x < 0) {
+		x += 16;
+		if (!(chunk = chunk->neighbour[CHUNK_FRONT_SIDE]))
+			return 0;
+	}
+	while (x > 15) {
+		x -= 16;
+		if (!(chunk = chunk->neighbour[CHUNK_BACK_SIDE]))
+			return 0;
+	}
+	
+	while (z < 0) {
+		z += 16;
+		if (!(chunk = chunk->neighbour[CHUNK_LEFT_SIDE]))
+			return 0;
+	}
+	while (z > 15) {
+		z -= 16;
+		if (!(chunk = chunk->neighbour[CHUNK_RIGHT_SIDE]))
+			return 0;
+	}
+	if (chunk->status < CHUNK_DATA_LOADED)
+		return 0;
+	return (chunk->cubes[GET_CUBE(x, y, z)]);
 }
 
 inline unsigned char Chunk::GetCube(glm::ivec3 pos) {

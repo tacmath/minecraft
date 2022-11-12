@@ -6,6 +6,8 @@
 #include<glm/gtx/rotate_vector.hpp>
 #include <iostream>
 
+#define ABS(x) ((x < 0) ? -x : x)
+
 class Frustum
 {
 private:
@@ -41,9 +43,9 @@ public:
 
     inline bool isOnOrForwardPlan(glm::vec4 &plan, glm::vec3 &point) const
     {
-        const float r = 8 * (std::abs(plan.x) + std::abs(plan.z)) +
-            128 * std::abs(plan.y);
-        return glm::dot(glm::vec3(plan), point) - -plan.w >= -r;
+        const float r = 8 * (ABS(plan.x) + ABS(plan.z)) +
+            128 * ABS(plan.y);
+        return plan.x * point.x + plan.y * point.y + plan.z * point.z - -plan.w >= -r;
     }
 
     inline bool chunkIsVisible(int x, int z) {

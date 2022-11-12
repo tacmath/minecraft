@@ -34,76 +34,191 @@ void Chunk::addVisibleBorderVertices(char sides) {
 	verticesNumber = (unsigned int)mesh.size();
 }
 
+inline int getVertexAO(int side1, int side2, int corner) {
+	if (side1 && side2)
+		return (3);
+	return ((side1 + side2 + corner));
+}
+
+void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
+	char visibleCubes[3][3];
+	int* val1;
+	int* val2;
+
+	val1 = &x;
+	val2 = &z;
+	if (pivot == 0) // the pivot is x
+		val1 = &y;
+	else if (pivot == 2) // the pivot is z
+		val2 = &y;
+	*val1 -= 1;
+	*val2 -= 1;
+	for (int n = 0; n < 3; n++) {
+		for (int m = 0; m < 3; m++) {	
+			visibleCubes[n][m] = (GetCube(x, y, z) != AIR);
+			*val2 += 1;
+		}
+		*val1 += 1;
+		*val2 -= 3;
+	}
+	result[0] = getVertexAO(visibleCubes[1][0], visibleCubes[0][1], visibleCubes[0][0]);
+	result[1] = getVertexAO(visibleCubes[1][2], visibleCubes[0][1], visibleCubes[0][2]);
+	result[2] = getVertexAO(visibleCubes[2][1], visibleCubes[1][0], visibleCubes[2][0]);
+	result[3] = getVertexAO(visibleCubes[2][1], visibleCubes[1][2], visibleCubes[2][2]);
+}
+
+inline void fillQuad(unsigned int *vertices, unsigned int *result) {
+	//first triangle
+	result[0] = vertices[0];
+	result[1] = vertices[1];
+	result[2] = vertices[2];
+
+	//second triangle
+	result[3] = vertices[2];
+	result[4] = vertices[1];
+	result[5] = vertices[3];
+}
+
+inline void fillFlippedQuad(unsigned int* vertices, unsigned int* result) {
+	//first triangle
+	result[0] = vertices[0];
+	result[1] = vertices[1];
+	result[2] = vertices[3];
+
+	//second triangle
+	result[3] = vertices[0];
+	result[4] = vertices[3];
+	result[5] = vertices[2];
+}
+
 void Chunk::addTopVertices(const int x, const int y, const int z) {
 	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].top, 0);
+	int sideAO[4];
+	unsigned int vertices[4];
 
-	// v.insert(v.end(), std::begin(a), std::end(a)); instead of multiples push_back
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 0));
+	getSideAO(x, y + 1, z, sideAO, 1);
+	for (int n = 0; n < 4; n++)
+		sideAO[n] <<= 28;
+	vertices[0] = sideAO[0] | atlasData | PACK_VERTEX_DATA( x,		(y + 1),  z,		0, 0);
+	vertices[1] = sideAO[1] | atlasData | PACK_VERTEX_DATA( x,		(y + 1), (z + 1),	1, 0);
+	vertices[2] = sideAO[2] | atlasData | PACK_VERTEX_DATA((x + 1), (y + 1),  z,		0, 1);
+	vertices[3] = sideAO[3] | atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1),	1, 1);
+	
+	size_t verticeNb = mesh.size();
+	mesh.resize(verticeNb + 6);
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 0));
+	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+		fillQuad(vertices, &mesh[verticeNb]);
+	else
+		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }
 
 void Chunk::addBottomVertices(const int x, const int y, const int z) {
 	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].bottom, 0);
+	int sideAO[4];
+	unsigned int vertices[4];
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
+	getSideAO(x, y - 1, z, sideAO, 1);
+	for (int n = 0; n < 4; n++)
+		sideAO[n] <<= 28;
+	vertices[0] = sideAO[0] | atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0);
+	vertices[2] = sideAO[1] | atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0);
+	vertices[1] = sideAO[2] | atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1);
+	vertices[3] = sideAO[3] | atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 1);
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 1));
+	size_t verticeNb = mesh.size();
+	mesh.resize(verticeNb + 6);
+
+	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+		fillQuad(vertices, &mesh[verticeNb]);
+	else
+		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }
 
 void Chunk::addFrontVertices(const int x, const int y, const int z) {
 	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
+	int sideAO[4];
+	unsigned int vertices[4];
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
+	getSideAO(x - 1, y, z, sideAO, 0);
+	for (int n = 0; n < 4; n++)
+		sideAO[n] <<= 28;
+	vertices[0] = sideAO[0] | atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0);
+	vertices[1] = sideAO[1] | atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0);
+	vertices[2] = sideAO[2] | atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1);
+	vertices[3] = sideAO[3] | atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 1);
 
+	size_t verticeNb = mesh.size();
+	mesh.resize(verticeNb + 6);
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 1, 1));
+	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+		fillQuad(vertices, &mesh[verticeNb]);
+	else
+		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }
 
 void Chunk::addBackVertices(const int x, const int y, const int z) {
 	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
+	int sideAO[4];
+	unsigned int vertices[4];
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
+	getSideAO(x + 1, y, z, sideAO, 0);
+	for (int n = 0; n < 4; n++)
+		sideAO[n] <<= 28;
+	vertices[0] = sideAO[0] | atlasData | PACK_VERTEX_DATA((x + 1), y, z, 0, 0);
+	vertices[2] = sideAO[1] | atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0);
+	vertices[1] = sideAO[2] | atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1);
+	vertices[3] = sideAO[3] | atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1);
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
+	size_t verticeNb = mesh.size();
+	mesh.resize(verticeNb + 6);
+
+	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+		fillQuad(vertices, &mesh[verticeNb]);
+	else
+		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }
 
 void Chunk::addRightVertices(const int x, const int y, const int z) {
 	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
+	int sideAO[4];
+	unsigned int vertices[4];
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
+	getSideAO(x, y, z + 1, sideAO, 2);
+	for (int n = 0; n < 4; n++)
+		sideAO[n] <<= 28;
+	vertices[0] = sideAO[0] | atlasData | PACK_VERTEX_DATA(x, y, (z + 1), 0, 0);
+	vertices[2] = sideAO[1] | atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1);
+	vertices[1] = sideAO[2] | atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0);
+	vertices[3] = sideAO[3] | atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1);
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), (z + 1), 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, (z + 1), 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), (z + 1), 1, 1));
+	size_t verticeNb = mesh.size();
+	mesh.resize(verticeNb + 6);
+
+	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+		fillQuad(vertices, &mesh[verticeNb]);
+	else
+		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }
 
 void Chunk::addLeftVertices(const int x, const int y, const int z) {
 	unsigned int atlasData = PACK_ATLAS_VERTEX_DATA(blocks[cubes[GET_CUBE(x, y, z)]].side, 0);
+	int sideAO[4];
+	unsigned int vertices[4];
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
+	getSideAO(x, y, z - 1, sideAO, 2);
+	for (int n = 0; n < 4; n++)
+		sideAO[n] <<= 28;
+	vertices[0] = sideAO[0] | atlasData | PACK_VERTEX_DATA(x, y, z, 0, 0);
+	vertices[1] = sideAO[1] | atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1);
+	vertices[2] = sideAO[2] | atlasData | PACK_VERTEX_DATA((x + 1), y, z, 1, 0);
+	vertices[3] = sideAO[3] | atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 1, 1);
 
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), y, z, 1, 0));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA(x, (y + 1), z, 0, 1));
-	mesh.push_back(atlasData | PACK_VERTEX_DATA((x + 1), (y + 1), z, 1, 1));
+	size_t verticeNb = mesh.size();
+	mesh.resize(verticeNb + 6);
+
+	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+		fillQuad(vertices, &mesh[verticeNb]);
+	else
+		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }

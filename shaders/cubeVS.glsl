@@ -2,6 +2,7 @@
 layout (location = 0) in uint vertex;
 
 out vec2 texCoord;
+out float luminosity;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -22,6 +23,7 @@ void main()
 	texCoord.x = (reduce[((vertex >> 18u) & 1u)] + texAtlasX) / 4.0f; // still the float precision problem
 	texCoord.y = ((vertex >> 19u) & 1u);
 
+	luminosity = 1.0f - (((vertex >> 28u) & 0xFu) / 3.0f) * 0.8f;
 
    gl_Position = projection * view * vec4(x + chunkPos.x, y, z + chunkPos.y, 1.0f);
 }
