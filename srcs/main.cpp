@@ -2,7 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "minecraft.h"
 #include "chunk_generation.h"
-#include "perlin_noise.h"
+
 #include "blocks.h"
 #include "event.h"
 #include "UI.h"
@@ -20,6 +20,7 @@ Block blocks[256];
 ChunkGeneration globalChunkGeneration;
 std::map<int64_t, Chunk*> chunksMap;
 Noise global_noise;
+SimplexNoise global_simplex_noise;
 
 Minecraft minecraft;
 Debug debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);

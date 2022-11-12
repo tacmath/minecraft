@@ -45,7 +45,4 @@ private:
     float mPersistence; ///< Persistence is the loss of amplitude between successive octaves (usually 1/lacunarity)
 };
 
-//noise using the seed
-extern SimplexNoise global_simplex_noise;
-
 #endif

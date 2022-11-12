@@ -25,6 +25,9 @@
 #include <glad/glad.h>
 #include "textDisplay.h"
 
+#include "perlin_noise.h"
+#include "simplex_noise.h"
+
 
 # define   PI           3.14159265358979323846
 # define DEFAULT_WINDOW_WIDTH   1200

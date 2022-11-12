@@ -2,11 +2,10 @@
 #include "blocks.h"
 #include <UI.h>
 #include <debug.h>
-#include "perlin_noise.h"
 
 
 extern Block blocks[256];
-extern Noise global_noise;
+
 
 Minecraft::Minecraft(void) {
     window = 0;
@@ -30,7 +29,6 @@ Minecraft::Minecraft(void) {
 
     seed = (int)((double)rand() / (RAND_MAX)) * UINT32_MAX;
     global_noise.SetSeed(seed);
-
     initChunks(STARTING_RENDER_DISTANCE);
 }
 
