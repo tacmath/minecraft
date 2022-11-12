@@ -151,17 +151,13 @@ private:
 Chunk* GetChunk(int x, int z);
 
 // return a the id of a cube based on its world coordonate 
-inline unsigned char GetCubeAt(float x, float y, float z) { //peux ètre couteux si appeler trop de fois
+inline unsigned char GetCubeAt(int x, int y, int z) { //peux ètre couteux si appeler trop de fois
 	Chunk* chunk;
-	int ix, iy, iz;
 
-	ix = (int)x - (x < (int)x); //maybe replace by floor
-	iy = (int)y - (y < (int)y);
-	iz = (int)z - (z < (int)z);
-	chunk = GetChunk(ix >> 4, iz >> 4);										//faire un get cube relatif a un chunk pour évité trop d'appel a GetChunk
-	if (!chunk || chunk->status < CHUNK_DATA_LOADED || iy < 0 || iy > 255)
+	chunk = GetChunk(x >> 4, z >> 4);										//faire un get cube relatif a un chunk pour évité trop d'appel a GetChunk
+	if (!chunk || chunk->status < CHUNK_DATA_LOADED || y < 0 || y > 255)
 		return (0);
-	return (chunk->cubes[GET_CUBE(ix & 0xF, iy, iz & 0xF)]);
+	return (chunk->cubes[GET_CUBE((x & 0xF), y, (z & 0xF))]);
 }
 
 inline unsigned char Chunk::GetCube(int x, int y, int z) {	//faire un getCube qui peux sortire des limites 0 a 15

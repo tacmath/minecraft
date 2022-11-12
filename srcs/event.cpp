@@ -4,21 +4,30 @@
 
 #define PLAYER_RANGE 5
 
+glm::vec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
+    Chunk* chunk;
+    
+    direction = glm::normalize(direction);
+    chunk = GetChunk((int)floor(origin.x) >> 4, (int)floor(origin.z) >> 4);
+    origin.x = origin.x - (float)(chunk->posx << 4);
+    origin.z = origin.z - (float)(chunk->posz << 4);
+    if (!chunk)
+        return (glm::vec3(-1));
+    for (int n = 0; n < range; n++) {
+        if (chunk->GetCube((int)floor(origin.x), (int)floor(origin.y), (int)floor(origin.z)) != AIR) {
+            return (glm::vec3(origin.x + (float)(chunk->posx << 4), origin.y, origin.z + (float)(chunk->posz << 4)));
+        }
+        origin += direction;
+    }
+    return (glm::vec3(-1));
+}
+
 //http://www.cse.yorku.ca/~amana/research/grid.pdf
 glm::ivec3 getPointedCube(Camera &camera) {     //test the function
-    Chunk* chunk;
-    glm::vec3 origin = camera.position;
-    origin.x -= 0.9f;
-    origin.z -= 0.9f;
+    glm::vec3 result = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
 
-    for (int n = 0; n < PLAYER_RANGE; n++) {
-        chunk = GetChunk((int)origin.x >> 4, (int)origin.z >> 4);   // change later to prevent getting the chunk on every block
-        if (chunk && chunk->GetCube((int)origin.x & 0xF, (int)origin.y & 0xFF, (int)origin.z & 0xF) != AIR) {
-            return (glm::ivec3(origin));
-        }
-        origin += camera.direction;
-    }
-    return (glm::ivec3(-1));
+
+    return (glm::ivec3(floor(result.x), floor(result.y), floor(result.z)));
 }
 
 void Event::removePointedCube(Camera& camera) {

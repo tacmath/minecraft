@@ -5,7 +5,7 @@
 #include<glm/gtc/type_ptr.hpp>
 #include<iostream>
 
-unsigned char GetCubeAt(float x, float y, float z);
+unsigned char GetCubeAt(int x, int y, int z);
 
 class Entity {		//maybe add the chunk the entity is in and update the chunk when x >> 4 != chunk.posx && z >> 4 != chunk.posz
 public:
@@ -35,13 +35,13 @@ public:
 private:
 	void ApplyCollision(glm::vec3& movement) {
 		position.y += movement.y;
-		if (movement.y < 0 && GetCubeAt(position.x, position.y - size.y, position.z))
+		if (movement.y < 0 && GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.y = floor(position.y + 1);
 		position.x += movement.x;
-		if (GetCubeAt(position.x, position.y - size.y, position.z))
+		if (GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.x = floor(position.x + (movement.x < 0)) - 0.001f * (movement.x >= 0);
 		position.z += movement.z;
-		if (GetCubeAt(position.x , position.y - size.y, position.z))
+		if (GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.z = floor(position.z + (movement.z < 0)) - 0.001f * (movement.z >= 0);
 	}
 };
