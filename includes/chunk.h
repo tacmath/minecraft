@@ -18,10 +18,6 @@
 #define CHUNK_RIGHT_SIDE 2
 #define CHUNK_LEFT_SIDE 3
 
-// neighbour loaded status
-#define CHUNK_NONE 0
-#define CHUNK_ALL_LOADED 0xF
-
 // all the possible status of a chunk
 
 #define CHUNK_UNLOADED 0
@@ -78,8 +74,6 @@ public:
 	char status;
 	//the thread status of the chunk 
 	char threadStatus;				// maybe change the way status are made
-	//neighbour status of the chunk
-	char neighbourLoaded;
 	// position x of the chunk
 	int posx;
 	// position z of the chunk
@@ -116,9 +110,6 @@ public:
 	// Draw the chunk 
 	void Draw(Shader& shader);
 
-	//add the mesh between a chunk and its neighbours
-	void addNeighbours();
-
 	//reload the chunk by recreating the mesh and changing the VBO
 	void Update();
 
@@ -144,7 +135,7 @@ private:
 	void getSideAO(int x, int y, int z, int *result, int pivot);
 
 	void addVisibleVertices(int x, int y, int z);
-	void addVisibleBorderVertices(char sides);
+	void addVisibleBorderVertices();
 };
 
 // return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found

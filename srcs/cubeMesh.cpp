@@ -19,16 +19,16 @@ void Chunk::addVisibleVertices(int x, int y, int z) {
 		addRightVertices(x, y, z);
 }
 
-void Chunk::addVisibleBorderVertices(char sides) {
+void Chunk::addVisibleBorderVertices() {
 	for (int y = 0; y < 255; y++)
 		for (int x = 0; x < CHUNK_SIZE; x++) {
-			if (((sides >> CHUNK_FRONT_SIDE) & 1) && cubes[GET_CUBE(0, y, x)] && neighbour[CHUNK_FRONT_SIDE]->cubes[GET_CUBE(15, y, x)] == AIR)
+			if (neighbour[CHUNK_FRONT_SIDE] && cubes[GET_CUBE(0, y, x)] && neighbour[CHUNK_FRONT_SIDE]->cubes[GET_CUBE(15, y, x)] == AIR)
 				addFrontVertices(0, y, x);
-			if (((sides >> CHUNK_BACK_SIDE) & 1) && cubes[GET_CUBE(15, y, x)] && neighbour[CHUNK_BACK_SIDE]->cubes[GET_CUBE(0, y, x)] == AIR)
+			if (neighbour[CHUNK_BACK_SIDE] && cubes[GET_CUBE(15, y, x)] && neighbour[CHUNK_BACK_SIDE]->cubes[GET_CUBE(0, y, x)] == AIR)
 				addBackVertices(15, y, x);
-			if (((sides >> CHUNK_RIGHT_SIDE) & 1) && cubes[GET_CUBE(x, y, 15)] && neighbour[CHUNK_RIGHT_SIDE]->cubes[GET_CUBE(x, y, 0)] == AIR)
+			if (neighbour[CHUNK_RIGHT_SIDE] && cubes[GET_CUBE(x, y, 15)] && neighbour[CHUNK_RIGHT_SIDE]->cubes[GET_CUBE(x, y, 0)] == AIR)
 				addRightVertices(x, y, 15);
-			if (((sides >> CHUNK_LEFT_SIDE) & 1) && cubes[GET_CUBE(x, y, 0)] && neighbour[CHUNK_LEFT_SIDE]->cubes[GET_CUBE(x, y, 15)] == AIR)
+			if (neighbour[CHUNK_LEFT_SIDE] && cubes[GET_CUBE(x, y, 0)] && neighbour[CHUNK_LEFT_SIDE]->cubes[GET_CUBE(x, y, 15)] == AIR)
 				addLeftVertices(x, y, 0);
 		}
 	verticesNumber = (unsigned int)mesh.size();

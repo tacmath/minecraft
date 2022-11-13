@@ -12,7 +12,6 @@ Chunk::Chunk() {
 	VBO = 0;
 	status = CHUNK_UNLOADED;
 	threadStatus = CHUNK_NOT_PROCESSING;
-	neighbourLoaded = CHUNK_NONE;
 	neighbour.resize(4);
 	memset(&neighbour[0], 0, sizeof(Chunk*) * 4);
 };
@@ -73,8 +72,7 @@ void Chunk::createMeshData() {
 					addVisibleVertices(x, y, z);
 
 	verticesNumber = (unsigned int)mesh.size();
-	if (neighbourLoaded != CHUNK_NONE)
-		addVisibleBorderVertices(neighbourLoaded);
+	addVisibleBorderVertices();
 	status = CHUNK_LOADED;
 }
 
@@ -94,8 +92,7 @@ void Chunk::Bind() {
 	glBindVertexArray(0);
 	threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 	isVisible = true;
-	if (neighbourLoaded == CHUNK_ALL_LOADED)
-		mesh.clear();
+	mesh.clear();
 }
 
 // Draw the chunk 
@@ -107,33 +104,12 @@ void Chunk::Draw(Shader& shader) {
 	glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 }
 
-//add the mesh between a chunk and its neighbours
-void Chunk::addNeighbours() {
-	char sides = 0;
-
-	for (int n = 0; n < 4; n++)
-		// if the neighbour exist and has loaded cubes and was not processed earlier
-		if (neighbour[n] && neighbour[n]->status >= CHUNK_DATA_LOADED && !((neighbourLoaded >> n) & 1))
-			sides |= 1 << n;
-	// if no new side has been found quit
-	if (sides == CHUNK_NONE)
-		return;
-	addVisibleBorderVertices(sides);
-	if (verticesNumber) {
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
-	}
-	neighbourLoaded |= sides;
-	if (neighbourLoaded == CHUNK_ALL_LOADED)
-		mesh.clear();
-}
-
 void Chunk::Update() {
-	if (threadStatus & CHUNK_PROCESSING) // almost never needed be we nerver know
+	if (threadStatus & CHUNK_PROCESSING || status < CHUNK_LOADED) // almost never needed be we nerver know
 		return;
 	mesh.clear();
 	createMeshData();
-	addVisibleBorderVertices(neighbourLoaded);
+	addVisibleBorderVertices();
 	if (verticesNumber) {
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);

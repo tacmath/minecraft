@@ -38,14 +38,14 @@ void Thread::CreateMesh(Chunk* chunk) {
 
 	if (meshThreads[thread].chunkLeft == MAX_CHUNK_PER_THREAD)
 		return;
+	for (int m = 0; m < 4; m++)
+		if (!chunk->neighbour[m] || chunk->neighbour[m]->status < CHUNK_DATA_LOADED)
+			return;
 	for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 		if (!meshThreads[thread].chunkListLeft[n]) {
 			chunk->threadStatus |= CHUNK_PROCESSING;
 			for (int m = 0; m < 4; m++)
-				if (chunk->neighbour[m] && chunk->neighbour[m]->status >= CHUNK_DATA_LOADED) {
-					chunk->neighbour[m]->threadStatus += 1;
-					chunk->neighbourLoaded |= 1 << m;
-				}
+					chunk->neighbour[m]->threadStatus += 1;	// lock all the neiboring chunks needed to generate mesh
 			meshThreads[thread].chunkListLeft[n] = chunk;
 			meshThreads[thread].chunkLeft += 1;
 			return;
@@ -60,9 +60,8 @@ void Thread::BindAllChunks(void) {
 				break;
 			if (meshThreads[thread].chunkListDone[n]) {
 				meshThreads[thread].chunkListDone[n]->Bind();
-				for (int m = 0; m < 4; m++)
-					if ((meshThreads[thread].chunkListDone[n]->neighbourLoaded >> m) & 1)
-						meshThreads[thread].chunkListDone[n]->neighbour[m]->threadStatus -= 1;
+				for (int m = 0; m < 4; m++) // unlock all the neiboring chunks needed to generate mesh
+					meshThreads[thread].chunkListDone[n]->neighbour[m]->threadStatus -= 1;
 				meshThreads[thread].chunkListDone[n] = 0;
 				meshThreads[thread].chunkLeft -= 1;
 			}

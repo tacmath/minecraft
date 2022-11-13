@@ -66,12 +66,12 @@ Minecraft::~Minecraft(void) {
 }
 
 void Minecraft::LoadChunks(void) {
-    Chunk    *loadedChunks[RENDER_DISTANCE << 1][RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
+    Chunk    *loadedChunks[DATA_RENDER_DISTANCE << 1][DATA_RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
-    maxChunk = RENDER_DISTANCE << 1;
-    playerPosx = ((int)camera.position.x >> 4) - RENDER_DISTANCE;
-    playerPosz = ((int)camera.position.z >> 4) - RENDER_DISTANCE;
+    maxChunk = DATA_RENDER_DISTANCE << 1;
+    playerPosx = ((int)camera.position.x >> 4) - DATA_RENDER_DISTANCE;
+    playerPosz = ((int)camera.position.z >> 4) - DATA_RENDER_DISTANCE;
     memset(loadedChunks, 0, maxChunk * maxChunk * sizeof(Chunk*));
     chunkNumber = (int)chunks.size();
     n = -1;
@@ -81,7 +81,7 @@ void Minecraft::LoadChunks(void) {
 
         // check if a chunk is too far away and delete it if nessesary
         if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->threadStatus == CHUNK_NOT_PROCESSING) {
-            delete chunks[n];
+            delete chunks[n]; // delete (chunk destructor) = 60 % of the function perf
             chunks.erase(chunks.begin() + n);
             n--;
             chunkNumber--;
@@ -101,27 +101,17 @@ void Minecraft::LoadChunks(void) {
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
                 thread.LoadChunk(newChunk);
-                /*newChunk->Generate();
-                newChunk->createMeshData();
-                newChunk->Bind();*/
                 chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
                 loadedChunks[x][z] = newChunk;
                 continue;
             }
-
             if (!loadedChunks[x][z] || loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING)
                 continue;
 
-            // load the chunk border if it is not being processed and has cube data
-            if (loadedChunks[x][z]->neighbourLoaded != CHUNK_ALL_LOADED && loadedChunks[x][z]->status >= CHUNK_DATA_LOADED)
-                loadedChunks[x][z]->addNeighbours();
-
             // add chunks to thread that where not able to be processed
-            if (loadedChunks[x][z]->status == CHUNK_UNLOADED) {
+            if (loadedChunks[x][z]->status == CHUNK_UNLOADED)
                 thread.LoadChunk(loadedChunks[x][z]);
-                continue;
-            }
-            if (loadedChunks[x][z]->status == CHUNK_DATA_LOADED)
+            else if (loadedChunks[x][z]->status == CHUNK_DATA_LOADED)
                 thread.CreateMesh(loadedChunks[x][z]);
         }
 }
