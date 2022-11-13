@@ -1,4 +1,4 @@
-﻿﻿#include <glm/gtx/string_cast.hpp>
+﻿#include <glm/gtx/string_cast.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include "minecraft.h"
 #include "chunk_generation.h"
