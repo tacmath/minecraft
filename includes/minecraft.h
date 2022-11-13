@@ -36,7 +36,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 20
+# define RENDER_DISTANCE 50
 # define UNLOAD_OFFSET 2
 
 class Minecraft {

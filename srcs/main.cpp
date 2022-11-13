@@ -40,7 +40,7 @@ void loop(Minecraft &minecraft) {
             latence = ((time - previousFrameTime) * 1000);
 
             minecraft.event.frequence = latence / 33.33f;
-            minecraft.event.GetEvents(minecraft.camera);
+            minecraft.event.GetEvents(minecraft.camera, minecraft.player);
             if (minecraft.event.lookChanged || minecraft.event.positionChanged) {
                 minecraft.setChunksVisibility();
                 minecraft.LoadViewMatrix();

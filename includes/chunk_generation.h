@@ -91,8 +91,8 @@ class ChunkGeneration {
                     else if (y > height - 4) cubes[GET_CUBE(x, y, z)] = 2;
                     else cubes[GET_CUBE(x, y, z)] = 3;
 				}
-                generateDirtPochet(ChunkSize, cubes, height, x, z, posx, posz);
-                generateCave(ChunkSize, cubes, height, x, z, posx, posz);
+            //    generateDirtPochet(ChunkSize, cubes, height, x, z, posx, posz);
+            //    generateCave(ChunkSize, cubes, height, x, z, posx, posz);
 			}
 		}
     }
@@ -122,8 +122,8 @@ class ChunkGeneration {
     inline int getHeight(Noise& noise, int x, int z, int y) {
 			return 40 
             + (int)(noise.noise(x * (1.0f / 140.0f), z * (1.0f / 140.0f)) * 40
-            - noise.noise(x * (1.0f / 75.0f), z * (1.0f / 75.0f)) * 20
-            - noise.noise(x * (1.0f / 10.0f), z * (1.0f / 10.0f)) * 5
+          //  - noise.noise(x * (1.0f / 75.0f), z * (1.0f / 75.0f)) * 20
+          //  - noise.noise(x * (1.0f / 10.0f), z * (1.0f / 10.0f)) * 5
             + noise.noise(x * (1.0f / 75.0f), z * (1.0f / 75.0f)) * 10);
     }
 };

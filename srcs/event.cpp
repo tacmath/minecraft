@@ -167,7 +167,7 @@ void Event::MovementEvent(Camera& camera, Player& player) {
 
 void Event::KeyEvent(Player& player) {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        speed = 10.0f;
+        speed = 20.0f;
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
         speed = 0.4f;
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE && keyPressed[GLFW_KEY_P]) {
