@@ -8,7 +8,8 @@
 
 #define MAX_CHUNK_PER_THREAD 1000
 
-#define THREAD_NUMBER 2
+#define DATA_THREAD_NUMBER 3
+#define MESH_THREAD_NUMBER 1
 
 #define THREAD_ALIVE 1
 #define THREAD_DYING 0
@@ -16,28 +17,30 @@
 
 class MeshThread;
 class DataThread;
-void DataThreadRoutine(DataThread& dataThread, MeshThread& meshThread);
-void MeshThreadRoutine(DataThread& dataThread, MeshThread& meshThread);
+void DataThreadRoutine(DataThread& dataThread);
+void MeshThreadRoutine(MeshThread& meshThread);
 
-class DataThread {
+class DataThread {			//no need to have the two classes they are too similar
 public:
-	Chunk** chunkList;
+	Chunk** chunkListLeft;
+	Chunk** chunkListDone;
 	int chunkLeft;
 	char status;
 
 	DataThread() {
 		chunkLeft = 0;
 		status = THREAD_ALIVE;
-		chunkList = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
+		chunkListLeft = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
+		chunkListDone = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
 	}
 
 	~DataThread() {
-		free(chunkList);
+		free(chunkListLeft);
+		free(chunkListDone);
 	}
 
-	void Launch(MeshThread& meshThread) {
-		std::thread(DataThreadRoutine, std::ref(*this), std::ref(meshThread)).detach();
-		std::thread(MeshThreadRoutine, std::ref(*this), std::ref(meshThread)).detach();
+	void Launch() {
+		std::thread(DataThreadRoutine, std::ref(*this)).detach();
 	}
 };
 
@@ -45,9 +48,11 @@ class MeshThread {
 public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
+	int chunkLeft;
 	char status;
 
 	MeshThread() {
+		chunkLeft = 0;
 		status = THREAD_ALIVE;
 		chunkListLeft = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*)); // maybe do a buffer double the size instead of 2 buffers
 		chunkListDone = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
@@ -56,6 +61,10 @@ public:
 	~MeshThread() {
 		free(chunkListLeft);
 		free(chunkListDone);
+	}
+
+	void Launch() {
+		std::thread(MeshThreadRoutine, std::ref(*this)).detach();
 	}
 };
 
@@ -82,10 +91,16 @@ public:
 	void StopThreads(void);
 
 	// assing the generation of a chunk to a thread
-	void AddChunk(Chunk* chunk);
+	void LoadChunk(Chunk* chunk);
+
+	// assing the generation of a chunk to a thread
+	void CreateMesh(Chunk* chunk);
 
 	// bind all the completed chunks from the threads
 	void BindAllChunks(void);
+
+	// unlock all the loaded chunks from the threads
+	void UnlockLoadedChunks(void);
 };
 
 #endif

@@ -100,7 +100,7 @@ void Minecraft::LoadChunks(void) {
                 Chunk* newChunk = new Chunk;     //push_back is creating a copy
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
-                thread.AddChunk(newChunk);
+                thread.LoadChunk(newChunk);
                 /*newChunk->Generate();
                 newChunk->createMeshData();
                 newChunk->Bind();*/
@@ -117,12 +117,21 @@ void Minecraft::LoadChunks(void) {
                 loadedChunks[x][z]->addNeighbours();
 
             // add chunks to thread that where not able to be processed
-            if (loadedChunks[x][z]->status == CHUNK_UNLOADED)
-                thread.AddChunk(loadedChunks[x][z]);
+            if (loadedChunks[x][z]->status == CHUNK_UNLOADED) {
+                thread.LoadChunk(loadedChunks[x][z]);
+                continue;
+            }
+            if (loadedChunks[x][z]->status == CHUNK_DATA_LOADED)
+                thread.CreateMesh(loadedChunks[x][z]);
         }
 }
 
 void Minecraft::setChunksVisibility(void) {
-    for (unsigned n = 0; n < chunks.size(); n++)
-        chunks[n]->isVisible = camera.frustum.chunkIsVisible(chunks[n]->posx, chunks[n]->posz);
+    Chunk* chunk;
+
+    for (unsigned n = 0; n < chunks.size(); n++) {
+        chunk = chunks[n];
+        if (chunk->status == CHUNK_LOADED)
+            chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
+    }
 }

@@ -62,6 +62,7 @@ void loop(Minecraft &minecraft) {
             UI.SetHighlight(event.selectedCube);
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();
+            minecraft.thread.UnlockLoadedChunks();
         }
     }
 }

@@ -4,7 +4,7 @@
 // Default constructor
 Chunk::Chunk() {
 	//	std::cout << "constructor called" << std::endl;
-	isVisible = true;
+	isVisible = false;
 	verticesNumber = 0;
 	posx = 0;
 	posz = 0;
@@ -93,6 +93,7 @@ void Chunk::Bind() {
 	glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (void*)0);
 	glBindVertexArray(0);
 	threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
+	isVisible = true;
 	if (neighbourLoaded == CHUNK_ALL_LOADED)
 		mesh.clear();
 }
