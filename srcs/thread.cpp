@@ -28,7 +28,7 @@ void Thread::StopThreads(void) {
 
 
 
-// assing the generation of a chunk to a thread
+// assing the mesh creation of a chunk to a thread
 void Thread::CreateMesh(Chunk* chunk) {
 	int thread = 0;
 
@@ -44,8 +44,8 @@ void Thread::CreateMesh(Chunk* chunk) {
 	for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 		if (!meshThreads[thread].chunkListLeft[n]) {
 			chunk->threadStatus |= CHUNK_PROCESSING;
-			for (int m = 0; m < 4; m++)
-					chunk->neighbour[m]->threadStatus += 1;	// lock all the neiboring chunks needed to generate mesh
+			for (int m = 0; m < 4; m++) // lock all the neighboring chunks needed to generate mesh
+					chunk->neighbour[m]->threadStatus += 1;
 			meshThreads[thread].chunkListLeft[n] = chunk;
 			meshThreads[thread].chunkLeft += 1;
 			return;
@@ -60,13 +60,12 @@ void Thread::BindAllChunks(void) {
 				break;
 			if (meshThreads[thread].chunkListDone[n]) {
 				meshThreads[thread].chunkListDone[n]->Bind();
-				for (int m = 0; m < 4; m++) // unlock all the neiboring chunks needed to generate mesh
+				for (int m = 0; m < 4; m++) // unlock all the neighboring chunks needed to generate mesh
 					meshThreads[thread].chunkListDone[n]->neighbour[m]->threadStatus -= 1;
 				meshThreads[thread].chunkListDone[n] = 0;
 				meshThreads[thread].chunkLeft -= 1;
 			}
 		}
-		//	std::cout << "chunk left = " << dataThreads[thread].chunkLeft << std::endl;
 	}
 }
 
