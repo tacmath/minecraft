@@ -50,8 +50,7 @@ public:
 
     inline bool isOnOrForwardPlan(glm::vec4 &plan, glm::vec3 &point) const
     {
-        const float r = 8 * (ABS(plan.x) + ABS(plan.z)) +
-            128 * ABS(plan.y);
+        const float r = 8 * (ABS(plan.x) + ABS(plan.z)) + 128 * ABS(plan.y);
         return plan.x * point.x + plan.y * point.y + plan.z * point.z - -plan.w >= -r;
     }
 
