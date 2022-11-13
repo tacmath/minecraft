@@ -3,6 +3,41 @@
 #include "event.h"
 
 #define PLAYER_RANGE 5
+/*
+list = NIL;
+do {
+    if (tMaxX < tMaxY) {
+        if (tMaxX < tMaxZ) {
+            X = X + stepX;
+            if (X == justOutX)
+                return(NIL); // outside grid
+            tMaxX = tMaxX + tDeltaX;
+        }
+        else {
+            Z = Z + stepZ;
+            if (Z == justOutZ)
+                return(NIL);
+            tMaxZ = tMaxZ + tDeltaZ;
+        }
+    }
+    else {
+        if (tMaxY < tMaxZ) {
+            Y = Y + stepY;
+            if (Y == justOutY)
+                return(NIL);
+            tMaxY = tMaxY + tDeltaY;
+        }
+        else {
+            Z = Z + stepZ;
+            if (Z == justOutZ)
+                return(NIL);
+            tMaxZ = tMaxZ + tDeltaZ;
+        }
+    }
+    list = ObjectList[X][Y][Z];
+} while (list == NIL);
+return(list);
+*/
 
 glm::vec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
     Chunk* chunk;
