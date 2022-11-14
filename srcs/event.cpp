@@ -122,43 +122,29 @@ void Event::Init(GLFWwindow* window) {
     this->window = window;
 }
 
-glm::vec3  Event::spectatorMovement(Camera& camera, Player& player) {
-    glm::vec3 newPos = glm::vec3(0);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        newPos += (speed * frequence) * camera.direction;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        newPos += (speed * frequence) * -glm::normalize(glm::cross(camera.direction, camera.up));
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        newPos += (speed * frequence) * -camera.direction;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        newPos += (speed * frequence) * glm::normalize(glm::cross(camera.direction, camera.up));
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        newPos += (speed * frequence) * camera.up;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        newPos += speed * -camera.up;
-    return newPos;
+
+void printVect(glm::vec3 vect) {
+    std::cout << "x: " << vect.x << " y : " << vect.y << " z : " << vect.z << std::endl;
 }
 
+
 void Event::MovementEvent(Camera& camera, Player& player) {
-    glm::vec3 newPos = glm::vec3(0);
-    if (!player.hasCollision)
-        newPos = spectatorMovement(camera, player);
-    else {
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            newPos += speed * camera.direction;
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            newPos += speed * -glm::normalize(glm::cross(camera.direction, camera.up));
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            newPos += speed * -camera.direction;
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            newPos += speed * glm::normalize(glm::cross(camera.direction, camera.up));
-        newPos.y = 0;
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            newPos.y = speed;
-        if (!newPos.y)
-            newPos.y -= 1.0f;
-    }
-    player.Move(newPos);
+    glm::vec3 move = glm::vec3(0);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        move += (speed * frequence) * glm::normalize(camera.direction * glm::vec3(1.0f, 0.0f, 1.0f));
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        move += (speed * frequence) * -glm::normalize(glm::cross(camera.direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        move += (speed * frequence) * glm::normalize(-camera.direction * glm::vec3(1.0f, 0.0f, 1.0f));
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        move += (speed * frequence) * glm::normalize(glm::cross(camera.direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        player.Jump();
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        move += (speed * frequence) * -camera.up;
+    
+    player.Move(move, frequence);
     if (player.position != camera.position) {
         camera.position = player.position;
         positionChanged = true;

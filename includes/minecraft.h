@@ -102,7 +102,6 @@ private:
     void initChunks(int radius);
     void initUniforms(void);
     void enableGlParam(void);
-    GLFWwindowsizefun window_size_callback(GLFWwindow* window, int width, int height);
 };
 
 #endif
