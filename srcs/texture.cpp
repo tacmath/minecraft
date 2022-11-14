@@ -53,6 +53,8 @@ void Texture::LoadAtlas(const std::vector<std::string> &fileNames, GLuint slot) 
     // limit the mimap level for each block in the atlas to be at 1 pixel minimum
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, (int)sqrt(TEXTURE_SIZE));
     
+    //try to add anisotropic filtering and use a ifdef
+
     //create the atlas texture
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEXTURE_SIZE * TEX_ATLAS_WIDTH, TEXTURE_SIZE * TEX_ATLAS_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, 0); //change for alpha
     

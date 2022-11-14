@@ -2,32 +2,70 @@
 #include "camera.h"
 #include "event.h"
 
-#define PLAYER_RANGE 5
+#define PLAYER_RANGE 8
 
-glm::vec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
+glm::ivec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
     Chunk* chunk;
+    glm::ivec3 step;
+    glm::ivec3 pos;
+    glm::vec3 delta;
+    glm::vec3 max;
     
     direction = glm::normalize(direction);
-    chunk = GetChunk((int)floor(origin.x) >> 4, (int)floor(origin.z) >> 4);
-    origin.x = origin.x - (float)(chunk->posx << 4);
-    origin.z = origin.z - (float)(chunk->posz << 4);
-    if (!chunk)
+    pos = floor(origin);
+    if (!(chunk = GetChunk(pos.x >> 4, pos.z >> 4)))
         return (glm::vec3(-1));
-    for (int n = 0; n < range; n++) {
-        if (chunk->GetCube((int)floor(origin.x), (int)floor(origin.y), (int)floor(origin.z)) != AIR) {
-            return (glm::vec3(origin.x + (float)(chunk->posx << 4), origin.y, origin.z + (float)(chunk->posz << 4)));
+    pos.x &= 0xF;
+    pos.z &= 0xF;
+    step.x = (direction.x < 0) ? -1 : 1;
+    step.y = (direction.y < 0) ? -1 : 1;
+    step.z = (direction.z < 0) ? -1 : 1;
+    delta = 1.0f / abs(direction);
+    if (step.x > 0)
+        max.x = ceil(origin.x) - origin.x;
+    else
+        max.x = origin.x - floor(origin.x);
+    if (step.y > 0)
+        max.y = ceil(origin.y) - origin.y;
+    else
+        max.y = origin.y - floor(origin.y);
+    if (step.z > 0)
+        max.z = ceil(origin.z) - origin.z;
+    else
+        max.z = origin.z - floor(origin.z);
+    max *= delta;
+    for (int n = 0; n < range; n++) {       //change the for to a while (length < range)
+        if (max.x < max.y) {
+            if (max.x < max.z) {
+                max.x += delta.x;
+                pos.x += step.x;
+            }
+            else {
+                max.z += delta.z;
+                pos.z += step.z;
+            }
         }
-        origin += direction;
+        else {
+            if (max.y < max.z) {
+                max.y += delta.y;
+                pos.y += step.y;
+            }
+            else {
+                max.z += delta.z;
+                pos.z += step.z;
+            }
+        }
+        if (chunk->GetCube(pos.x, pos.y, pos.z) != AIR)
+            return (glm::ivec3(pos.x + (chunk->posx << 4), pos.y, pos.z + (chunk->posz << 4)));
     }
-    return (glm::vec3(-1));
+    return (glm::ivec3(-1));
 }
 
 //http://www.cse.yorku.ca/~amana/research/grid.pdf
 glm::ivec3 getPointedCube(Camera &camera) {     //test the function
-    glm::vec3 result = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+    glm::ivec3 result = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
 
-
-    return (glm::ivec3(floor(result.x), floor(result.y), floor(result.z)));
+    return (result);
 }
 
 void Event::removePointedCube(Camera& camera) {
