@@ -12,8 +12,7 @@ Chunk::Chunk() {
 	VBO = 0;
 	status = CHUNK_UNLOADED;
 	threadStatus = CHUNK_NOT_PROCESSING;
-	neighbour.resize(4);
-	memset(&neighbour[0], 0, sizeof(Chunk*) * 4);
+	neighbour = (Chunk**)calloc(4, sizeof(Chunk*)); //need to secure the memory alloc
 };
 
 // Destructor
@@ -30,6 +29,7 @@ Chunk::~Chunk() {
 	if (neighbour[CHUNK_LEFT_SIDE])
 		neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = 0;
 	free(cubes);
+	free(neighbour);		// maybe combine them in a single memory alloc or combine multiples chunks in a single alloc
 	glDeleteBuffers(1, &VBO);
 }
 

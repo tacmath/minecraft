@@ -69,7 +69,7 @@ public:
 	// the visibility of the chunk
 	bool isVisible;
 	// pointer to every neighbour of the chunk
-	std::vector<Chunk*> neighbour;			//remove the vector if needed
+	Chunk** neighbour;			//remove the vector if needed
 	// loading status of the chunk
 	char status;
 	//the thread status of the chunk 
