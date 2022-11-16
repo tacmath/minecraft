@@ -2,7 +2,7 @@
 #include "camera.h"
 #include "event.h"
 
-#define PLAYER_RANGE 8
+#define PLAYER_RANGE 5
 
 glm::ivec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
     Chunk* chunk;
@@ -34,7 +34,8 @@ glm::ivec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
     else
         max.z = origin.z - floor(origin.z);
     max *= delta;
-    for (int n = 0; n < range; n++) {       //change the for to a while (length < range)
+    origin = glm::vec3(pos);
+    while (glm::length(origin - glm::vec3(pos)) < PLAYER_RANGE) {
         if (max.x < max.y) {
             if (max.x < max.z) {
                 max.x += delta.x;
