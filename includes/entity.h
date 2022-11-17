@@ -32,11 +32,7 @@ public:
 		else {
 			position.y = ceil(position.y);
 		}
-			
-		if (!CheckCollisionXZ(movement.x, movement.z)) {
-			position.x += movement.x;
-			position.z += movement.z;
-		}
+		CheckCollision(movement);
 	}
 
 	float updateFromGravity(float frequence) {
@@ -60,6 +56,7 @@ public:
 	void SetLook(float x, float y, float z);
 
 private:
+	/*
 	void CheckCollision(glm::vec3& movement) {
 		position.y += movement.y;
 		if (movement.y < 0 && GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
@@ -71,6 +68,7 @@ private:
 		if (GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.z = floor(position.z + (movement.z < 0)) - 0.001f * (movement.z >= 0);
 	}
+	*/
 
 	bool CheckCollisionDown(float moveY) {
 		if (moveY >= 0) return (0);
@@ -80,10 +78,14 @@ private:
 		return (0);
 	}
 
-	bool CheckCollisionXZ(float moveX, float moveZ) {
+	void printVect(glm::vec3 vect) {
+		std::cout << "x: " << vect.x << " y : " << vect.y << " z : " << vect.z << std::endl;
+	}
 
-		if (moveX == 0 && moveZ == 0) return (0);
-
+	bool CheckCollision(glm::vec3 movement) {
+		glm::vec3 ratio = glm::normalize(movement);
+		
+		printVect(ratio);
 		return (0);
 	}
 };

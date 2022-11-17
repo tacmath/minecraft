@@ -122,14 +122,8 @@ void Event::Init(GLFWwindow* window) {
     this->window = window;
 }
 
-
-void printVect(glm::vec3 vect) {
-    std::cout << "x: " << vect.x << " y : " << vect.y << " z : " << vect.z << std::endl;
-}
-
-
 void Event::MovementEvent(Camera& camera, Player& player) {
-    glm::vec3 move = glm::vec3(0);
+    glm::vec3 move = glm::vec3(0.f, 0.f, 0.f);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         move += (speed * frequence) * glm::normalize(camera.direction * glm::vec3(1.0f, 0.0f, 1.0f));
