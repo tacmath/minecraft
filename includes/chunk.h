@@ -144,7 +144,7 @@ private:
 	void addVisibleBorderVertices();
 };
 
-inline bool Chunk::HasAllNeighbours() {
+inline bool Chunk::HasAllNeighbours() { // instead incement a value when retreving a chunk data from thread
 	for (int n = 0; n < 4; n++)
 		if (!neighbour[n] || neighbour[n]->status < CHUNK_DATA_LOADED)
 			return (false);
