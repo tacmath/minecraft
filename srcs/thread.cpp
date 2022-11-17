@@ -1,15 +1,15 @@
 #include "thread.h"
 
-Thread::Thread(void) {
-	dataThreads = new DataThread[DATA_THREAD_NUMBER];
-	meshThreads = new MeshThread[MESH_THREAD_NUMBER];
+ThreadControleur::ThreadControleur(void) {
+	dataThreads = new Thread[DATA_THREAD_NUMBER];
+	meshThreads = new Thread[MESH_THREAD_NUMBER];
 	for (int n = 0; n < DATA_THREAD_NUMBER; n++)
-		dataThreads[n].Launch();
+		dataThreads[n].Launch(DataThreadRoutine);
 	for (int n = 0; n < MESH_THREAD_NUMBER; n++)
-		meshThreads[n].Launch();
+		meshThreads[n].Launch(MeshThreadRoutine);
 }
 
-void Thread::StopThreads(void) {
+void ThreadControleur::StopThreads(void) {
 	for (int n = 0; n < DATA_THREAD_NUMBER; n++)
 		dataThreads[n].status = THREAD_DYING;
 	for (int n = 0; n < MESH_THREAD_NUMBER; n++)
@@ -29,23 +29,20 @@ void Thread::StopThreads(void) {
 
 
 // assing the mesh creation of a chunk to a thread
-void Thread::CreateMesh(Chunk* chunk) {
+void ThreadControleur::CreateMesh(Chunk* chunk) {
 	int thread = 0;
 
 	for (int t = 0; t < MESH_THREAD_NUMBER - 1; t++)
 		if (meshThreads[t].chunkLeft > meshThreads[t + 1].chunkLeft)
 			thread = t + 1;
 
-	if (meshThreads[thread].chunkLeft == MAX_CHUNK_PER_THREAD)
+	if (meshThreads[thread].chunkLeft == MAX_CHUNK_PER_THREAD
+		|| !chunk->HasAllNeighbours())
 		return;
-	for (int m = 0; m < 4; m++)
-		if (!chunk->neighbour[m] || chunk->neighbour[m]->status < CHUNK_DATA_LOADED)
-			return;
 	for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 		if (!meshThreads[thread].chunkListLeft[n]) {
 			chunk->threadStatus |= CHUNK_PROCESSING;
-			for (int m = 0; m < 4; m++) // lock all the neighboring chunks needed to generate mesh
-					chunk->neighbour[m]->threadStatus += 1;
+			chunk->LockNeighbours();
 			meshThreads[thread].chunkListLeft[n] = chunk;
 			meshThreads[thread].chunkLeft += 1;
 			return;
@@ -53,15 +50,14 @@ void Thread::CreateMesh(Chunk* chunk) {
 	}
 }
 
-void Thread::BindAllChunks(void) {
+void ThreadControleur::BindAllChunks(void) {
 	for (int thread = 0; thread < MESH_THREAD_NUMBER; thread++) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (!meshThreads[thread].chunkLeft)
 				break;
 			if (meshThreads[thread].chunkListDone[n]) {
 				meshThreads[thread].chunkListDone[n]->Bind();
-				for (int m = 0; m < 4; m++) // unlock all the neighboring chunks needed to generate mesh
-					meshThreads[thread].chunkListDone[n]->neighbour[m]->threadStatus -= 1;
+				meshThreads[thread].chunkListDone[n]->UnlockNeighbours();
 				meshThreads[thread].chunkListDone[n] = 0;
 				meshThreads[thread].chunkLeft -= 1;
 			}
@@ -70,7 +66,7 @@ void Thread::BindAllChunks(void) {
 }
 
 
-void Thread::LoadChunk(Chunk* chunk) {
+void ThreadControleur::LoadChunk(Chunk* chunk) {
 	int thread = 0;
 
 	for (int t = 0; t < DATA_THREAD_NUMBER - 1; t++)
@@ -88,7 +84,7 @@ void Thread::LoadChunk(Chunk* chunk) {
 	}
 }
 
-void Thread::UnlockLoadedChunks(void) {
+void ThreadControleur::UnlockLoadedChunks(void) {
 	for (int thread = 0; thread < DATA_THREAD_NUMBER; thread++) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (dataThreads[thread].chunkListDone[n]) {
@@ -102,7 +98,7 @@ void Thread::UnlockLoadedChunks(void) {
 	}
 }
 
-void DataThreadRoutine(DataThread& dataThread) {		// maybe do a single thread instead of 2 specialized ones
+void DataThreadRoutine(Thread& dataThread) {		// maybe do a single thread instead of 2 specialized ones
 	int n, m;
 
 	while (dataThread.status) {
@@ -127,7 +123,7 @@ void DataThreadRoutine(DataThread& dataThread) {		// maybe do a single thread in
 //	std::cout << "data thread is dead"<< std::endl;
 }
 
-void MeshThreadRoutine(MeshThread& meshThread) {
+void MeshThreadRoutine(Thread& meshThread) {
 	int n, m;
 
 	while (meshThread.status) {

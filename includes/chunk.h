@@ -122,6 +122,12 @@ public:
 	unsigned char GetCube(glm::ivec3 pos);
 	//set the id of the cube at a certain position
 	void SetCube(unsigned char cubeId, int x, int y, int z);
+	// return true if the chunk is surounded by neighbour with data
+	bool HasAllNeighbours();
+	// lock all the neighbours of the chunk
+	void LockNeighbours();
+	// unlock all the neighbours of the chunk
+	void UnlockNeighbours();
 
 private:
 	void addTopVertices(const int x, const int y, const int z);
@@ -137,6 +143,37 @@ private:
 	void addVisibleVertices(int x, int y, int z);
 	void addVisibleBorderVertices();
 };
+
+inline bool Chunk::HasAllNeighbours() {
+	for (int n = 0; n < 4; n++)
+		if (!neighbour[n] || neighbour[n]->status < CHUNK_DATA_LOADED)
+			return (false);
+	if (!neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_LEFT_SIDE] || neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_LEFT_SIDE]->status < CHUNK_DATA_LOADED ||
+		!neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] || neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->status < CHUNK_DATA_LOADED || 
+		!neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_LEFT_SIDE] || neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_LEFT_SIDE]->status < CHUNK_DATA_LOADED ||
+		!neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_RIGHT_SIDE] || neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->status < CHUNK_DATA_LOADED)
+		return (false);
+	return (true);
+}
+
+inline void Chunk::LockNeighbours() {
+	for (int n = 0; n < 4; n++)
+		neighbour[n]->threadStatus += 1;
+	neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_LEFT_SIDE]->threadStatus += 1;
+	neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->threadStatus += 1;
+	neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_LEFT_SIDE]->threadStatus += 1;
+	neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->threadStatus += 1;
+
+}
+
+inline void Chunk::UnlockNeighbours() {
+	for (int n = 0; n < 4; n++)
+		neighbour[n]->threadStatus -= 1;
+	neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_LEFT_SIDE]->threadStatus -= 1;
+	neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->threadStatus -= 1;
+	neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_LEFT_SIDE]->threadStatus -= 1;
+	neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->threadStatus -= 1;
+}
 
 // return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
 Chunk* GetChunk(int x, int z);

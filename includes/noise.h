@@ -82,32 +82,32 @@ private:
 		*/
 	}
 
-	glm::vec2 randomGradient(int ix, int iy) {
-    // No precomputed gradients mean this works for any number of grid coordinates
-    const unsigned w = 8 * sizeof(unsigned);
-    const unsigned s = w / 2; // rotation width
-    unsigned a = ix, b = iy;
-    a *= 3284157443; b ^= a << s | a >> (w - s);
-    b *= 1911520717; a ^= b << s | b >> (w - s);
-    a *= 2048419325;
-    float random = a * (3.14159265f / ~(~0u >> 1)); // in [0, 2*Pi]
-    glm::vec2 v;
-    v.x = cos(random); v.y = sin(random);
-    return v;
-}
+	inline glm::vec2 randomGradient(int ix, int iy) {
+		// No precomputed gradients mean this works for any number of grid coordinates
+		const unsigned w = 8 * sizeof(unsigned);
+		const unsigned s = w / 2; // rotation width
+		unsigned a = ix, b = iy;
+		a *= 3284157443; b ^= a << s | a >> (w - s);
+		b *= 1911520717; a ^= b << s | b >> (w - s);
+		a *= 2048419325;
+		float random = a * (3.14159265f / ~(~0u >> 1)); // in [0, 2*Pi]
+		glm::vec2 v;
+		v.x = cos(random); v.y = sin(random);
+		return v;
+	}
 
 // Computes the dot product of the distance and gradient vectors.
-float dotGridGradient(int ix, int iy, float x, float y) {
-    // Get gradient from integer coordinates
-    glm::vec2 gradient = randomGradient(ix, iy);
+	inline float dotGridGradient(int ix, int iy, float x, float y) {
+		// Get gradient from integer coordinates
+		glm::vec2 gradient = randomGradient(ix, iy);
 
-    // Compute the distance vector
-    float dx = x - (float)ix;
-    float dy = y - (float)iy;
+		// Compute the distance vector
+		float dx = x - (float)ix;
+		float dy = y - (float)iy;
 
-    // Compute the dot-product
-    return (dx * gradient.x + dy * gradient.y);
-}
+		// Compute the dot-product
+		return (dx * gradient.x + dy * gradient.y);
+	}
 };
 
 //noise using the seed

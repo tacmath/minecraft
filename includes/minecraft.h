@@ -42,7 +42,7 @@ public:
 	std::vector<Chunk*> chunks;
 
     // multithreading object
-    Thread thread;
+    ThreadControleur thread;
     
     //chunk shader
     Shader  chunkShader;

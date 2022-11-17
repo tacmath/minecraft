@@ -15,59 +15,33 @@
 #define THREAD_DYING 0
 #define THREAD_DEAD 2
 
-class MeshThread;
-class DataThread;
-void DataThreadRoutine(DataThread& dataThread);
-void MeshThreadRoutine(MeshThread& meshThread);
+class Thread;
+void DataThreadRoutine(Thread& dataThread);
+void MeshThreadRoutine(Thread& meshThread);
 
-class DataThread {			//no need to have the two classes they are too similar
+class Thread {			//no need to have the two classes they are too similar
 public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
 	int chunkLeft;
 	char status;
 
-	DataThread() {
+	Thread() {
 		chunkLeft = 0;
 		status = THREAD_ALIVE;
 		chunkListLeft = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
 		chunkListDone = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
 	}
 
-	~DataThread() {
+	~Thread() {
 		free(chunkListLeft);
 		free(chunkListDone);
 	}
 
-	void Launch() {
-		std::thread(DataThreadRoutine, std::ref(*this)).detach();
+	void Launch(void (*routine)(Thread&)) {
+		std::thread(routine, std::ref(*this)).detach();
 	}
 };
-
-class MeshThread {
-public:
-	Chunk** chunkListLeft;
-	Chunk** chunkListDone;
-	int chunkLeft;
-	char status;
-
-	MeshThread() {
-		chunkLeft = 0;
-		status = THREAD_ALIVE;
-		chunkListLeft = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*)); // maybe do a buffer double the size instead of 2 buffers
-		chunkListDone = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
-	}
-
-	~MeshThread() {
-		free(chunkListLeft);
-		free(chunkListDone);
-	}
-
-	void Launch() {
-		std::thread(MeshThreadRoutine, std::ref(*this)).detach();
-	}
-};
-
 /*
 	for now the thread routine :
 
@@ -78,14 +52,14 @@ public:
 
 */
 
-class Thread {
+class ThreadControleur {
 private:
-	DataThread *dataThreads;
-	MeshThread *meshThreads;
+	Thread *dataThreads;
+	Thread *meshThreads;
 	
 public:
 	// default contuctor that launch the threads
-	Thread(void);
+	ThreadControleur(void);
 
 	// send a signal to the threads and wait for them to properly close
 	void StopThreads(void);

@@ -118,10 +118,20 @@ void Chunk::Update() {
 
 void Chunk::UpdateCube(int x, int z) { // need tu uptade de corner if a block is in the corner for the AO
 	Update();
-	if (x == 0 && neighbour[CHUNK_FRONT_SIDE])
+	if (x == 0 && neighbour[CHUNK_FRONT_SIDE]) {
 		neighbour[CHUNK_FRONT_SIDE]->Update();
-	if (x == 15 && neighbour[CHUNK_BACK_SIDE])
+		if (z == 0)
+			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_LEFT_SIDE]->Update();
+		if (z == 15)
+			neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->Update();
+	}
+	if (x == 15 && neighbour[CHUNK_BACK_SIDE]) {
 		neighbour[CHUNK_BACK_SIDE]->Update();
+		if (z == 0)
+			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_LEFT_SIDE]->Update();
+		if (z == 15)
+			neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_RIGHT_SIDE]->Update();
+	}
 	if (z == 0 && neighbour[CHUNK_LEFT_SIDE])
 		neighbour[CHUNK_LEFT_SIDE]->Update();
 	if (z == 15 && neighbour[CHUNK_RIGHT_SIDE])
