@@ -59,7 +59,7 @@ void loop(Minecraft &minecraft) {
                 minecraft.LoadViewMatrix();
                 UI.SetViewMatrix(minecraft.camera.view);
             }
-            UI.SetHighlight(event.selectedCube);
+            UI.SetHighlight(minecraft.player.selectedCube);
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();
             minecraft.thread.UnlockLoadedChunks();

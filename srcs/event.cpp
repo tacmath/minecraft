@@ -4,19 +4,27 @@
 
 #define PLAYER_RANGE 5
 
-glm::ivec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
+//http://www.cse.yorku.ca/~amana/research/grid.pdf
+
+RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
     Chunk* chunk;
     glm::ivec3 step;
     glm::ivec3 pos;
     glm::vec3 delta;
     glm::vec3 max;
+    RayCastInfo result;
     
     direction = glm::normalize(direction);
     pos = floor(origin);
     if (!(chunk = GetChunk(pos.x >> 4, pos.z >> 4)))
-        return (glm::vec3(-1));
+        return (result);
     pos.x &= 0xF;
     pos.z &= 0xF;
+    if (chunk->GetCube(pos.x, pos.y, pos.z) != AIR) {
+        result.id = chunk->GetCube(pos.x, pos.y, pos.z);
+        result.position = glm::ivec3(origin);
+        return (result);
+    }
     step.x = (direction.x < 0) ? -1 : 1;
     step.y = (direction.y < 0) ? -1 : 1;
     step.z = (direction.z < 0) ? -1 : 1;
@@ -36,6 +44,7 @@ glm::ivec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
     max *= delta;
     origin = glm::vec3(pos);
     while (glm::length(origin - glm::vec3(pos)) < PLAYER_RANGE) {
+        result.side = pos;
         if (max.x < max.y) {
             if (max.x < max.z) {
                 max.x += delta.x;
@@ -56,33 +65,49 @@ glm::ivec3 rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
                 pos.z += step.z;
             }
         }
-        if (chunk->GetCube(pos.x, pos.y, pos.z) != AIR)
-            return (glm::ivec3(pos.x + (chunk->posx << 4), pos.y, pos.z + (chunk->posz << 4)));
+        if (chunk->GetCube(pos.x, pos.y, pos.z) != AIR) {
+            result.id = chunk->GetCube(pos.x, pos.y, pos.z);
+            result.position = glm::ivec3(pos.x + (chunk->posx << 4), pos.y, pos.z + (chunk->posz << 4));
+            result.side.x += (chunk->posx << 4);
+            result.side.z += (chunk->posz << 4);
+            result.range = glm::length(origin - glm::vec3(pos));
+            return (result);
+        }
     }
-    return (glm::ivec3(-1));
-}
-
-//http://www.cse.yorku.ca/~amana/research/grid.pdf
-glm::ivec3 getPointedCube(Camera &camera) {     //test the function
-    glm::ivec3 result = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
-
     return (result);
 }
 
-void Event::removePointedCube(Camera& camera) {
+
+
+void Event::removePointedCube(Camera& camera, Player& player) {
     Chunk* chunk;
-    if (selectedCube.y < 0)
+    glm::ivec3 pos;
+
+    if (player.selectedCube.id == AIR)
         return;
-    chunk = GetChunk(selectedCube.x >> 4, selectedCube.z >> 4);
-    chunk->SetCube(AIR, selectedCube.x & 0xF, selectedCube.y & 0xFF, selectedCube.z & 0xF);
-    chunk->UpdateCube(selectedCube.x & 0xF, selectedCube.z & 0xF);
-    selectedCube = getPointedCube(camera);
+    pos = player.selectedCube.position;
+    chunk = GetChunk(pos.x >> 4, pos.z >> 4);
+    chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
+    chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
+    player.selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+}
+
+void Event::placeCube(Camera& camera, Player& player) {
+    Chunk* chunk;
+    glm::ivec3 pos;
+
+    if (player.selectedCube.id == AIR || player.selectedCube.range < 1.5)
+        return;
+    pos = player.selectedCube.side;
+    chunk = GetChunk(pos.x >> 4, pos.z >> 4);
+    chunk->SetCube(3, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
+    chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
+    player.selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
 }
 
 Event::Event() {
     window = 0;
     mousePos = glm::dvec2(0);
-    selectedCube = glm::ivec3(-1);
     memset(keyPressed, 0, 256);
     positionChanged = false;
     lookChanged = false;
@@ -200,8 +225,10 @@ void Event::GetEvents(Camera& camera, Player& player) {
     MouseEvent(camera);
     if (positionChanged || lookChanged) {
         camera.Update(perspective);
-        selectedCube = getPointedCube(camera);
+        player.selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
     }
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-        removePointedCube(camera);
+        removePointedCube(camera, player);
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+        placeCube(camera, player);
 }

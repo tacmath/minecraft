@@ -24,7 +24,6 @@ class Event {
 public:
 	bool positionChanged;
 	bool lookChanged;
-	glm::ivec3 selectedCube;
 	
 	Event();
 
@@ -34,7 +33,8 @@ public:
 	void KeyEvent(Player& player);
 	void GetEvents(Camera &camera, Player &player);
 private:
-	void removePointedCube(Camera& camera);
+	void removePointedCube(Camera& camera, Player& player);
+	void placeCube(Camera& camera, Player& player);
 	glm::vec3 spectatorMovement(Camera& camera, Player& player);
 }; 
 

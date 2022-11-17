@@ -3,6 +3,7 @@
 
 #include "shader.h"
 #include "VAO.h"
+#include "player.h"
 
 class UserInterface {
 	Shader highlightShader;
@@ -26,12 +27,12 @@ public:
         highlightShader.setMat4("view", view);
     }
 
-    void SetHighlight(glm::vec3 pos) {
+    void SetHighlight(RayCastInfo selectedCube) {
         hasHighlight = false;
-        if (pos.y < 0)
+        if (selectedCube.id == AIR || selectedCube.range < 1)
             return;
         highlightShader.Activate();
-        highlightShader.setVec3("cubePos", pos);
+        highlightShader.setVec3("cubePos", selectedCube.position);
         hasHighlight = true;
     }
 
