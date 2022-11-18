@@ -85,8 +85,10 @@ private:
 	bool CheckCollision(glm::vec3 movement) {
 		glm::vec3 ratio = glm::normalize(movement);
 		
+		if (glm::all(glm::isnan(ratio))) return (false);
 		printVect(ratio);
-		return (0);
+
+		return (false);
 	}
 };
 
