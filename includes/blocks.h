@@ -18,6 +18,14 @@ struct Block {
 		this->side = side;
 		this->bottom = bottom;
 	}
+	void SetTexture(std::string& type, char textureIndex) {
+		if (type == "Top")
+			this->top = textureIndex;
+		else if (type == "Side")
+			this->side = textureIndex;
+		else if (type == "Bottom")
+			this->bottom = textureIndex;
+	}
 };
 
 #endif

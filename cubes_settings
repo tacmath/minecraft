@@ -1,0 +1,17 @@
+Name Grass
+	ID		1
+	Top		grass_top.png
+	Side	grass_side.png
+	Bottom	dirt.png
+
+Name Dirt
+	ID		2
+	Top		dirt.png
+	Side	dirt.png
+	Bottom	dirt.png
+
+Name Stone
+	ID		3
+	Top		stone.png
+	Side	stone.png
+	Bottom	stone.png

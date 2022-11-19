@@ -175,6 +175,7 @@
     <ClInclude Include="includes\VBO.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cubes_settings" />
     <None Include="shaders\highlightFS.glsl" />
     <None Include="shaders\highlightVS.glsl" />
     <None Include="shaders\skyBoxFS.glsl" />
