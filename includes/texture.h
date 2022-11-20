@@ -10,6 +10,7 @@
 
 #define TEX_ATLAS_WIDTH 4
 #define TEX_ATLAS_HEIGHT 1
+#define TEX_ARRAY_LENGTH 64
 
 #define TEXTURE_SIZE 16
 
@@ -19,10 +20,13 @@ public:
     GLuint ID;
     // Unit where the texture is assigned 
     GLuint unit;
+    // type of texture
+    GLuint type;
     // Default constructor
     Texture() {
         ID = 0;
         unit = 0;
+        type = GL_TEXTURE_2D;
     }
     // Default destructor
     ~Texture();
@@ -34,6 +38,8 @@ public:
 
     // load all texture in fileNames and create a texture atlas 
     void LoadAtlas(const std::vector<std::string> &fileNames, GLuint slot);
+    // load all texture in fileNames and create a texture array 
+    void LoadArray(const std::vector<std::string>& fileNames, GLuint slot);
     // Bind a texture to a texture unit
     void Bind();
     // Unbind a texture

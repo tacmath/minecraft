@@ -53,7 +53,7 @@ static void parseBlockData(std::vector<std::string> &textures) {
                 char index;
                 
                 if (it != textures.end())
-                    index = it - textures.begin();
+                    index = (char)(it - textures.begin());
                 else {
                     index = (char)textures.size();
                     textures.push_back(splitLine[1]);
@@ -78,7 +78,7 @@ Minecraft::Minecraft(void) {
     parseBlockData(textureNames);
     for (auto& name : textureNames)
         name = "texture/" + name;
-    texAtlas.LoadAtlas(textureNames, 0);
+    texAtlas.LoadArray(textureNames, 0);
     
     initUniforms();
 
@@ -86,7 +86,7 @@ Minecraft::Minecraft(void) {
     global_noise.SetSeed(seed);
 
     initChunks(STARTING_RENDER_DISTANCE);
-
+//    setChunksVisibility();
 }
 
 void Minecraft::Draw(void) {

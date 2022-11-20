@@ -15,3 +15,9 @@ Name Stone
 	Top		stone.png
 	Side	stone.png
 	Bottom	stone.png
+
+Name BedRock
+	ID		5
+	Top		bedrock.png
+	Side	bedrock.png
+	Bottom	bedrock.png

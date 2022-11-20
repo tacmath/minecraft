@@ -34,11 +34,11 @@
 /*
 	store multiple data in an int32 with the format :
 
-	0000		|	0000	|	0000	|	0	|	0	|	00000	|	00000	|	00000000
-	luminosity	| texatlasY	| texatlasX	| textY	| textX	|	posZ	|	posX	|	  posY
+	0000		|	00000000	|	0	|	0	|	00000	|	00000	|	00000000
+	luminosity	|	 textID		| textY	| textX	|	posZ	|	posX	|	  posY
 */
 #define PACK_VERTEX_DATA(x, y, z, textx, texty) (y | (x << 8) | (z << 13) | textx << 18 | texty << 19)
-#define PACK_ATLAS_VERTEX_DATA(texatlasX, texatlasY) ((texatlasX << 20) | (texatlasY << 24))
+#define PACK_TEXTURE_ID(textID) (textID << 20)
 
 // get the offset of a cube based on the position in the chunk
 #define GET_CUBE(x, y, z) ((y << 8) | (x << 4) | z)

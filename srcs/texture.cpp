@@ -70,13 +70,43 @@ void Texture::LoadAtlas(const std::vector<std::string> &fileNames, GLuint slot) 
     glGenerateMipmap(GL_TEXTURE_2D);
 }
 
+void Texture::LoadArray(const std::vector<std::string>& fileNames, GLuint slot) {
+    void* data;
+    int x, y, comp;
+
+    unit = slot;
+    type = GL_TEXTURE_2D_ARRAY;
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glGenTextures(1, &ID);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, ID);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    //try to add anisotropic filtering and use a ifdef
+
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, TEXTURE_SIZE, TEXTURE_SIZE, TEX_ARRAY_LENGTH, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    stbi_set_flip_vertically_on_load(true);
+    for (unsigned n = 0; n < fileNames.size(); n++) {
+        if (!(data = stbi_load(fileNames[n].c_str(), &x, &y, &comp, 0)))
+            std::cerr << "Failed to load" << fileNames[n] << std::endl;
+        if (n < TEX_ARRAY_LENGTH)
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, n, x, y, 1,  (comp == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+        stbi_image_free(data);
+    }
+    
+    //create the atlas mimap
+    glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+}
+
 void Texture::Bind() {
     glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(GL_TEXTURE_2D, ID);
+    glBindTexture(type, ID);
 }
 
 void Texture::Unbind() {
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(type, 0);
 }
 
 void Texture::Delete() {

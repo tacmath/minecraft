@@ -1,11 +1,11 @@
 #version 400
 out vec4 FragColor;
 
-in vec2 texCoord;
+in vec3 texCoord;
 in float luminosity;
 //in float dist;
 
-uniform sampler2D atlas;
+uniform sampler2DArray atlas;
 
 
 void main()
