@@ -86,8 +86,8 @@ class ChunkGeneration {
                 int height = groundHeight(global_noise, posx * ChunkSize + x, posz * ChunkSize + z);
 				for (int y = 0; y < height; y++) {
                     if (y == 0) cubes[GET_CUBE(x, y, z)] = 5;
-                    else if (cubes[GET_CUBE(x, y, z)] == -1) cubes[GET_CUBE(x, y, z)] = 0;
-                    else if (cubes[GET_CUBE(x, y, z)] == -2) cubes[GET_CUBE(x, y, z)] = 2;
+                    else if ((char)cubes[GET_CUBE(x, y, z)] == -1) cubes[GET_CUBE(x, y, z)] = 0;
+                    else if ((char)cubes[GET_CUBE(x, y, z)] == -2) cubes[GET_CUBE(x, y, z)] = 2;
                     else if (y == height - 1) cubes[GET_CUBE(x, y, z)] = 1;
                     else if (y > height - 4) cubes[GET_CUBE(x, y, z)] = 2;
                     else cubes[GET_CUBE(x, y, z)] = 3;

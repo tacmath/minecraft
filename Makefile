@@ -6,7 +6,7 @@
 #    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/05 15:16:55 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/11/21 10:51:12 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,13 @@ NAME_SRC=main.cpp \
 			texture.cpp\
 			shader.cpp\
 			thread.cpp\
+			chunk.cpp\
+			event.cpp\
+			entity.cpp\
+			cubeMesh.cpp\
+			camera.cpp\
 			minecraft.cpp\
+			
 			
 
 NAME_SRC_C=glad.c \
