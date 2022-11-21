@@ -84,7 +84,11 @@ void Texture::LoadArray(const std::vector<std::string>& fileNames, GLuint slot) 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    //try to add anisotropic filtering and use a ifdef
+    //anisotropic filtering
+    GLfloat value, max_anisotropy = 4.0f; /* don't exceed this value...*/
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, & value);
+    value = (value > max_anisotropy) ? max_anisotropy : value;
+    glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, value);
 
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, TEXTURE_SIZE, TEXTURE_SIZE, TEX_ARRAY_LENGTH, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
     stbi_set_flip_vertically_on_load(true);
