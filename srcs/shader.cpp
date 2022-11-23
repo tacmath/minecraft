@@ -6,6 +6,8 @@ char* Shader::getShaderSource(const char* fileName) {
     std::ifstream   file;
     size_t  size;
 
+    if (!fileName)
+        return (0);
     file.open(fileName);
     if (!file.is_open()) {
         printf("Failed to open %s\n", fileName);
@@ -27,9 +29,10 @@ char* Shader::getShaderSource(const char* fileName) {
     return (source);
 }
 
-void Shader::Load(const char *vertexShaderFile, const char *fragmentShaderFile) {
+void Shader::Load(const char *vertexShaderFile, const char *fragmentShaderFile, const char *geometryShaderFile) {
     char* vertexShaderSource = getShaderSource(vertexShaderFile);
     char* fragmentShaderSource = getShaderSource(fragmentShaderFile);
+    char* geometryShaderSource = getShaderSource(geometryShaderFile);
 
     ID = 0;
     if (!vertexShaderSource || !fragmentShaderSource)
@@ -45,16 +48,28 @@ void Shader::Load(const char *vertexShaderFile, const char *fragmentShaderFile) 
 	glCompileShader(fragmentShader);
     compileErrors(fragmentShader, "FRAGMENT");
 
+    GLuint geometryShader = 0;
+    if (geometryShaderSource) {
+        geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
+        glCompileShader(geometryShader);
+        compileErrors(geometryShader, "GEOMETRY");
+    }
+
 	GLuint programShader = glCreateProgram();
 	glAttachShader(programShader, vertexShader);
 	glAttachShader(programShader, fragmentShader);
+    if (geometryShader)
+        glAttachShader(programShader, geometryShader);
 	glLinkProgram(programShader);
     compileErrors(programShader, "PROGRAM");
 
     free(vertexShaderSource);
     free(fragmentShaderSource);
+    free(geometryShaderSource);
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+    glDeleteShader(geometryShader);
     ID = programShader;
 }
 
