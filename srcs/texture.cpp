@@ -89,7 +89,7 @@ void Texture::LoadArray(const std::vector<std::string>& fileNames, GLuint slot) 
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, & value);
     value = (value > max_anisotropy) ? max_anisotropy : value;
     glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, value);
-
+    
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, TEXTURE_SIZE, TEXTURE_SIZE, TEX_ARRAY_LENGTH, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
     stbi_set_flip_vertically_on_load(true);
     for (unsigned n = 0; n < fileNames.size(); n++) {

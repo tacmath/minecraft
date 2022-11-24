@@ -139,5 +139,11 @@
     <None Include="cubes_settings">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="shaders\wireFrameGS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\wireFrameFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

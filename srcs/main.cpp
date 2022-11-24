@@ -37,7 +37,9 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
 void loop(Minecraft &minecraft) {
     Event event;
     UserInterface UI;
+    bool    hasNormalShader;
 
+    hasNormalShader = true;
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
     event.Init(minecraft.window);
@@ -58,6 +60,13 @@ void loop(Minecraft &minecraft) {
                 minecraft.setChunksVisibility();
                 minecraft.LoadViewMatrix();
                 UI.SetViewMatrix(minecraft.camera.view);
+            }
+            if (event.chunkShaderChanged) {
+                hasNormalShader = !hasNormalShader;
+                if (hasNormalShader)
+                    minecraft.changeShader(minecraft.chunkShader, minecraft.normalChunkShader);
+                else
+                    minecraft.changeShader(minecraft.chunkShader, minecraft.wireframeChunkShader);
             }
             UI.SetHighlight(minecraft.player.selectedCube);
             minecraft.LoadChunks();

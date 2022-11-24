@@ -6,7 +6,7 @@
 
 //http://www.cse.yorku.ca/~amana/research/grid.pdf
 
-RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) {
+RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { //need to modify it has some problem in certain coord
     Chunk* chunk;
     glm::ivec3 step;
     glm::ivec3 pos;
@@ -111,6 +111,7 @@ Event::Event() {
     memset(keyPressed, 0, 256);
     positionChanged = false;
     lookChanged = false;
+    chunkShaderChanged = false;
     inMenu = true;
     perspective = NORMAL_PERSPECTIVE;
     speed = 0.4f;
@@ -182,6 +183,12 @@ void Event::KeyEvent(Player& player) {
     }
     else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
         keyPressed[GLFW_KEY_C] = 1;
+    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_RELEASE && keyPressed[GLFW_KEY_Z]) {
+        chunkShaderChanged = !chunkShaderChanged;
+        keyPressed[GLFW_KEY_Z] = 0;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+        keyPressed[GLFW_KEY_Z] = 1;
 }
 
 void Event::MouseEvent(Camera &camera) {
@@ -219,6 +226,7 @@ void Event::MouseEvent(Camera &camera) {
 void Event::GetEvents(Camera& camera, Player& player) {
     lookChanged = false;
     positionChanged = false;
+    chunkShaderChanged = false;
     glfwPollEvents();
     MovementEvent(camera, player);
     KeyEvent(player);

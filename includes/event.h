@@ -24,6 +24,7 @@ class Event {
 public:
 	bool positionChanged;
 	bool lookChanged;
+	bool chunkShaderChanged;
 	
 	Event();
 

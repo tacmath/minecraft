@@ -71,7 +71,10 @@ Minecraft::Minecraft(void) {
     initSkybox();
     enableGlParam();
     skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
-    chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+    normalChunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+    wireframeChunkShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
+    changeShader(chunkShader, normalChunkShader);
+
     camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
     
     std::vector<std::string> textureNames;
@@ -121,6 +124,9 @@ Minecraft::~Minecraft(void) {
     //std::cout << "Minecraft destructor has been called" << std::endl;
     for (int n = 0; n < chunks.size(); n++)
         delete chunks[n];
+    normalChunkShader.Delete();
+    wireframeChunkShader.Delete();
+    skyboxShader.Delete();
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -184,4 +190,9 @@ void Minecraft::setChunksVisibility(void) {
         if (chunk->status == CHUNK_LOADED)
             chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
     }
+}
+
+void Minecraft::changeShader(Shader& currentShader, Shader& newShader) {
+    currentShader = newShader;
+    initUniforms();
 }

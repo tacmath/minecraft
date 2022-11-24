@@ -44,6 +44,10 @@ public:
     // multithreading object
     ThreadControleur thread;
     
+    //normal chunk shader
+    Shader  normalChunkShader;
+    //wireframe chunk shader
+    Shader  wireframeChunkShader;
     //chunk shader
     Shader  chunkShader;
     // texture atlas
@@ -76,6 +80,8 @@ public:
 
     // set the visibility of each chunk
     void setChunksVisibility(void);
+
+    void changeShader(Shader &currentShader, Shader &newShader);
 
 private:
     void initWindows(void);
