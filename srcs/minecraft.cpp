@@ -196,7 +196,7 @@ void Minecraft::LoadChunks(void) {
 
         chunk = chunksLoading[n];
         chunk->SetPlayerProximity(abs(chunk->posx - ((int)camera.position.x >> 4)) + abs(chunk->posz - ((int)camera.position.z >> 4)));
-        chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 16);
+        chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 24);
     }
     std::sort(chunksLoading.begin(), chunksLoading.end(), cmpChunk);
     for (int n = 0; n < chunksLoading.size(); n++) {
