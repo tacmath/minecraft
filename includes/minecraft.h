@@ -38,8 +38,11 @@ public:
     // the player
     Player      player;
 
-    // a chunk
+    // list of all the chunks loaded
 	std::vector<Chunk*> chunks;
+
+    // list of all the chunks loading
+    std::vector<Chunk*> chunksLoading;
 
     // multithreading object
     ThreadControleur thread;

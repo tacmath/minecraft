@@ -131,6 +131,10 @@ Minecraft::~Minecraft(void) {
     glfwTerminate();
 }
 
+bool cmpChunk(Chunk* a, const Chunk* b) {
+    return (*a < *b);
+}
+
 void Minecraft::LoadChunks(void) {
     Chunk    *loadedChunks[DATA_RENDER_DISTANCE << 1][DATA_RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
     int x, z, playerPosx, playerPosz, maxChunk;
@@ -156,30 +160,56 @@ void Minecraft::LoadChunks(void) {
         else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
             loadedChunks[x][z] = chunks[n];
     }
+    chunkNumber = (int)chunksLoading.size();
+    n = -1;
+    while (++n < chunkNumber) {
+        x = chunksLoading[n]->posx - playerPosx;
+        z = chunksLoading[n]->posz - playerPosz;
+
+        // check if a chunk is too far away and delete it if nessesary
+        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunksLoading[n]->threadStatus == CHUNK_NOT_PROCESSING) {
+            delete chunksLoading[n]; // delete (chunk destructor) = 60 % of the function perf
+            chunksLoading.erase(chunksLoading.begin() + n);
+            n--;
+            chunkNumber--;
+        }
+        // fill the 2d array if a chunk is in the RENDER_DISTANCE
+        else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
+            loadedChunks[x][z] = chunksLoading[n];
+    }
 
     //add all the chunk that are in loadedChunks but didn't exist
     for (int x = 0; x < maxChunk; x++)
         for (int z = 0; z < maxChunk; z++) {
-
             // load new chunks if it is in the render distance but didn't exist
-            if (!loadedChunks[x][z]/* && camera.frustum.chunkIsVisible(playerPosx + x, playerPosz + z)*/) {    //change the order of generation to start from the middle to the side
-                Chunk* newChunk = new Chunk;     //push_back is creating a copy
+            if (!loadedChunks[x][z]/* && camera.frustum.chunkIsVisible(playerPosx + x, playerPosz + z)*/) {
+                Chunk* newChunk = new Chunk;
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
                 thread.LoadChunk(newChunk);
-                chunks.push_back(newChunk);     //if needed push_back fist the most important chunk or create a priority list
+                chunksLoading.push_back(newChunk);
                 loadedChunks[x][z] = newChunk;
-                continue;
             }
-            if (!loadedChunks[x][z] || loadedChunks[x][z]->threadStatus & CHUNK_PROCESSING)
-                continue;
-
-            // add chunks to thread that where not able to be processed
-            if (loadedChunks[x][z]->status == CHUNK_UNLOADED)
-                thread.LoadChunk(loadedChunks[x][z]);
-            else if (loadedChunks[x][z]->status == CHUNK_DATA_LOADED)
-                thread.CreateMesh(loadedChunks[x][z]);
         }
+    for (int n = 0; n < chunksLoading.size(); n++) {
+        Chunk* chunk;
+
+        chunk = chunksLoading[n];
+        chunk->SetPlayerProximity(abs(chunk->posx - ((int)camera.position.x >> 4)) + abs(chunk->posz - ((int)camera.position.z >> 4)));
+        chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 16);
+    }
+    std::sort(chunksLoading.begin(), chunksLoading.end(), cmpChunk);
+    for (int n = 0; n < chunksLoading.size(); n++) {
+        Chunk* chunk;
+
+        chunk = chunksLoading[n];
+        if (chunk->threadStatus & CHUNK_PROCESSING)
+            continue;
+        if (chunk->status == CHUNK_UNLOADED)
+            thread.LoadChunk(chunk);
+        else if (chunk->status == CHUNK_DATA_LOADED)
+            thread.CreateMesh(chunk);
+    }
 }
 
 void Minecraft::setChunksVisibility(void) {
@@ -188,7 +218,7 @@ void Minecraft::setChunksVisibility(void) {
     for (unsigned n = 0; n < chunks.size(); n++) {
         chunk = chunks[n];
         if (chunk->status == CHUNK_LOADED)
-            chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
+            chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 8);
     }
 }
 

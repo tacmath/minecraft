@@ -50,7 +50,7 @@ void ThreadControleur::CreateMesh(Chunk* chunk) {
 	}
 }
 
-void ThreadControleur::BindAllChunks(void) {
+void ThreadControleur::BindAllChunks(std::vector<Chunk*>& chunks, std::vector<Chunk*>& chunksLoading) {
 	for (int thread = 0; thread < MESH_THREAD_NUMBER; thread++) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (!meshThreads[thread].chunkLeft)
@@ -58,6 +58,12 @@ void ThreadControleur::BindAllChunks(void) {
 			if (meshThreads[thread].chunkListDone[n]) {
 				meshThreads[thread].chunkListDone[n]->Bind();
 				meshThreads[thread].chunkListDone[n]->UnlockNeighbours();
+				chunks.push_back(meshThreads[thread].chunkListDone[n]);
+				for (int i = 0; i < chunksLoading.size(); i++)
+					if (chunksLoading[i] == meshThreads[thread].chunkListDone[n]) {
+						chunksLoading.erase(chunksLoading.begin() + i);
+						break;
+					}
 				meshThreads[thread].chunkListDone[n] = 0;
 				meshThreads[thread].chunkLeft -= 1;
 			}

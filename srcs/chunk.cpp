@@ -146,3 +146,11 @@ Chunk* GetChunk(int x, int z) {
 	else
 		return (0);
 }
+
+void Chunk::SetPlayerProximity(unsigned int poximity) {
+	this->playerProximity = poximity;
+}
+
+bool Chunk::operator<(const Chunk& rhs) {
+	return ((this->playerProximity + !this->isVisible * 1000) < (rhs. playerProximity + !rhs.isVisible * 1000));
+}

@@ -41,20 +41,20 @@ public:
         
     }
 
-    inline bool isOnOrForwardPlan(glm::vec4 &plan, glm::vec3 &point) const
+    inline bool isOnOrForwardPlan(glm::vec4 &plan, glm::vec3 &point, int radius) const
     {
-        const float r = 8 * (ABS(plan.x) + ABS(plan.z)) +
+        const float r = radius * (ABS(plan.x) + ABS(plan.z)) +
             128 * ABS(plan.y);
         return plan.x * point.x + plan.y * point.y + plan.z * point.z - -plan.w >= -r;
     }
 
-    inline bool chunkIsVisible(int x, int z) {
+    inline bool chunkIsVisible(int x, int z, int radius) {
         glm::vec3 pos((x << 4) + 8, 128, (z << 4) + 8);
 
-        if (isOnOrForwardPlan(right, pos) &&
-            isOnOrForwardPlan(left, pos) &&
-            isOnOrForwardPlan(top, pos) &&
-            isOnOrForwardPlan(bottom, pos))
+        if (isOnOrForwardPlan(right, pos, radius) &&
+            isOnOrForwardPlan(left, pos, radius) &&
+            isOnOrForwardPlan(top, pos, radius) &&
+            isOnOrForwardPlan(bottom, pos, radius))
             return (true);
         return (false);
     }

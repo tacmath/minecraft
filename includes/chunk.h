@@ -60,6 +60,9 @@ private:
 	// the number of all the vertices
 	unsigned int verticesNumber;
 
+	// chunk proximity to the player
+	unsigned int playerProximity;
+
 	// vertex array object
 	VAO VAO;
 	// vertex buffer object ID
@@ -129,6 +132,10 @@ public:
 	// unlock all the neighbours of the chunk
 	void UnlockNeighbours();
 
+	// set player proximity
+	void SetPlayerProximity(unsigned int poximity);
+	// compare the player proximity of a chunk
+	bool operator<(const Chunk &rhs);
 private:
 	void addTopVertices(const int x, const int y, const int z);
 	void addBottomVertices(const int x, const int y, const int z);

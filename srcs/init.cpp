@@ -16,20 +16,22 @@
 void Minecraft::initChunks(int radius) {
     long diameter = (radius + 1) * 2;
 
-    chunks.resize(diameter * diameter);
+    chunksLoading.resize(diameter * diameter);
     for (int x = 0; x < diameter; x++)
         for (int z = 0; z < diameter; z++) {
             Chunk *newChunk = new Chunk;
             newChunk->SetPosistion(x - (radius + 1), z - (radius + 1));
             chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
             newChunk->Generate();
-            chunks[x * diameter + z] = newChunk;
+            chunksLoading[x * diameter + z] = newChunk;
         }
     for (int x = 1; x < diameter - 1; x++)
         for (int z = 1; z < diameter - 1; z++) {
-            Chunk* chunk = chunks[x * diameter + z];
+            Chunk* chunk = chunksLoading[x * diameter + z];
             chunk->createMeshData();
             chunk->Bind();
+            chunks.push_back(chunk);
+            chunksLoading.erase(chunksLoading.begin() + x * diameter + z);
         }
 }
 

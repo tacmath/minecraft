@@ -70,7 +70,7 @@ void loop(Minecraft &minecraft) {
             }
             UI.SetHighlight(minecraft.player.selectedCube);
             minecraft.LoadChunks();
-            minecraft.thread.BindAllChunks();
+            minecraft.thread.BindAllChunks(minecraft.chunks, minecraft.chunksLoading);
             minecraft.thread.UnlockLoadedChunks();
         }
     }
