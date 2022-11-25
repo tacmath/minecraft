@@ -132,11 +132,11 @@ Minecraft::~Minecraft(void) {
 }
 
 inline bool cmpChunk(Chunk* a, const Chunk* b) {
-    return ((a->playerProximity + (!a->isVisible << 9)) < (b->playerProximity + (!b->isVisible << 9)));
+    return ((a->playerProximity + (!a->isVisible << 10)) < (b->playerProximity + (!b->isVisible << 10)));
 }
 
 void Minecraft::LoadChunks(void) {
-    Chunk    *loadedChunks[DATA_RENDER_DISTANCE << 1][DATA_RENDER_DISTANCE << 1];     //probably need to change that for a dynamic table
+    Chunk    *loadedChunks[(DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1)];     //probably need to change that for a dynamic table
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
     maxChunk = DATA_RENDER_DISTANCE << 1;
@@ -158,7 +158,7 @@ void Minecraft::LoadChunks(void) {
         }
         // fill the 2d array if a chunk is in the RENDER_DISTANCE
         else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
-            loadedChunks[x][z] = chunks[n];
+            loadedChunks[x * maxChunk + z] = chunks[n];
     }
     chunkNumber = (int)chunksLoading.size();
     n = -1;
@@ -175,20 +175,20 @@ void Minecraft::LoadChunks(void) {
         }
         // fill the 2d array if a chunk is in the RENDER_DISTANCE
         else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
-            loadedChunks[x][z] = chunksLoading[n];
+            loadedChunks[x * maxChunk + z] = chunksLoading[n];
     }
 
     //add all the chunk that are in loadedChunks but didn't exist
     for (int x = 0; x < maxChunk; x++)
         for (int z = 0; z < maxChunk; z++) {
             // load new chunks if it is in the render distance but didn't exist
-            if (!loadedChunks[x][z] /*&& VEC2_LEN((x - DATA_RENDER_DISTANCE), (z - DATA_RENDER_DISTANCE)) <= DATA_RENDER_DISTANCE*/) {
+            if (!loadedChunks[x * maxChunk + z] /*&& VEC2_LEN((x - DATA_RENDER_DISTANCE), (z - DATA_RENDER_DISTANCE)) <= DATA_RENDER_DISTANCE*/) {
                 Chunk* newChunk = new Chunk;
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
                 thread.LoadChunk(newChunk);
                 chunksLoading.push_back(newChunk);
-                loadedChunks[x][z] = newChunk;
+                loadedChunks[x * maxChunk + z] = newChunk;
             }
         }
     for (int n = 0; n < chunksLoading.size(); n++) {
