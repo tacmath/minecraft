@@ -48,7 +48,7 @@ public:
         return plan.x * point.x + plan.y * point.y + plan.z * point.z - -plan.w >= -r;
     }
 
-    inline bool chunkIsVisible(int x, int z, int radius) {
+    inline bool chunkIsVisible(int x, int z, int radius = 8) {
         glm::vec3 pos((x << 4) + 8, 128, (z << 4) + 8);
 
         if (isOnOrForwardPlan(right, pos, radius) &&

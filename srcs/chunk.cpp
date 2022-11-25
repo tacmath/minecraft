@@ -147,10 +147,10 @@ Chunk* GetChunk(int x, int z) {
 		return (0);
 }
 
-void Chunk::SetPlayerProximity(unsigned int poximity) {
-	this->playerProximity = poximity;
-}
+void Chunk::SetPlayerProximity(glm::vec3 &playerPos) {
+	int x, z;
 
-bool Chunk::operator<(const Chunk& rhs) {
-	return ((this->playerProximity + !this->isVisible * 1000) < (rhs. playerProximity + !rhs.isVisible * 1000));
+	x = posx - ((int)playerPos.x >> 4);
+	z = posz - ((int)playerPos.z >> 4);
+	this->playerProximity = VEC2_LEN(x, z);
 }

@@ -47,6 +47,8 @@
 
 #define GET_CHUNK_ID(x, z) ((int64_t)x << 32 | (z & UINT32_MAX))
 
+#define VEC2_LEN(x, y) (sqrt(x * x + y * y))
+
 class Chunk;
 
 extern std::map<int64_t, Chunk*> chunksMap;
@@ -60,9 +62,6 @@ private:
 	// the number of all the vertices
 	unsigned int verticesNumber;
 
-	// chunk proximity to the player
-	unsigned int playerProximity;
-
 	// vertex array object
 	VAO VAO;
 	// vertex buffer object ID
@@ -71,6 +70,8 @@ private:
 public:
 	// the visibility of the chunk
 	bool isVisible;
+	// chunk proximity to the player
+	unsigned int playerProximity;
 	// pointer to every neighbour of the chunk
 	Chunk** neighbour;			//remove the vector if needed
 	// loading status of the chunk
@@ -133,9 +134,7 @@ public:
 	void UnlockNeighbours();
 
 	// set player proximity
-	void SetPlayerProximity(unsigned int poximity);
-	// compare the player proximity of a chunk
-	bool operator<(const Chunk &rhs);
+	void SetPlayerProximity(glm::vec3 &playerPos);
 private:
 	void addTopVertices(const int x, const int y, const int z);
 	void addBottomVertices(const int x, const int y, const int z);
@@ -186,10 +185,10 @@ inline void Chunk::UnlockNeighbours() {
 Chunk* GetChunk(int x, int z);
 
 // return a the id of a cube based on its world coordonate 
-inline unsigned char GetCubeAt(int x, int y, int z) { //peux ètre couteux si appeler trop de fois
+inline unsigned char GetCubeAt(int x, int y, int z) { //peux ï¿½tre couteux si appeler trop de fois
 	Chunk* chunk;
 
-	chunk = GetChunk(x >> 4, z >> 4);										//faire un get cube relatif a un chunk pour évité trop d'appel a GetChunk
+	chunk = GetChunk(x >> 4, z >> 4);										//faire un get cube relatif a un chunk pour ï¿½vitï¿½ trop d'appel a GetChunk
 	if (!chunk || chunk->status < CHUNK_DATA_LOADED || y < 0 || y > 255)
 		return (0);
 	return (chunk->cubes[GET_CUBE((x & 0xF), y, (z & 0xF))]);

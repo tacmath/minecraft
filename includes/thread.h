@@ -6,10 +6,10 @@
 #include "chunk.h"
 #include <chrono>
 
-#define MAX_CHUNK_PER_THREAD 200
+#define MAX_CHUNK_PER_THREAD 100
 
-#define DATA_THREAD_NUMBER 3
-#define MESH_THREAD_NUMBER 2
+#define DATA_THREAD_NUMBER 2
+#define MESH_THREAD_NUMBER 1
 
 #define THREAD_ALIVE 1
 #define THREAD_DYING 0
@@ -67,11 +67,17 @@ public:
 	// assing the generation of a chunk to a thread
 	void LoadChunk(Chunk* chunk);
 
+	// assing the generation of multiple chunk to the threads
+	void LoadChunk(std::vector<Chunk*> &chunks);
+
+	// assing the generation of a chunk to a thread
+	void CreateMesh(std::vector<Chunk*> &chunks, std::vector<Chunk*> &chunksLoading);
+
 	// assing the generation of a chunk to a thread
 	void CreateMesh(Chunk* chunk);
 
 	// bind all the completed chunks from the threads
-	void BindAllChunks(std::vector<Chunk*> &chunks, std::vector<Chunk*> &chunksLoading);
+	void BindAllChunks();
 
 	// unlock all the loaded chunks from the threads
 	void UnlockLoadedChunks(void);

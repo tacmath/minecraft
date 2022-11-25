@@ -6,7 +6,7 @@
 #    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/21 10:51:12 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/11/25 14:37:21 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,7 +67,7 @@ OBJ_NAME_C		= $(NAME_SRC_C:.c=.o)
 
 OBJS = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME)) $(addprefix $(OBJ_PATH)/,$(OBJ_NAME_C))
 
-OPTIMISATION_FLAG = #-o3 #-ofast  pas d'interet pour l'instant
+OPTIMISATION_FLAG = -ofast #-fsanitize=address#-o3 #-ofast  pas d'interet pour l'instant
 
 CC			= gcc $(OPTIMISATION_FLAG)
 GPP			= g++ -std=c++11 $(OPTIMISATION_FLAG)
