@@ -91,7 +91,6 @@ void Chunk::Bind() {
 	glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (void*)0);
 	glBindVertexArray(0);
 	threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
-	isVisible = true;
 	mesh.clear();
 }
 
@@ -152,5 +151,5 @@ void Chunk::SetPlayerProximity(glm::vec3 &playerPos) {
 
 	x = posx - ((int)playerPos.x >> 4);
 	z = posz - ((int)playerPos.z >> 4);
-	this->playerProximity = VEC2_LEN(x, z);
+	this->playerProximity = (unsigned int)VEC2_LEN(x, z);
 }

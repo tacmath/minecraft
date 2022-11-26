@@ -23,11 +23,14 @@
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 50
+# define RENDER_DISTANCE 20
 # define DATA_RENDER_DISTANCE (RENDER_DISTANCE + 1)
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
+private:
+    //list of all the chunks in the render distance
+    Chunk** loadedChunks;
 public:
     // the window context
     GLFWwindow* window;
@@ -92,6 +95,9 @@ private:
     void initChunks(int radius);
     void initUniforms(void);
     void enableGlParam(void);
+    void fillLoadedChunks(std::vector<Chunk*>& chunks);
+    void sortChunksLoading(void);
+    void loadNewChunks(void);
 };
 
 #endif

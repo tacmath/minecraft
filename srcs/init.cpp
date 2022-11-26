@@ -30,6 +30,7 @@ void Minecraft::initChunks(int radius) {
             Chunk* chunk = chunksLoading[x * diameter + z];
             chunk->createMeshData();
             chunk->Bind();
+            chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
             chunks.push_back(chunk);
             chunksLoading.erase(chunksLoading.begin() + x * diameter + z);
         }

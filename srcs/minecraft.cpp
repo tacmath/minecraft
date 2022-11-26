@@ -89,7 +89,10 @@ Minecraft::Minecraft(void) {
     global_noise.SetSeed(seed);
 
     initChunks(STARTING_RENDER_DISTANCE);
-//    setChunksVisibility();
+
+    loadedChunks = (Chunk**)calloc((DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1), sizeof(Chunk*));
+    if (!loadedChunks)
+        exit(1);
 }
 
 void Minecraft::Draw(void) {
@@ -124,6 +127,7 @@ Minecraft::~Minecraft(void) {
     //std::cout << "Minecraft destructor has been called" << std::endl;
     for (int n = 0; n < chunks.size(); n++)
         delete chunks[n];
+    free(loadedChunks);
     normalChunkShader.Delete();
     wireframeChunkShader.Delete();
     skyboxShader.Delete();
@@ -135,49 +139,51 @@ inline bool cmpChunk(Chunk* a, const Chunk* b) {
     return ((a->playerProximity + (!a->isVisible << 10)) < (b->playerProximity + (!b->isVisible << 10)));
 }
 
-void Minecraft::LoadChunks(void) {
-    Chunk    *loadedChunks[(DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1)];     //probably need to change that for a dynamic table
+void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks) {
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
+    Chunk* chunk;
+
     maxChunk = DATA_RENDER_DISTANCE << 1;
     playerPosx = ((int)camera.position.x >> 4) - DATA_RENDER_DISTANCE;
     playerPosz = ((int)camera.position.z >> 4) - DATA_RENDER_DISTANCE;
-    memset(loadedChunks, 0, maxChunk * maxChunk * sizeof(Chunk*));
     chunkNumber = (int)chunks.size();
     n = -1;
     while (++n < chunkNumber) {
-        x = chunks[n]->posx - playerPosx;
-        z = chunks[n]->posz - playerPosz;
+        chunk = chunks[n];
+        x = chunk->posx - playerPosx;
+        z = chunk->posz - playerPosz;
 
         // check if a chunk is too far away and delete it if nessesary
-        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunks[n]->threadStatus == CHUNK_NOT_PROCESSING) {
-            delete chunks[n]; // delete (chunk destructor) = 60 % of the function perf
+        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunk->threadStatus == CHUNK_NOT_PROCESSING) {
+            delete chunk; // delete (chunk destructor) = 60 % of the function perf
             chunks.erase(chunks.begin() + n);
             n--;
             chunkNumber--;
         }
         // fill the 2d array if a chunk is in the RENDER_DISTANCE
         else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
-            loadedChunks[x * maxChunk + z] = chunks[n];
+            loadedChunks[x * maxChunk + z] = chunk;
     }
-    chunkNumber = (int)chunksLoading.size();
-    n = -1;
-    while (++n < chunkNumber) {
-        x = chunksLoading[n]->posx - playerPosx;
-        z = chunksLoading[n]->posz - playerPosz;
+}
 
-        // check if a chunk is too far away and delete it if nessesary
-        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunksLoading[n]->threadStatus == CHUNK_NOT_PROCESSING) {
-            delete chunksLoading[n]; // delete (chunk destructor) = 60 % of the function perf
-            chunksLoading.erase(chunksLoading.begin() + n);
-            n--;
-            chunkNumber--;
-        }
-        // fill the 2d array if a chunk is in the RENDER_DISTANCE
-        else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
-            loadedChunks[x * maxChunk + z] = chunksLoading[n];
+void Minecraft::sortChunksLoading(void) {
+    for (int n = 0; n < chunksLoading.size(); n++) {
+        Chunk* chunk;
+
+        chunk = chunksLoading[n];
+        chunk->SetPlayerProximity(camera.position); //sqrt take some time
+        chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 24);
     }
+    std::sort(chunksLoading.begin(), chunksLoading.end(), cmpChunk); //instead sort from middle to borders and maybe limit the ammount of chunks in chunksLoading
+}
 
+void Minecraft::loadNewChunks(void) {
+    int playerPosx, playerPosz, maxChunk;
+
+    maxChunk = DATA_RENDER_DISTANCE << 1;
+    playerPosx = ((int)camera.position.x >> 4) - DATA_RENDER_DISTANCE;
+    playerPosz = ((int)camera.position.z >> 4) - DATA_RENDER_DISTANCE;
     //add all the chunk that are in loadedChunks but didn't exist
     for (int x = 0; x < maxChunk; x++)
         for (int z = 0; z < maxChunk; z++) {
@@ -186,19 +192,22 @@ void Minecraft::LoadChunks(void) {
                 Chunk* newChunk = new Chunk;
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
-                thread.LoadChunk(newChunk);
                 chunksLoading.push_back(newChunk);
                 loadedChunks[x * maxChunk + z] = newChunk;
             }
         }
-    for (int n = 0; n < chunksLoading.size(); n++) {
-        Chunk* chunk;
+}
 
-        chunk = chunksLoading[n];
-        chunk->SetPlayerProximity(camera.position);
-        chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 24);
-    }
-    std::sort(chunksLoading.begin(), chunksLoading.end(), cmpChunk);
+void Minecraft::LoadChunks(void) {
+
+    memset(loadedChunks, 0, (DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1) * sizeof(Chunk*));
+
+    fillLoadedChunks(chunks);
+    fillLoadedChunks(chunksLoading);
+
+    loadNewChunks();
+
+    sortChunksLoading();
 
     thread.LoadChunk(chunksLoading);
     thread.CreateMesh(chunks, chunksLoading);
