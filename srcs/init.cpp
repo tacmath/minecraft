@@ -25,8 +25,8 @@ void Minecraft::initChunks(int radius) {
             newChunk->Generate();
             chunksLoading[x * diameter + z] = newChunk;
         }
-    for (int x = 1; x < diameter - 1; x++)
-        for (int z = 1; z < diameter - 1; z++) {
+    for (int x = 1; x < diameter - 2; x++)
+        for (int z = 1; z < diameter - 2; z++) {
             Chunk* chunk = chunksLoading[x * diameter + z];
             chunk->createMeshData();
             chunk->Bind();
