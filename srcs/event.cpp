@@ -33,10 +33,14 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { /
         max.x = ceil(origin.x) - origin.x;
     else
         max.x = origin.x - floor(origin.x);
-    if (step.y > 0)
+    if (step.y > 0) {
         max.y = ceil(origin.y) - origin.y;
-    else
+        max.y += (max.y == 0) * 0.9999f;
+    }
+    else {
         max.y = origin.y - floor(origin.y);
+        max.y += (max.y == 0) * 0.0001f;
+    }
     if (step.z > 0)
         max.z = ceil(origin.z) - origin.z;
     else
