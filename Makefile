@@ -6,7 +6,7 @@
 #    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/05 15:16:55 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/11/28 12:27:27 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,19 +36,28 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib
+FRAMEWORK= -framework opengl -lglfw -L libraries/lib/glfw3lib -lfreetype -L libraries/lib/freetypelib
 FRAMEWORK_INC = libraries/include
 
-NAME_SRC=main.cpp \
+NAME_SRC=	main.cpp \
+			minecraft.cpp \
+			shader.cpp \
+			texture.cpp \
+			thread.cpp \
+			VAO.cpp \
+			VBO.cpp \
+			cubeMap.cpp \
 			init.cpp \
-			cubeMap.cpp\
-			VBO.cpp\
-			VAO.cpp\
-			texture.cpp\
-			shader.cpp\
-			thread.cpp\
-			minecraft.cpp\
-			
+			camera.cpp \
+			cubeMesh.cpp \
+			chunk.cpp \
+			event.cpp \
+			entity.cpp \
+			textDisplay.cpp \
+			debug.cpp \
+			simplex_noise.cpp
+	
+	 
 
 NAME_SRC_C=glad.c \
 
