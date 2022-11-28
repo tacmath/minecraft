@@ -29,10 +29,14 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { /
     step.y = (direction.y < 0) ? -1 : 1;
     step.z = (direction.z < 0) ? -1 : 1;
     delta = 1.0f / abs(direction);
-    if (step.x > 0)
+    if (step.x > 0) {
         max.x = ceil(origin.x) - origin.x;
-    else
+        max.x += (max.x == 0) * 0.9999f;
+    }
+    else {
         max.x = origin.x - floor(origin.x);
+        max.x += (max.x == 0) * 0.0001f;
+    }
     if (step.y > 0) {
         max.y = ceil(origin.y) - origin.y;
         max.y += (max.y == 0) * 0.9999f;
@@ -41,10 +45,14 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { /
         max.y = origin.y - floor(origin.y);
         max.y += (max.y == 0) * 0.0001f;
     }
-    if (step.z > 0)
+    if (step.z > 0) {
         max.z = ceil(origin.z) - origin.z;
-    else
+        max.z += (max.z == 0) * 0.9999f;
+    }
+    else {
         max.z = origin.z - floor(origin.z);
+        max.z += (max.z == 0) * 0.0001f;
+    }
     max *= delta;
     origin = glm::vec3(pos);
     while (glm::length(origin - glm::vec3(pos)) < PLAYER_RANGE) {
