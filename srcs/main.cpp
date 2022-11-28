@@ -34,6 +34,26 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     return (1);
 }
 
+void sun(Minecraft& minecraft, Event &event) {
+    static float time = 0.0f;
+    glm::vec3 sunPos;
+
+    time++;
+    if (time >= 180.0f)
+        time = 0.0f;
+    if (!event.sunMode)
+        return;
+    sunPos.z = 500 * -cos(glm::radians(time));
+    sunPos.y = 500 * sin(glm::radians(time));
+    sunPos.x = 0;
+
+    glm::mat4 sunMat = glm::lookAt(sunPos + minecraft.camera.position, minecraft.camera.position, glm::vec3(0, 1, 0));
+    minecraft.chunkShader.Activate();
+    minecraft.chunkShader.setMat4("view", sunMat);
+    minecraft.skyboxShader.Activate();
+    minecraft.skyboxShader.setMat4("view", glm::mat4(glm::mat3(sunMat)));
+}
+
 void loop(Minecraft &minecraft) {
     Event event;
     UserInterface UI;
@@ -72,6 +92,7 @@ void loop(Minecraft &minecraft) {
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();
             minecraft.thread.UnlockLoadedChunks();
+            sun(minecraft, event);
         }
     }
 }

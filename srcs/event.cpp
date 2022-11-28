@@ -119,6 +119,7 @@ Event::Event() {
     lookChanged = false;
     chunkShaderChanged = false;
     inMenu = true;
+    sunMode = false;
     perspective = NORMAL_PERSPECTIVE;
     speed = 0.4f;
     mouseSensitivity = 0.1f;
@@ -195,6 +196,13 @@ void Event::KeyEvent(Player& player) {
     }
     else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
         keyPressed[GLFW_KEY_Z] = 1;
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE && keyPressed[GLFW_KEY_L]) {
+        sunMode = !sunMode;
+        lookChanged = true;
+        keyPressed[GLFW_KEY_L] = 0;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+        keyPressed[GLFW_KEY_L] = 1;
 }
 
 void Event::MouseEvent(Camera &camera) {
