@@ -6,7 +6,7 @@
 #include "chunk.h"
 #include <chrono>
 
-#define MAX_CHUNK_PER_THREAD 100
+#define MAX_CHUNK_PER_THREAD 200
 
 #define DATA_THREAD_NUMBER 2
 #define MESH_THREAD_NUMBER 1
