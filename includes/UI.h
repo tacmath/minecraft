@@ -20,19 +20,28 @@ public:
         hasHighlight = false;
     }
 
-    void  setTextProjection(float width, float height) {
-        text.setProjection(width, height);
-    }
-
     void InitUniforms(glm::mat4& projection) {
         highlightShader.Activate();
         highlightShader.setMat4("projection", projection);
+    }
+
+    void  setTextProjection(float width, float height) {
+        text.setProjection(width, height);
     }
 
     void SetViewMatrix(glm::mat4& view) {
         highlightShader.Activate();
         highlightShader.setMat4("view", view);
     }
+
+    void Draw(Minecraft &minecraft) {
+        SetHighlight(minecraft.player.selectedCube);
+        DrawHighlight();
+        DrawCross(minecraft.windowsSize.x / 2, minecraft.windowsSize.y / 2);
+    }
+
+private:
+
 
     void SetHighlight(RayCastInfo selectedCube) {
         hasHighlight = false;
@@ -56,7 +65,6 @@ public:
         text.display("+", x, z, 0.4f, glm::vec3(1.0, 1.0f, 1.0f));
     }
 
-private:
     void initHighlight() {
 
         float CubeVertices[] =

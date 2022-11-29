@@ -26,8 +26,6 @@ Minecraft minecraft;
 Debug debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
 UserInterface UI = UserInterface(minecraft.windowsSize.x, minecraft.windowsSize.y);
 
-
-
 void sun(Minecraft& minecraft, Event& event) {
     static float time = 0.0f;
     glm::vec3 sunPos;
@@ -47,6 +45,8 @@ void sun(Minecraft& minecraft, Event& event) {
     minecraft.skyboxShader.Activate();
     minecraft.skyboxShader.setMat4("view", glm::mat4(glm::mat3(sunMat)));
 }
+
+
 
 void loop(Minecraft &minecraft) {
     bool hasNormalShader = false;
@@ -69,6 +69,7 @@ void loop(Minecraft &minecraft) {
                 minecraft.LoadViewMatrix();
                 UI.SetViewMatrix(minecraft.camera.view);
             }
+
             if (minecraft.event.chunkShaderChanged) {
                 hasNormalShader = !hasNormalShader;
                 if (hasNormalShader)
@@ -76,15 +77,15 @@ void loop(Minecraft &minecraft) {
                 else
                     minecraft.changeShader(minecraft.chunkShader, minecraft.wireframeChunkShader);
             }
-            minecraft.LoadChunks();
-            minecraft.thread.BindAllChunks();
-            minecraft.thread.UnlockLoadedChunks();
-            sun(minecraft, minecraft.event);
+            if (minecraft.motor.update(time)) {
+                minecraft.LoadChunks();
+                minecraft.thread.BindAllChunks();
+                minecraft.thread.UnlockLoadedChunks();
+                sun(minecraft, minecraft.event);
+            }
             minecraft.Draw();
-            UI.SetHighlight(minecraft.player.selectedCube);
-            UI.DrawHighlight();
-            UI.DrawCross(minecraft.windowsSize.x / 2, minecraft.windowsSize.y / 2);
-            debug.display(time, latence, minecraft);
+            UI.Draw(minecraft);
+         //   debug.Draw(time, latence, minecraft);
 
             glfwSwapBuffers(minecraft.window);
             previousFrameTime = time;
@@ -122,3 +123,5 @@ GLenum glCheckError()
     }
     return errorCode;
 }
+
+

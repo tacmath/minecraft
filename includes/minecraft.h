@@ -10,6 +10,7 @@
 #include "chunk.h"
 #include "thread.h"
 #include "player.h"
+#include "motor.h"
 #include "event.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
@@ -48,6 +49,8 @@ public:
 
     // the event
     Event       event;
+
+    Motor       motor;
 
     glm::vec2 windowsSize;
 

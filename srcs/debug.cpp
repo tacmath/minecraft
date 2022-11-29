@@ -24,7 +24,7 @@ void Debug::setProjection(float width, float height) {
     text.setProjection(width, height);
 }
 
-void Debug::display(float time, float latence, Minecraft &minecraft) {
+void Debug::Draw(float time, float latence, Minecraft &minecraft) {
     if (visible == false) return;
     frame += 1;
 
@@ -54,7 +54,7 @@ void Debug::display(float time, float latence, Minecraft &minecraft) {
     sprintf(target, "target: %d %d %d", minecraft.player.selectedCube.position.x, minecraft.player.selectedCube.position.y, minecraft.player.selectedCube.position.z);
 
     float y = minecraft.windowsSize.y - 15;
-    float scale = y / 600 / 5;
+    float scale = (y / 600) / 5;
     float space = scale * 100.0f;
     text.display("Vox Version 0.1", 5.0f, y, scale, glm::vec3(1.0, 1.0f, 1.0f));
     text.display(fps, 5.0f, y - space * 1, scale, glm::vec3(1.0, 1.0f, 1.0f));

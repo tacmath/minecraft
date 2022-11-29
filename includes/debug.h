@@ -27,7 +27,7 @@ public:
 
     void disable();
 
-    void display(float time, float latence, Minecraft &minecraft);
+    void Draw(float time, float latence, Minecraft &minecraft);
 };
 
 #endif
