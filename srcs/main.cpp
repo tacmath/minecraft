@@ -1,38 +1,106 @@
 #include <glm/gtx/string_cast.hpp>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "minecraft.h"
 #include "chunk_generation.h"
+
 #include "blocks.h"
 #include "event.h"
 #include "UI.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+#include "debug.h"
+#include <iomanip>
+
+#include "debug.h"
+#include <iomanip>
+
 
 // all the globals needed
 Block blocks[256];
 ChunkGeneration globalChunkGeneration;
 std::map<int64_t, Chunk*> chunksMap;
 Noise global_noise;
+SimplexNoise global_simplex_noise;
 
-void getMouseEvent(GLFWwindow* window, Camera& camera);
+Minecraft minecraft;
+Debug debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
+UserInterface UI = UserInterface(minecraft.windowsSize.x, minecraft.windowsSize.y);
 
-int showFPS(GLFWwindow* window, Minecraft &minecraft) {
-    static double oldTime = 0;
-    static double newTime;
-    static int frames = 0;
-    static char title[100];
-    double timeDiff;
+void loop(Minecraft &minecraft) {
+    bool hasNormalShader = false;
+    float previousLoopTime = 0;
+    float previousFrameTime = 0;
+    float diff = 0;
+    float time = 0;
+    float latence = 0;
+    float maxfps = (1.0f / MAX_FPS);
+    while  (glfwGetKey(minecraft.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(minecraft.window) != 1) {
+        time = (float)glfwGetTime();
+        diff = time - previousLoopTime;
+        if (diff >= maxfps) {
+            latence = ((time - previousFrameTime) * 1000);
 
-    newTime = glfwGetTime();
-    timeDiff = newTime - oldTime;
-    frames++;
-    if (timeDiff < 1.0f / 30.0f)
-        return (0);
-    sprintf(title, "Minecraft :  FPS = %d  ms = %f coor = %f %f %f", (int)((1.0 / timeDiff) * frames), (timeDiff * 1000) / frames, minecraft.camera.position.x, minecraft.camera.position.y, minecraft.camera.position.z);
-    glfwSetWindowTitle(window, title);
-    frames = 0;
-    oldTime = newTime;
-    return (1);
+            minecraft.event.frequence = latence / 33.33f;
+            minecraft.event.GetEvents(minecraft.camera, minecraft.player);
+            if (minecraft.event.lookChanged || minecraft.event.positionChanged) {
+                minecraft.setChunksVisibility();
+                minecraft.LoadViewMatrix();
+                UI.SetViewMatrix(minecraft.camera.view);
+            }
+            if (event.chunkShaderChanged) {
+                hasNormalShader = !hasNormalShader;
+                if (hasNormalShader)
+                    minecraft.changeShader(minecraft.chunkShader, minecraft.normalChunkShader);
+                else
+                    minecraft.changeShader(minecraft.chunkShader, minecraft.wireframeChunkShader);
+            }
+            minecraft.LoadChunks();
+            minecraft.thread.BindAllChunks();
+            minecraft.thread.UnlockLoadedChunks();
+            sun(minecraft, event);
+            minecraft.Draw();
+            UI.SetHighlight(minecraft.player.selectedCube);
+            UI.DrawHighlight();
+            UI.DrawCross(minecraft.windowsSize.x / 2, minecraft.windowsSize.y / 2);
+            debug.display(time, latence, minecraft);
+
+            glfwSwapBuffers(minecraft.window);
+            previousFrameTime = time;
+            previousLoopTime = time - (diff - maxfps);
+        }
+    }
 }
+/*
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+*/   
+
+
+int main(void) {
+    glfwSetWindowSizeCallback(minecraft.window, [](GLFWwindow* window, int width, int height)
+    {
+            std::cout << "RESIZE" << std::endl;
+            minecraft.windowsSize = glm::vec2((float)width, (float)height);
+            minecraft.camera.updateSize((float)width, (float)height);
+            debug.setProjection((float)width, (float)height);
+            UI.setTextProjection((float)width, (float)height);
+            glViewport(0, 0, (int)minecraft.windowsSize.x,  (int)minecraft.windowsSize.y);
+    });
+
+//    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    UI.InitUniforms(minecraft.camera.projection);
+    UI.SetViewMatrix(minecraft.camera.view);
+    minecraft.event.Init(minecraft.window);
+    glfwSetWindowTitle(minecraft.window, "Minecraft");
+    glfwSwapInterval(0);
+    loop(minecraft);
+    minecraft.thread.StopThreads();
+	return (0);
+}
+
+
+
 
 void sun(Minecraft& minecraft, Event &event) {
     static float time = 0.0f;
@@ -54,49 +122,6 @@ void sun(Minecraft& minecraft, Event &event) {
     minecraft.skyboxShader.setMat4("view", glm::mat4(glm::mat3(sunMat)));
 }
 
-void loop(Minecraft &minecraft) {
-    Event event;
-    UserInterface UI;
-    bool    hasNormalShader;
-
-    hasNormalShader = true;
-    UI.InitUniforms(minecraft.camera.projection);
-    UI.SetViewMatrix(minecraft.camera.view);
-    event.Init(minecraft.window);
-    glfwSwapInterval(0);
-    while (1) {
-
-        minecraft.Draw();
-        UI.DrawHighlight();
-     
-        glfwSwapBuffers(minecraft.window);
-
-        if (showFPS(minecraft.window, minecraft)) { // return 1 when at an inteval
-            event.GetEvents(minecraft.camera, minecraft.player);
-            if (glfwGetKey(minecraft.window, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
-                glfwWindowShouldClose(minecraft.window) == 1)
-                return;
-            if (event.lookChanged || event.positionChanged) {
-                minecraft.setChunksVisibility();
-                minecraft.LoadViewMatrix();
-                UI.SetViewMatrix(minecraft.camera.view);
-            }
-            if (event.chunkShaderChanged) {
-                hasNormalShader = !hasNormalShader;
-                if (hasNormalShader)
-                    minecraft.changeShader(minecraft.chunkShader, minecraft.normalChunkShader);
-                else
-                    minecraft.changeShader(minecraft.chunkShader, minecraft.wireframeChunkShader);
-            }
-            UI.SetHighlight(minecraft.player.selectedCube);
-            minecraft.LoadChunks();
-            minecraft.thread.BindAllChunks();
-            minecraft.thread.UnlockLoadedChunks();
-            sun(minecraft, event);
-        }
-    }
-}
-
 GLenum glCheckError()
 {
     GLenum errorCode;
@@ -114,19 +139,4 @@ GLenum glCheckError()
         std::cout << error << std::endl;
     }
     return errorCode;
-}
-
-/*
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-*/
-int main(void) {
-    Minecraft minecraft;
-    
-//    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-    loop(minecraft);
-    minecraft.thread.StopThreads();
-	return (0);
 }
