@@ -63,8 +63,8 @@ void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
         time = 0.0f;
     if (!event.sunMode)
         return;
-    sunPos.z = 120 * -cos(glm::radians(time));
-    sunPos.y = 120 * sin(glm::radians(time));
+    sunPos.z = 160 * -cos(glm::radians(time));
+    sunPos.y = 160 * sin(glm::radians(time));
     sunPos.x = 0;
 
     setChunkVisibility(minecraft);

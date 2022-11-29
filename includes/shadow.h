@@ -21,7 +21,7 @@ public:
 
     void Init() {
         glGenTextures(1, &textureID);
-        glActiveTexture(GL_TEXTURE3);
+    //    glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
              SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
@@ -39,16 +39,18 @@ public:
 
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
-        float near_plane = 0.1f, far_plane = 100.0f;
-        projection = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, near_plane, far_plane);
+        float near_plane = 0.1f, far_plane = 240.0f;
+        projection = glm::ortho(-80.0f, 80.0f, -80.0f, 80.0f, near_plane, far_plane);
     }
 
     void GenerateShadowMap(glm::vec3 sunPos, Minecraft &minecraft) {
         glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
         glClear(GL_DEPTH_BUFFER_BIT);
-
-        glm::mat4 sunMat = glm::lookAt(sunPos + minecraft.camera.position, minecraft.camera.position, glm::vec3(0, 1, 0));
+        
+        sunPos.x += minecraft.camera.position.x;
+        sunPos.z += minecraft.camera.position.z;
+        glm::mat4 sunMat = glm::lookAt(sunPos, minecraft.camera.position, glm::vec3(0, 1, 0));
         minecraft.chunkShader.setMat4("projection", projection);
         minecraft.chunkShader.setMat4("view", sunMat);
         sunMat = projection * sunMat;
