@@ -22,8 +22,8 @@
 
 
 # define PI             3.14159265358979323846
-# define WINDOW_WIDTH   1200
-# define WINDOW_HEIGHT  900
+# define DEFAULT_WINDOW_WIDTH  1200
+# define DEFAULT_WINDOW_HEIGHT  900
 # define MAX_FPS        1000
 
 
