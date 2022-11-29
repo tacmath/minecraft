@@ -16,17 +16,18 @@ class Event {
 	GLFWwindow* window;
 	glm::dvec2 mousePos;
 	char		keyPressed[256];
-	bool inMenu;
-	float speed;
-	float mouseSensitivity;
-	bool perspective;
+	bool		inMenu;
+	float		speed;
+	float		mouseSensitivity;
+	bool		perspective;
 
 public:
 	bool positionChanged;
 	bool lookChanged;
 	bool chunkShaderChanged;
 	bool sunMode;
-	
+	float frequence;
+
 	Event();
 
 	void Init(GLFWwindow* window);

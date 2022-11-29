@@ -51,7 +51,7 @@ void Debug::display(float time, float latence, Minecraft &minecraft) {
         sprintf(xz, "Chunk: undefined");
     }
 
-    sprintf(target, "target: %d %d %d", minecraft.event.selectedCube.x, minecraft.event.selectedCube.y, minecraft.event.selectedCube.z);
+    sprintf(target, "target: %d %d %d", minecraft.player.selectedCube.position.x, minecraft.player.selectedCube.position.y, minecraft.player.selectedCube.position.z);
 
     float y = minecraft.windowsSize.y - 15;
     float scale = y / 600 / 5;

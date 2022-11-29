@@ -26,6 +26,28 @@ Minecraft minecraft;
 Debug debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
 UserInterface UI = UserInterface(minecraft.windowsSize.x, minecraft.windowsSize.y);
 
+
+
+void sun(Minecraft& minecraft, Event& event) {
+    static float time = 0.0f;
+    glm::vec3 sunPos;
+
+    time++;
+    if (time >= 180.0f)
+        time = 0.0f;
+    if (!event.sunMode)
+        return;
+    sunPos.z = 500 * -cos(glm::radians(time));
+    sunPos.y = 500 * sin(glm::radians(time));
+    sunPos.x = 0;
+
+    glm::mat4 sunMat = glm::lookAt(sunPos + minecraft.camera.position, minecraft.camera.position, glm::vec3(0, 1, 0));
+    minecraft.chunkShader.Activate();
+    minecraft.chunkShader.setMat4("view", sunMat);
+    minecraft.skyboxShader.Activate();
+    minecraft.skyboxShader.setMat4("view", glm::mat4(glm::mat3(sunMat)));
+}
+
 void loop(Minecraft &minecraft) {
     bool hasNormalShader = false;
     float previousLoopTime = 0;
@@ -47,7 +69,7 @@ void loop(Minecraft &minecraft) {
                 minecraft.LoadViewMatrix();
                 UI.SetViewMatrix(minecraft.camera.view);
             }
-            if (event.chunkShaderChanged) {
+            if (minecraft.event.chunkShaderChanged) {
                 hasNormalShader = !hasNormalShader;
                 if (hasNormalShader)
                     minecraft.changeShader(minecraft.chunkShader, minecraft.normalChunkShader);
@@ -57,7 +79,7 @@ void loop(Minecraft &minecraft) {
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();
             minecraft.thread.UnlockLoadedChunks();
-            sun(minecraft, event);
+            sun(minecraft, minecraft.event);
             minecraft.Draw();
             UI.SetHighlight(minecraft.player.selectedCube);
             UI.DrawHighlight();
@@ -70,25 +92,8 @@ void loop(Minecraft &minecraft) {
         }
     }
 }
-/*
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-*/   
-
 
 int main(void) {
-    glfwSetWindowSizeCallback(minecraft.window, [](GLFWwindow* window, int width, int height)
-    {
-            std::cout << "RESIZE" << std::endl;
-            minecraft.windowsSize = glm::vec2((float)width, (float)height);
-            minecraft.camera.updateSize((float)width, (float)height);
-            debug.setProjection((float)width, (float)height);
-            UI.setTextProjection((float)width, (float)height);
-            glViewport(0, 0, (int)minecraft.windowsSize.x,  (int)minecraft.windowsSize.y);
-    });
-
-//    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
     minecraft.event.Init(minecraft.window);
@@ -97,29 +102,6 @@ int main(void) {
     loop(minecraft);
     minecraft.thread.StopThreads();
 	return (0);
-}
-
-
-
-
-void sun(Minecraft& minecraft, Event &event) {
-    static float time = 0.0f;
-    glm::vec3 sunPos;
-
-    time++;
-    if (time >= 180.0f)
-        time = 0.0f;
-    if (!event.sunMode)
-        return;
-    sunPos.z = 500 * -cos(glm::radians(time));
-    sunPos.y = 500 * sin(glm::radians(time));
-    sunPos.x = 0;
-
-    glm::mat4 sunMat = glm::lookAt(sunPos + minecraft.camera.position, minecraft.camera.position, glm::vec3(0, 1, 0));
-    minecraft.chunkShader.Activate();
-    minecraft.chunkShader.setMat4("view", sunMat);
-    minecraft.skyboxShader.Activate();
-    minecraft.skyboxShader.setMat4("view", glm::mat4(glm::mat3(sunMat)));
 }
 
 GLenum glCheckError()

@@ -10,6 +10,7 @@
 #include "chunk.h"
 #include "thread.h"
 #include "player.h"
+#include "event.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
@@ -17,9 +18,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-# define   PI           3.14159265358979323846
+#include "simplex_noise.h"
+
+
+# define PI             3.14159265358979323846
 # define WINDOW_WIDTH   1200
 # define WINDOW_HEIGHT  900
+# define MAX_FPS        1000
 
 
 # define STARTING_RENDER_DISTANCE 1
@@ -40,6 +45,11 @@ public:
 
     // the player
     Player      player;
+
+    // the event
+    Event       event;
+
+    glm::vec2 windowsSize;
 
     // list of all the chunks loaded
 	std::vector<Chunk*> chunks;
