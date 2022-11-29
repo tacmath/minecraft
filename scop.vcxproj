@@ -190,6 +190,8 @@
     <None Include="shaders\cubeFS.glsl" />
     <None Include="shaders\wireFrameFS.glsl" />
     <None Include="shaders\wireFrameGS.glsl" />
+    <None Include="shaders\textFS.glsl" />
+    <None Include="shaders\textVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

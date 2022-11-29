@@ -208,7 +208,7 @@ float SimplexNoise::noise(float x) {
 
     // The maximum value of this noise is 8*(3/4)^4 = 2.53125
     // A factor of 0.395 scales to fit exactly within [-1,1]
-    return (0.395f * (n0 + n1)) * 0.5 + 0.5;
+    return (0.395f * (n0 + n1)) * 0.5f + 0.5f;
 }
 
 /**
@@ -296,7 +296,7 @@ float SimplexNoise::noise(float x, float y) {
 
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to return values in the interval [-1,1].
-    return (45.23065f * (n0 + n1 + n2)) * 0.5 + 0.5;
+    return (45.23065f * (n0 + n1 + n2)) * 0.5f + 0.5f;
 }
 
 
@@ -402,7 +402,7 @@ float SimplexNoise::noise(float x, float y, float z) {
     }
     // Add contributions from each corner to get the final noise value.
     // The result is scaled to stay just inside [-1,1]
-    return (32.0f * (n0 + n1 + n2 + n3)) * 0.5 + 0.5;
+    return (32.0f * (n0 + n1 + n2 + n3)) * 0.5f + 0.5f;
 }
 
 

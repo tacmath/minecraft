@@ -151,5 +151,11 @@
     <None Include="shaders\wireFrameFS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="shaders\textFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\textVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>
