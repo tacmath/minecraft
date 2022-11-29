@@ -10,6 +10,14 @@ Debug::Debug(float width, float height) {
     previousUpdateTime = 0.0f;
 }
 
+void Debug::toggle() {
+    if (visible == true) {
+        disable();
+        return;
+    }
+    enable();
+}
+
 void Debug::enable() {
     visible = true;
 }
@@ -22,6 +30,19 @@ void Debug::disable() {
 
 void Debug::setProjection(float width, float height) {
     text.setProjection(width, height);
+}
+
+void Debug::fpsTitle(float time, float latence, Minecraft& minecraft) {
+    static char title[100];
+
+    frame_title += 1;
+    diff = time - previousUpdateTime_title;
+    if (diff >= 0.2f) {
+        sprintf(title, "Minecraft :  FPS: %d (%.2f ms)", frame_title * 5, latence);
+        glfwSetWindowTitle(minecraft.window, title);
+        previousUpdateTime_title = time - (diff - 0.2f);
+        frame_title = 0;
+    }
 }
 
 void Debug::Draw(float time, float latence, Minecraft &minecraft) {

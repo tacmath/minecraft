@@ -1,6 +1,7 @@
 #include "chunk.h"
 #include "camera.h"
 #include "event.h"
+#include "debug.h"
 
 #define PLAYER_RANGE 5
 
@@ -172,11 +173,11 @@ void Event::MovementEvent(Camera& camera, Player& player) {
     }
 }
 
-void Event::KeyEvent(Player& player) {
+void Event::KeyEvent(Player& player, Debug& debug) {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        speed = 20.0f;
+        speed = 10.0f;
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-        speed = 1.0f;
+        speed = 0.4f;
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE && keyPressed[GLFW_KEY_P]) {
         perspective = !perspective;
         lookChanged = true;
@@ -203,6 +204,9 @@ void Event::KeyEvent(Player& player) {
     }
     else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
         keyPressed[GLFW_KEY_L] = 1;
+    if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS) {
+        debug.toggle();
+    }
 }
 
 void Event::MouseEvent(Camera &camera) {
@@ -237,13 +241,13 @@ void Event::MouseEvent(Camera &camera) {
     mousePos.y = posy;
 }
 
-void Event::GetEvents(Camera& camera, Player& player) {
+void Event::GetEvents(Camera& camera, Player& player, Debug& debug) {
     lookChanged = false;
     positionChanged = false;
     chunkShaderChanged = false;
     glfwPollEvents();
     MovementEvent(camera, player);
-    KeyEvent(player);
+    KeyEvent(player, debug);
     MouseEvent(camera);
     if (positionChanged || lookChanged) {
         camera.Update(perspective);

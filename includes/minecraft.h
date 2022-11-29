@@ -11,7 +11,6 @@
 #include "thread.h"
 #include "player.h"
 #include "motor.h"
-#include "event.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
@@ -25,7 +24,7 @@
 # define PI             3.14159265358979323846
 # define DEFAULT_WINDOW_WIDTH  1200
 # define DEFAULT_WINDOW_HEIGHT  900
-# define MAX_FPS        1000
+# define MAX_FPS        4000
 
 
 # define STARTING_RENDER_DISTANCE 1
@@ -46,9 +45,6 @@ public:
 
     // the player
     Player      player;
-
-    // the event
-    Event       event;
 
     Motor       motor;
 

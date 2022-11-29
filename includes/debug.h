@@ -6,7 +6,9 @@
 
 class Debug {
     int frame;
+    int frame_title;
     float previousUpdateTime;
+    float previousUpdateTime_title;
     float diff;
     char fps[100];
     char xyz[100];
@@ -27,7 +29,11 @@ public:
 
     void disable();
 
+    void toggle();
+
     void Draw(float time, float latence, Minecraft &minecraft);
+
+    void fpsTitle(float time, float latence, Minecraft& minecraft);
 };
 
 #endif

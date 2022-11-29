@@ -19,8 +19,10 @@
 Block blocks[256];
 ChunkGeneration globalChunkGeneration;
 std::map<int64_t, Chunk*> chunksMap;
-Noise global_noise;
+Noise        global_noise;
 SimplexNoise global_simplex_noise;
+Event       event;
+
 
 Minecraft minecraft;
 Debug debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
@@ -62,15 +64,15 @@ void loop(Minecraft &minecraft) {
         if (diff >= maxfps) {
             latence = ((time - previousFrameTime) * 1000);
 
-            minecraft.event.frequence = latence / 33.33f;
-            minecraft.event.GetEvents(minecraft.camera, minecraft.player);
-            if (minecraft.event.lookChanged || minecraft.event.positionChanged) {
+            event.frequence = latence / 33.33f;
+            event.GetEvents(minecraft.camera, minecraft.player, debug);
+            if (event.lookChanged || event.positionChanged) {
                 minecraft.setChunksVisibility();
                 minecraft.LoadViewMatrix();
                 UI.SetViewMatrix(minecraft.camera.view);
             }
 
-            if (minecraft.event.chunkShaderChanged) {
+            if (event.chunkShaderChanged) {
                 hasNormalShader = !hasNormalShader;
                 if (hasNormalShader)
                     minecraft.changeShader(minecraft.chunkShader, minecraft.normalChunkShader);
@@ -81,11 +83,12 @@ void loop(Minecraft &minecraft) {
                 minecraft.LoadChunks();
                 minecraft.thread.BindAllChunks();
                 minecraft.thread.UnlockLoadedChunks();
-                sun(minecraft, minecraft.event);
+                sun(minecraft, event);
             }
             minecraft.Draw();
             UI.Draw(minecraft);
-         //   debug.Draw(time, latence, minecraft);
+            debug.fpsTitle(time, latence, minecraft);
+            debug.Draw(time, latence, minecraft);
 
             glfwSwapBuffers(minecraft.window);
             previousFrameTime = time;
@@ -97,7 +100,7 @@ void loop(Minecraft &minecraft) {
 int main(void) {
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
-    minecraft.event.Init(minecraft.window);
+    event.Init(minecraft.window);
     glfwSetWindowTitle(minecraft.window, "Minecraft");
     glfwSwapInterval(0);
     loop(minecraft);
