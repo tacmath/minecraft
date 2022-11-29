@@ -2,6 +2,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "minecraft.h"
+#include "shadow.h"
 #include "chunk_generation.h"
 #include "blocks.h"
 #include "event.h"
@@ -34,7 +35,26 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     return (1);
 }
 
-void sun(Minecraft& minecraft, Event &event) {
+void setChunkVisibility(Minecraft& minecraft) {
+    int maxChunk;
+    Chunk *chunk;
+
+    maxChunk = DATA_RENDER_DISTANCE << 1;
+    //add all the chunk that are in loadedChunks but didn't exist
+    for (int n = 0; n < minecraft.chunks.size(); n++)
+        minecraft.chunks[n]->isVisible = false;
+    for (int x = 0; x < maxChunk; x++)
+        for (int z = 0; z < maxChunk; z++) {
+            chunk = minecraft.loadedChunks[x * maxChunk + z];
+            if (!chunk)
+                continue;
+            if (x > DATA_RENDER_DISTANCE - 6 && x < DATA_RENDER_DISTANCE + 6
+                && z > DATA_RENDER_DISTANCE - 6 && z < DATA_RENDER_DISTANCE + 6)
+                chunk->isVisible = true;
+        }
+}
+
+void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
     static float time = 0.0f;
     glm::vec3 sunPos;
 
@@ -43,31 +63,71 @@ void sun(Minecraft& minecraft, Event &event) {
         time = 0.0f;
     if (!event.sunMode)
         return;
-    sunPos.z = 500 * -cos(glm::radians(time));
-    sunPos.y = 500 * sin(glm::radians(time));
+    sunPos.z = 120 * -cos(glm::radians(time));
+    sunPos.y = 120 * sin(glm::radians(time));
     sunPos.x = 0;
 
-    glm::mat4 sunMat = glm::lookAt(sunPos + minecraft.camera.position, minecraft.camera.position, glm::vec3(0, 1, 0));
-    minecraft.chunkShader.Activate();
-    minecraft.chunkShader.setMat4("view", sunMat);
-    minecraft.skyboxShader.Activate();
-    minecraft.skyboxShader.setMat4("view", glm::mat4(glm::mat3(sunMat)));
+    setChunkVisibility(minecraft);
+    shadow.GenerateShadowMap(sunPos, minecraft);
 }
+
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+    if (quadVAO == 0)
+    {
+        float quadVertices[] = {
+            // positions        // texture Coords
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+        // setup plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+}
+
 
 void loop(Minecraft &minecraft) {
     Event event;
+    Shadow shadow;
     UserInterface UI;
     bool    hasNormalShader;
+    
+    Shader debugShader;
 
+
+    debugShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
+    debugShader.setInt("depthMap", 3);
     hasNormalShader = true;
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
     event.Init(minecraft.window);
+    shadow.Init();
     glfwSwapInterval(0);
     while (1) {
+       // if (!event.sunMode) {
+            minecraft.Draw();
+            UI.DrawHighlight();
+       // }
+       /* else {
+            debugShader.Activate();
 
-        minecraft.Draw();
-        UI.DrawHighlight();
+            renderQuad();
+        }*/
      
         glfwSwapBuffers(minecraft.window);
 
@@ -92,7 +152,7 @@ void loop(Minecraft &minecraft) {
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();
             minecraft.thread.UnlockLoadedChunks();
-            sun(minecraft, event);
+            sun(minecraft, event, shadow);
         }
     }
 }

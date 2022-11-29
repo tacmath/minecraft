@@ -28,9 +28,6 @@
 # define UNLOAD_OFFSET 2
 
 class Minecraft {
-private:
-    //list of all the chunks in the render distance
-    Chunk** loadedChunks;
 public:
     // the window context
     GLFWwindow* window;
@@ -46,6 +43,9 @@ public:
 
     // list of all the chunks loading
     std::vector<Chunk*> chunksLoading;
+
+    //list of all the chunks in the render distance
+    Chunk** loadedChunks;
 
     // multithreading object
     ThreadControleur thread;
