@@ -1,6 +1,7 @@
 #version 400
 out vec4 FragColor;
 
+in vec3	normal;
 in vec3 texCoord;
 in float luminosity;
 in vec4	fragPosLightSpace;
@@ -24,7 +25,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 
-    float bias = 0.001f;
+    float bias = 0.0005f;
 
     float shadow = 0.0f;
     vec2 texelSize = 1.0f / textureSize(shadowMap, 0);

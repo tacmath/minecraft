@@ -86,9 +86,11 @@ void Chunk::Bind() {
 	VAO.Bind();
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(u_int64_t) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, (void*)0);
+	glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, sizeof(u_int64_t), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(1, 1, GL_UNSIGNED_INT, sizeof(u_int64_t), (void*)(sizeof(u_int32_t)));
 	glBindVertexArray(0);
 	threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 	mesh.clear();
