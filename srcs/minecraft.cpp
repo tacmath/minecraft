@@ -96,6 +96,8 @@ Minecraft::Minecraft(void) {
 }
 
 void Minecraft::Draw(void) {
+    Chunk *chunk;
+
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     glDepthFunc(GL_LEQUAL);
@@ -107,8 +109,11 @@ void Minecraft::Draw(void) {
 
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
-    for (int n = 0; n < chunks.size(); n++)
-        chunks[n]->Draw(chunkShader);
+    for (int n = 0; n < chunks.size(); n++) {
+        chunk = chunks[n];
+        if (chunk->isVisible)
+            chunk->Draw(chunkShader);
+    }
     glDisable(GL_CULL_FACE);
 }
 

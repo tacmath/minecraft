@@ -39,6 +39,7 @@ void Minecraft::initChunks(int radius) {
 void Minecraft::initUniforms(void) {
     chunkShader.Activate();
     chunkShader.setInt("atlas", 0);
+    chunkShader.setInt("shadowMap", 3);
     chunkShader.setMat4("projection", camera.projection);
     chunkShader.setMat4("view", camera.view);
 

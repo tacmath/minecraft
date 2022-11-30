@@ -35,39 +35,17 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
     return (1);
 }
 
-void setChunkVisibility(Minecraft& minecraft) {
-    int maxChunk;
-    Chunk *chunk;
-
-    maxChunk = DATA_RENDER_DISTANCE << 1;
-    //add all the chunk that are in loadedChunks but didn't exist
-    for (int n = 0; n < minecraft.chunks.size(); n++)
-        minecraft.chunks[n]->isVisible = false;
-    for (int x = 0; x < maxChunk; x++)
-        for (int z = 0; z < maxChunk; z++) {
-            chunk = minecraft.loadedChunks[x * maxChunk + z];
-            if (!chunk)
-                continue;
-            if (x > DATA_RENDER_DISTANCE - 6 && x < DATA_RENDER_DISTANCE + 6
-                && z > DATA_RENDER_DISTANCE - 6 && z < DATA_RENDER_DISTANCE + 6)
-                chunk->isVisible = true;
-        }
-}
-
 void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
-    static float time = 0.0f;
+    static float time = 20.0f;
     glm::vec3 sunPos;
 
     time++;
-    if (time >= 180.0f)
-        time = 0.0f;
-    if (!event.sunMode)
-        return;
+    if (time >= 160.0f)
+        time = 20.0f;
     sunPos.z = 160 * -cos(glm::radians(time));
-    sunPos.y = 160 * sin(glm::radians(time));
-    sunPos.x = 0;
+    sunPos.y = 160 * sin(glm::radians(time)) + 60;
+    sunPos.x = 20 * (sunPos.z / 160.0f);
 
-    setChunkVisibility(minecraft);
     shadow.GenerateShadowMap(sunPos, minecraft);
 }
 
@@ -111,6 +89,7 @@ void loop(Minecraft &minecraft) {
 
 
     debugShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
+    debugShader.Activate();
     debugShader.setInt("depthMap", 3);
     hasNormalShader = true;
     UI.InitUniforms(minecraft.camera.projection);
@@ -119,18 +98,20 @@ void loop(Minecraft &minecraft) {
     shadow.Init();
     glfwSwapInterval(0);
     while (1) {
-       // if (!event.sunMode) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (!event.sunMode) {
             minecraft.Draw();
             UI.DrawHighlight();
-       // }
-       /* else {
-            debugShader.Activate();
-
-            renderQuad();
-        }*/
+        }
+        else {
+            
+                        debugShader.Activate();
+        renderQuad();
      
-        glfwSwapBuffers(minecraft.window);
 
+        }
+
+        glfwSwapBuffers(minecraft.window);
         if (showFPS(minecraft.window, minecraft)) { // return 1 when at an inteval
             event.GetEvents(minecraft.camera, minecraft.player);
             if (glfwGetKey(minecraft.window, GLFW_KEY_ESCAPE) == GLFW_PRESS ||

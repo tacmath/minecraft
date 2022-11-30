@@ -96,8 +96,6 @@ void Chunk::Bind() {
 
 // Draw the chunk 
 void Chunk::Draw(Shader& shader) {
-	if (!isVisible)
-		return;
 	VAO.Bind();
 	shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
 	glDrawArrays(GL_TRIANGLES, 0, verticesNumber);

@@ -1,12 +1,13 @@
 #version 400
 layout (location = 0) in uint vertex;
 
-out vec3 texCoord;
-out float luminosity;
-//out float dist;
+out vec3	texCoord;
+out float	luminosity;
+out vec4	fragPosLightSpace;
 
 uniform mat4 projection;
 uniform mat4 view;
+uniform mat4 lightSpaceMatrix;
 uniform vec2 chunkPos;
 
 void main()
@@ -21,8 +22,9 @@ void main()
 
 	luminosity = 1.0f - (((vertex >> 28u) & 0xFu) / 3.0f) * 0.8f;
 
-	gl_Position = projection * view * vec4(x + chunkPos.x, y, z + chunkPos.y, 1.0f);
-   /*gl_Position = view * vec4(x + chunkPos.x, y, z + chunkPos.y, 1.0f);
-   dist = length(gl_Position);
-   gl_Position = projection * gl_Position;*/
+	vec4 vertexPos = vec4(x + chunkPos.x, y, z + chunkPos.y, 1.0f);
+	
+	gl_Position = projection * view * vertexPos;
+	
+	fragPosLightSpace = lightSpaceMatrix * vertexPos;
 }

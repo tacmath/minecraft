@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include "shader.h"
 
-#define SHADOW_TEXTURE_SIZE 2048
+#define SHADOW_TEXTURE_SIZE 4096
 
 class Shadow {
 private:
@@ -21,14 +21,17 @@ public:
 
     void Init() {
         glGenTextures(1, &textureID);
-    //    glActiveTexture(GL_TEXTURE3);
+        glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
              SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);  
+        glActiveTexture(GL_TEXTURE0);
 
         glGenFramebuffers(1, &frameBufferID);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
@@ -39,8 +42,7 @@ public:
 
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
-        float near_plane = 0.1f, far_plane = 240.0f;
-        projection = glm::ortho(-80.0f, 80.0f, -80.0f, 80.0f, near_plane, far_plane);
+        projection = glm::ortho(-80.0f, 80.0f, -80.0f, 80.0f, 0.0f, 250.0f);
     }
 
     void GenerateShadowMap(glm::vec3 sunPos, Minecraft &minecraft) {
@@ -50,21 +52,16 @@ public:
         
         sunPos.x += minecraft.camera.position.x;
         sunPos.z += minecraft.camera.position.z;
-        glm::mat4 sunMat = glm::lookAt(sunPos, minecraft.camera.position, glm::vec3(0, 1, 0));
-        minecraft.chunkShader.setMat4("projection", projection);
-        minecraft.chunkShader.setMat4("view", sunMat);
+        glm::mat4 sunMat = glm::lookAt(sunPos, glm::vec3(minecraft.camera.position.x, 60.01f, minecraft.camera.position.z), glm::vec3(0, 1, 0));
         sunMat = projection * sunMat;
+        minecraft.chunkShader.Activate();
+        minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
         shadowShader.Activate();
         shadowShader.setMat4("matrix", sunMat);
 
+        renderChunks(minecraft);
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glEnable(GL_CULL_FACE);
-        for (int n = 0; n < minecraft.chunks.size(); n++)
-            minecraft.chunks[n]->Draw(shadowShader);
-        glDisable(GL_CULL_FACE);
-
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
         
         int width, height;
         glfwGetFramebufferSize(minecraft.window, &width, &height);    // reset the viewport
@@ -74,6 +71,26 @@ public:
     ~Shadow() {
         glDeleteFramebuffers(1, &frameBufferID);
         glDeleteTextures(1, &textureID);
+    }
+
+private:
+    void renderChunks(Minecraft& minecraft) {
+        int maxChunk;
+        Chunk *chunk;
+
+        glEnable(GL_CULL_FACE);
+        maxChunk = DATA_RENDER_DISTANCE << 1;
+        for (int x = 0; x < maxChunk; x++) {
+            for (int z = 0; z < maxChunk; z++) {
+                chunk = minecraft.loadedChunks[x * maxChunk + z];
+                if (!chunk)
+                    continue;
+                if (x > DATA_RENDER_DISTANCE - 6 && x < DATA_RENDER_DISTANCE + 6
+                    && z > DATA_RENDER_DISTANCE - 6 && z < DATA_RENDER_DISTANCE + 6)
+                    chunk->Draw(shadowShader);
+            }
+        }
+        glDisable(GL_CULL_FACE);
     }
 };
 
