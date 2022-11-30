@@ -4,6 +4,7 @@
 #include <cstddef>  // size_t
 
 class SimplexNoise {
+
 public:
     // 1D Perlin simplex noise
     static float noise(float x);
@@ -12,7 +13,7 @@ public:
     // 3D Perlin simplex noise
     static float noise(float x, float y, float z);
 
-    static void setSeed(unsigned int seed);
+    static void SetSeed(unsigned int seed);
 
     // Fractal/Fractional Brownian Motion (fBm) noise summation
     float fractal(size_t octaves, float x) const;

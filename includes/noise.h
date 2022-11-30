@@ -30,6 +30,7 @@ public:
 
 		std::shuffle(permutation.begin(), permutation.end(), engine);
 
+	
 		//duplique la liste
 		permutation.insert(permutation.end(), permutation.begin(), permutation.end());
 	}
@@ -114,3 +115,5 @@ private:
 extern Noise global_noise;
 
 #endif // !NOISE_CLASS_H
+
+

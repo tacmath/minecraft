@@ -73,7 +73,7 @@ static inline int32_t fastfloor(float fp) {
  * float-valued 4D noise 64 times. We want this to fit in the cache!
  */
 
-static std::vector<int>perm;
+std::vector<int> perm;
 
 /**
  * Helper function to hash an integer using the above permutation table
@@ -155,7 +155,7 @@ static float grad(int32_t hash, float x, float y, float z) {
 }
 
 
-void SimplexNoise::setSeed(unsigned int seed) {
+void SimplexNoise::SetSeed(unsigned int seed) {
     // set size to 256
     perm.resize(256);
 
