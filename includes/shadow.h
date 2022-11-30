@@ -78,6 +78,7 @@ private:
         int maxChunk;
         Chunk *chunk;
 
+        glCullFace(GL_FRONT);
         glEnable(GL_CULL_FACE);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int x = 0; x < maxChunk; x++) {
@@ -91,6 +92,7 @@ private:
             }
         }
         glDisable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
     }
 };
 
