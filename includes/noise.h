@@ -70,8 +70,8 @@ private:
 	}
 
 	glm::vec2 grad(glm::vec2 p) {
-		return glm::vec2(permutation[(int)floor(p.x) & 255] > 127 ? 1.0f : -1.0f,
-			permutation[(int)floor(p.y) & 255] > 127 ? 1.0f : -1.0f);
+		return glm::vec2(permutation[(int)(p.x / 255.0f)] > 127 ? 1.0f : -1.0f,
+			permutation[(int)(p.y / 255.0f)] > 127 ? 1.0f : -1.0f);
 	}
 };
 

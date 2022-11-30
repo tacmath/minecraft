@@ -26,6 +26,18 @@ mkdir -p ./libraries/lib/glfw3lib
 cp -f $path ./libraries/lib/glfw3lib
 cp -fr ~/.brew/Cellar/glfw/*/include/ ./libraries/include/
 
+path=~/.brew/Cellar/freetype/*/lib/libfreetype.dylib
+if [ -e $path ]
+then
+    echo -n ''
+else
+    echo 'installing lib freetype'
+    brew install freetype
+fi
+mkdir -p ./libraries/lib/freetypelib
+cp -f $path ./libraries/lib/freetypelib/
+cp -fr ~/.brew/Cellar/freetype/*/include/freetype2/ ./libraries/include/
+
 path=./libraries/include/KHR/khrplatform.h
 if [ -e $path ]
 then

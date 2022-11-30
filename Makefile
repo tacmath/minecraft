@@ -6,7 +6,7 @@
 #    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/25 14:37:21 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/11/30 12:51:13 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib
+FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib -lfreetype -L libraries/lib/freetypelib
 FRAMEWORK_INC = libraries/include
 
 NAME_SRC=main.cpp \
@@ -53,6 +53,10 @@ NAME_SRC=main.cpp \
 			cubeMesh.cpp\
 			camera.cpp\
 			minecraft.cpp\
+			debug.cpp\
+			simplex_noise.cpp\
+			textDisplay.cpp\
+			motor.cpp\
 			
 			
 
