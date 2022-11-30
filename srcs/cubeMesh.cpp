@@ -67,7 +67,7 @@ void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
 	result[3] = getVertexAO(visibleCubes[2][1], visibleCubes[1][2], visibleCubes[2][2]);
 }
 
-inline void fillQuad(u_int64_t *vertices, u_int64_t *result) {
+inline void fillQuad(int64_t *vertices, int64_t *result) {
 	//first triangle
 	result[0] = vertices[0];
 	result[1] = vertices[1];
@@ -79,7 +79,7 @@ inline void fillQuad(u_int64_t *vertices, u_int64_t *result) {
 	result[5] = vertices[3];
 }
 
-inline void fillFlippedQuad(u_int64_t* vertices, u_int64_t* result) {
+inline void fillFlippedQuad(int64_t* vertices, int64_t* result) {
 	//first triangle
 	result[0] = vertices[0];
 	result[1] = vertices[1];
@@ -94,7 +94,7 @@ inline void fillFlippedQuad(u_int64_t* vertices, u_int64_t* result) {
 void Chunk::addTopVertices(const int x, const int y, const int z) {
 	int textureID= blocks[cubes[GET_CUBE(x, y, z)]].top;
 	int sideAO[4];
-	u_int64_t vertices[4];
+	int64_t vertices[4];
 
 	getSideAO(x, y + 1, z, sideAO, 1);
 	for (int n = 0; n < 4; n++)
@@ -116,7 +116,7 @@ void Chunk::addTopVertices(const int x, const int y, const int z) {
 void Chunk::addBottomVertices(const int x, const int y, const int z) {
 	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].bottom;
 	int sideAO[4];
-	u_int64_t vertices[4];
+	int64_t vertices[4];
 
 	getSideAO(x, y - 1, z, sideAO, 1);
 	for (int n = 0; n < 4; n++)
@@ -138,7 +138,7 @@ void Chunk::addBottomVertices(const int x, const int y, const int z) {
 void Chunk::addFrontVertices(const int x, const int y, const int z) {
 	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].side;
 	int sideAO[4];
-	u_int64_t vertices[4];
+	int64_t vertices[4];
 
 	getSideAO(x - 1, y, z, sideAO, 0);
 	for (int n = 0; n < 4; n++)
@@ -160,7 +160,7 @@ void Chunk::addFrontVertices(const int x, const int y, const int z) {
 void Chunk::addBackVertices(const int x, const int y, const int z) {
 	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].side;
 	int sideAO[4];
-	u_int64_t vertices[4];
+	int64_t vertices[4];
 
 	getSideAO(x + 1, y, z, sideAO, 0);
 	for (int n = 0; n < 4; n++)
@@ -182,7 +182,7 @@ void Chunk::addBackVertices(const int x, const int y, const int z) {
 void Chunk::addRightVertices(const int x, const int y, const int z) {
 	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].side;
 	int sideAO[4];
-	u_int64_t vertices[4];
+	int64_t vertices[4];
 
 	getSideAO(x, y, z + 1, sideAO, 2);
 	for (int n = 0; n < 4; n++)
@@ -204,7 +204,7 @@ void Chunk::addRightVertices(const int x, const int y, const int z) {
 void Chunk::addLeftVertices(const int x, const int y, const int z) {
 	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].side;
 	int sideAO[4];
-	u_int64_t vertices[4];
+	int64_t vertices[4];
 
 	getSideAO(x, y, z - 1, sideAO, 2);
 	for (int n = 0; n < 4; n++)
