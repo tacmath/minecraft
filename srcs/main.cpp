@@ -17,16 +17,15 @@
 
 // all the globals needed
 Block blocks[256];
-ChunkGeneration globalChunkGeneration;
 std::map<int64_t, Chunk*> chunksMap;
-PerlinNoise        global_noise;
-SimplexNoise global_simplex_noise;
-Event       event;
+
+ChunkGeneration     globalChunkGeneration;
 
 
-Minecraft minecraft;
-Debug debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
-UserInterface UI = UserInterface(minecraft.windowsSize.x, minecraft.windowsSize.y);
+Event           event;
+Minecraft       minecraft;
+Debug           debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
+UserInterface   UI = UserInterface(minecraft.windowsSize.x, minecraft.windowsSize.y);
 
 void sun(Minecraft& minecraft, Event& event) {
     static float time = 0.0f;

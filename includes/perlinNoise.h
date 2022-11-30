@@ -33,7 +33,4 @@ private:
 	double grad(int hash, double x, double y, double z);
 };
 
-//noise using the seed
-extern PerlinNoise global_noise;
-
 #endif

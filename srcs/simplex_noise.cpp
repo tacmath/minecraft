@@ -25,12 +25,7 @@
  */
 
 #include "simplex_noise.h"
-#include <random>
-#include <numeric>
-#include <iostream>
-#include<glm/glm.hpp>
-#include<glm/gtc/type_ptr.hpp>
-#include <cstdint>  // int32_t/uint8_t
+
 
 /**
  * Computes the largest integer value not greater than the float one
@@ -46,34 +41,11 @@
  *
  * @return largest integer value not greater than fp
  */
-static inline int32_t fastfloor(float fp) {
+inline int32_t SimplexNoise::fastfloor(float fp) {
     int32_t i = static_cast<int32_t>(fp);
     return (fp < i) ? (i - 1) : (i);
 }
 
-/**
- * Permutation table. This is just a random jumble of all numbers 0-255.
- *
- * This produce a repeatable pattern of 256, but Ken Perlin stated
- * that it is not a problem for graphic texture as the noise features disappear
- * at a distance far enough to be able to see a repeatable pattern of 256.
- *
- * This needs to be exactly the same for all instances on all platforms,
- * so it's easiest to just keep it as static explicit data.
- * This also removes the need for any initialisation of this class.
- *
- * Note that making this an uint32_t[] instead of a uint8_t[] might make the
- * code run faster on platforms with a high penalty for unaligned single
- * byte addressing. Intel x86 is generally single-byte-friendly, but
- * some other CPUs are faster with 4-aligned reads.
- * However, a char[] is smaller, which avoids cache trashing, and that
- * is probably the most important aspect on most architectures.
- * This array is accessed a *lot* by the noise functions.
- * A vector-valued noise over 3D accesses it 96 times, and a
- * float-valued 4D noise 64 times. We want this to fit in the cache!
- */
-
-std::vector<int> perm;
 
 /**
  * Helper function to hash an integer using the above permutation table
@@ -87,7 +59,7 @@ std::vector<int> perm;
  *
  * @return 8-bits hashed value
  */
-static inline uint8_t hash(int32_t i) {
+inline uint8_t SimplexNoise::hash(int32_t i) {
     return perm[static_cast<uint8_t>(i)];
 }
 
@@ -113,7 +85,7 @@ static const float gradients1D[16] = {
  *
  * @return gradient value
  */
-static float grad(int32_t hash, float x) {
+float SimplexNoise::grad(int32_t hash, float x) {
     const int32_t h = hash & 0x0F;  // Convert low 4 bits of hash code
     float grad = 1.0f + (h & 7);    // Gradient value 1.0, 2.0, ..., 8.0
     if ((h & 8) != 0) grad = -grad; // Set a random sign for the gradient
@@ -130,7 +102,7 @@ static float grad(int32_t hash, float x) {
  *
  * @return gradient value
  */
-static float grad(int32_t hash, float x, float y) {
+float SimplexNoise::grad(int32_t hash, float x, float y) {
     const int32_t h = hash & 0x3F;  // Convert low 3 bits of hash code
     const float u = h < 4 ? x : y;  // into 8 simple gradient directions,
     const float v = h < 4 ? y : x;
@@ -147,7 +119,7 @@ static float grad(int32_t hash, float x, float y) {
  *
  * @return gradient value
  */
-static float grad(int32_t hash, float x, float y, float z) {
+float SimplexNoise::grad(int32_t hash, float x, float y, float z) {
     int h = hash & 15;     // Convert low 4 bits of hash code into 12 simple
     float u = h < 8 ? x : y; // gradient directions, and compute dot product.
     float v = h < 4 ? y : h == 12 || h == 14 ? x : z; // Fix repeats at h = 12 to 15
@@ -414,7 +386,7 @@ float SimplexNoise::noise(float x, float y, float z) {
  *
  * @return Noise value in the range[-1; 1], value of 0 on all integer coordinates.
  */
-float SimplexNoise::fractal(size_t octaves, float x) const {
+float SimplexNoise::fractal(size_t octaves, float x) {
     float output    = 0.f;
     float denom     = 0.f;
     float frequency = mFrequency;
@@ -440,7 +412,7 @@ float SimplexNoise::fractal(size_t octaves, float x) const {
  *
  * @return Noise value in the range[-1; 1], value of 0 on all integer coordinates.
  */
-float SimplexNoise::fractal(size_t octaves, float x, float y) const {
+float SimplexNoise::fractal(size_t octaves, float x, float y) {
     float output = 0.f;
     float denom  = 0.f;
     float frequency = mFrequency;
@@ -467,7 +439,7 @@ float SimplexNoise::fractal(size_t octaves, float x, float y) const {
  *
  * @return Noise value in the range[-1; 1], value of 0 on all integer coordinates.
  */
-float SimplexNoise::fractal(size_t octaves, float x, float y, float z) const {
+float SimplexNoise::fractal(size_t octaves, float x, float y, float z) {
     float output = 0.f;
     float denom  = 0.f;
     float frequency = mFrequency;
