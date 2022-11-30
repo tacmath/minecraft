@@ -3,7 +3,6 @@
 
 #include <glad/glad.h>
 #include <VAO.h>
-#include <noise.h>
 #include <vector>
 #include <map>
 #include "shader.h"

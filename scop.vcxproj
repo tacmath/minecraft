@@ -139,7 +139,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
-    <ClCompile Include="includes\motor.cpp" />
+    <ClCompile Include="srcs\perlin_noise.cpp" />
+    <ClCompile Include="srcs\motor.cpp" />
     <ClCompile Include="srcs\camera.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
     <ClCompile Include="srcs\cubeMap.cpp" />
@@ -173,7 +174,6 @@
     <ClInclude Include="includes\event.h" />
     <ClInclude Include="includes\frustum.h" />
     <ClInclude Include="includes\minecraft.h" />
-    <ClInclude Include="includes\noise.h" />
     <ClInclude Include="includes\player.h" />
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />
@@ -181,6 +181,7 @@
     <ClInclude Include="includes\UI.h" />
     <ClInclude Include="includes\VAO.h" />
     <ClInclude Include="includes\VBO.h" />
+    <ClInclude Include="includes\perlinNoise.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />

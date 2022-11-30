@@ -1,4 +1,5 @@
 #include "minecraft.h"
+#include "perlinNoise.h"
 #include "blocks.h"
 #include <fstream>
 #include <algorithm>
@@ -84,12 +85,12 @@ Minecraft::Minecraft(void) {
     texAtlas.LoadArray(textureNames, 0);
     
     initUniforms();
-    std::srand(std::time(nullptr));
+    std::srand((unsigned int)std::time(0));
     unsigned long long seed = 7;
     for (int n = 0; n != 20; ++n) {
         seed = seed * 10 + (1 + std::rand() / ((RAND_MAX + 1u) / 6));
     }
-    global_noise.SetSeed(seed);
+    global_noise.setSeed(seed);
     initChunks(STARTING_RENDER_DISTANCE);
 
     loadedChunks = (Chunk**)calloc((DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1), sizeof(Chunk*));

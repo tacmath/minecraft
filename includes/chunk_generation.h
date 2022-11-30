@@ -1,7 +1,7 @@
 #ifndef CHUNK_GENERATION_CLASS_H
 #define CHUNK_GENERATION_CLASS_H
 
-#include "noise.h"
+#include "perlinNoise.h"
 
 // get the offset of a cube based on the position in the chunk
 #define GET_CUBE(x, y, z) ((y << 8) | (x << 4) | z)
@@ -48,7 +48,7 @@ class ChunkGeneration {
     }
 
     void generateCave(int ChunkSize, unsigned char *cubes, int maxHeight, int x, int z, int posx, int posz) {
-        float cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 47.0f), (posz * ChunkSize + z) * (1.0f / 47.0f))
+        double cave = global_noise.noise((posx * ChunkSize + x) * (1.0f / 47.0f), (posz * ChunkSize + z) * (1.0f / 47.0f))
             + global_noise.noise((posx * ChunkSize + x) * (1.0f / 33.0f), (posz * ChunkSize + z) * (1.0f / 33.0f));
 
         if (cave > 1.15) {
@@ -65,7 +65,7 @@ class ChunkGeneration {
 
 
     void generateDirtPochet(int ChunkSize, unsigned char* cubes, int maxHeight, int x, int z, int posx, int posz) {
-        float isDirtPocket = global_noise.noise((posx * ChunkSize + x) * (1.0f / 53.0f), (posz * ChunkSize + z) * (1.0f / 53.0f))
+        double isDirtPocket = global_noise.noise((posx * ChunkSize + x) * (1.0f / 53.0f), (posz * ChunkSize + z) * (1.0f / 53.0f))
             + global_noise.noise((posx * ChunkSize + x) * (1.0f / 17.0f), (posz * ChunkSize + z) * (1.0f / 17.0f));
 
         if ((isDirtPocket > 1.2 && isDirtPocket < 1.25) || (isDirtPocket > 0.7 && isDirtPocket < 0.75) || (isDirtPocket > 0.9 && isDirtPocket < 0.92)) {
@@ -100,27 +100,27 @@ class ChunkGeneration {
 
     private:
 
-	inline int groundHeight(Noise& noise, int x, int z) {
+	inline int groundHeight(PerlinNoise& noise, int x, int z) {
             int height = 30 + (int)(noise.noise(x * (1.0f / 500.0f), z * (1.0f / 500.0f)) * 25
 			+ noise.noise(x * (1.0f / 50.0f), z * (1.0f / 50.0f)) * 15
 			+ noise.noise(x * (1.0f / 20.0f), z * (1.0f / 20.0f)) * 7
 			- noise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 30);
 
-            float nice =  noise.noise(x * (1.0f / 30.0f), z * (1.0f / 30.0f));
+            double nice =  noise.noise(x * (1.0f / 30.0f), z * (1.0f / 30.0f));
             if (nice < 0.5) nice = 0.5;
             height += (int)(nice * 30);
            return height;
 	}
 
 
-	inline int getRadius(Noise& noise, int x, int z, int y) {
+	inline int getRadius(PerlinNoise& noise, int x, int z, int y) {
 			return 3 + (int)(noise.noise(x * (1.0f / 40.0f), z * (1.0f / 40.0f)) * 1
                     + noise.noise(x * (1.0f / 100.0f), z * (1.0f / 100.0f)) * 1
                     + noise.noise(x * (1.0f / 20.0f), z * (1.0f / 20.0f)) * 1
                     - noise.noise(x * (1.0f / 62.0f), z * (1.0f / 62.0f)) * 1);
 	}
 
-    inline int getHeight(Noise& noise, int x, int z, int y) {
+    inline int getHeight(PerlinNoise& noise, int x, int z, int y) {
 			return 40 
             + (int)(noise.noise(x * (1.0f / 140.0f), z * (1.0f / 140.0f)) * 40
             - noise.noise(x * (1.0f / 75.0f), z * (1.0f / 75.0f)) * 20
