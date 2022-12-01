@@ -42,7 +42,7 @@ public:
 
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
-        projection = glm::ortho(-80.0f, 80.0f, -80.0f, 80.0f, 0.0f, 250.0f);
+        projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, 80.0f, 250.0f);
     }
 
     void GenerateShadowMap(glm::vec3 sunPos, Minecraft &minecraft) {
@@ -50,11 +50,12 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
         glClear(GL_DEPTH_BUFFER_BIT);
         
+        minecraft.chunkShader.Activate();
+        minecraft.chunkShader.setVec3("lightDir", glm::normalize(glm::vec3(sunPos.x, sunPos.y - 60.0f, sunPos.z)));
         sunPos.x += minecraft.camera.position.x;
         sunPos.z += minecraft.camera.position.z;
-        glm::mat4 sunMat = glm::lookAt(sunPos, glm::vec3(minecraft.camera.position.x, 60.01f, minecraft.camera.position.z), glm::vec3(0, 1, 0));
+        glm::mat4 sunMat = glm::lookAt(sunPos, glm::vec3(minecraft.camera.position.x, 60.0f, minecraft.camera.position.z), glm::vec3(0, 1, 0));
         sunMat = projection * sunMat;
-        minecraft.chunkShader.Activate();
         minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
         shadowShader.Activate();
         shadowShader.setMat4("matrix", sunMat);
@@ -78,8 +79,8 @@ private:
         int maxChunk;
         Chunk *chunk;
 
-        glCullFace(GL_FRONT);
-        glEnable(GL_CULL_FACE);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(2.5f, 1.0f);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int x = 0; x < maxChunk; x++) {
             for (int z = 0; z < maxChunk; z++) {
@@ -91,8 +92,7 @@ private:
                     chunk->Draw(shadowShader);
             }
         }
-        glDisable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glDisable(GL_POLYGON_OFFSET_FILL);
     }
 };
 

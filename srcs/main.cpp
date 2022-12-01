@@ -7,6 +7,7 @@
 #include "blocks.h"
 #include "event.h"
 #include "UI.h"
+#include "debug_utils.h"
 
 // all the globals needed
 Block blocks[256];
@@ -44,38 +45,9 @@ void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
         time = 20.0f;
     sunPos.z = 160 * -cos(glm::radians(time));
     sunPos.y = 160 * sin(glm::radians(time)) + 60;
-    sunPos.x = 20 * (sunPos.z / 160.0f);
+    sunPos.x = 160 * -cos(glm::radians(time));
 
     shadow.GenerateShadowMap(sunPos, minecraft);
-}
-
-unsigned int quadVAO = 0;
-unsigned int quadVBO;
-void renderQuad()
-{
-    if (quadVAO == 0)
-    {
-        float quadVertices[] = {
-            // positions        // texture Coords
-            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        };
-        // setup plane VAO
-        glGenVertexArrays(1, &quadVAO);
-        glGenBuffers(1, &quadVBO);
-        glBindVertexArray(quadVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    }
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
 }
 
 
@@ -86,6 +58,7 @@ void loop(Minecraft &minecraft) {
     bool    hasNormalShader;
     
     Shader debugShader;
+    DebugUtils debugUtils;
 
 
     debugShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
@@ -106,7 +79,7 @@ void loop(Minecraft &minecraft) {
         else {
             
                         debugShader.Activate();
-        renderQuad();
+        debugUtils.renderQuad();
      
 
         }
@@ -136,25 +109,6 @@ void loop(Minecraft &minecraft) {
             sun(minecraft, event, shadow);
         }
     }
-}
-
-GLenum glCheckError()
-{
-    GLenum errorCode;
-    while ((errorCode = glGetError()) != GL_NO_ERROR)
-    {
-        std::string error;
-        switch (errorCode)
-        {
-        case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
-        case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
-        case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
-        case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
-        case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
-        }
-        std::cout << error << std::endl;
-    }
-    return errorCode;
 }
 
 /*
