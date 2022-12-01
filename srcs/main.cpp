@@ -46,8 +46,8 @@ void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
     sunPos.z = 160 * -cos(glm::radians(time));
     sunPos.y = 160 * sin(glm::radians(time)) + 60;
     sunPos.x = 160 * -cos(glm::radians(time));
-
-    shadow.GenerateShadowMap(sunPos, minecraft);
+    if (time < 85 || time > 90)
+        shadow.GenerateShadowMap(sunPos, minecraft);
 }
 
 

@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include "shader.h"
 
-#define SHADOW_TEXTURE_SIZE 4096
+#define SHADOW_TEXTURE_SIZE 2048
 
 class Shadow {
 private:
@@ -42,7 +42,7 @@ public:
 
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
-        projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, 80.0f, 250.0f);
+        projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, 100.0f, 400.0f);
     }
 
     void GenerateShadowMap(glm::vec3 sunPos, Minecraft &minecraft) {
@@ -55,6 +55,8 @@ public:
         sunPos.x += minecraft.camera.position.x;
         sunPos.z += minecraft.camera.position.z;
         glm::mat4 sunMat = glm::lookAt(sunPos, glm::vec3(minecraft.camera.position.x, 60.0f, minecraft.camera.position.z), glm::vec3(0, 1, 0));
+    /*    minecraft.chunkShader.setMat4("projection", projection);
+        minecraft.chunkShader.setMat4("view", sunMat);*/
         sunMat = projection * sunMat;
         minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
         shadowShader.Activate();
@@ -80,7 +82,7 @@ private:
         Chunk *chunk;
 
         glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(2.5f, 1.0f);
+        glPolygonOffset(2.0f, 1.0f);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int x = 0; x < maxChunk; x++) {
             for (int z = 0; z < maxChunk; z++) {
