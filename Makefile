@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
+#    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/30 12:51:13 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/12/02 12:17:16 by matheme          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,25 +39,25 @@ HEADER= $(INC_PATH)/*
 FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib -lfreetype -L libraries/lib/freetypelib
 FRAMEWORK_INC = libraries/include
 
-NAME_SRC=main.cpp \
-			init.cpp \
-			cubeMap.cpp\
-			VBO.cpp\
-			VAO.cpp\
-			texture.cpp\
-			shader.cpp\
-			thread.cpp\
+NAME_SRC=	camera.cpp\
 			chunk.cpp\
-			event.cpp\
-			entity.cpp\
+			cubeMap.cpp\
 			cubeMesh.cpp\
-			camera.cpp\
-			minecraft.cpp\
 			debug.cpp\
+			entity.cpp\
+			event.cpp\
+			init.cpp \
+			main.cpp \
+			minecraft.cpp\
+			motor.cpp\
+			perlin_noise.cpp\
+			shader.cpp\
 			simplex_noise.cpp\
 			textDisplay.cpp\
-			motor.cpp\
-			
+			texture.cpp\
+			thread.cpp\
+			VAO.cpp\
+			VBO.cpp\
 			
 
 NAME_SRC_C=glad.c \
