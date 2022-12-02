@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
+#    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/11/25 14:37:21 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/12/02 14:10:01 by matheme          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,24 +36,28 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib
+FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib -lfreetype -L libraries/lib/freetypelib
 FRAMEWORK_INC = libraries/include
 
-NAME_SRC=main.cpp \
-			init.cpp \
-			cubeMap.cpp\
-			VBO.cpp\
-			VAO.cpp\
-			texture.cpp\
-			shader.cpp\
-			thread.cpp\
+NAME_SRC=	camera.cpp\
 			chunk.cpp\
-			event.cpp\
-			entity.cpp\
+			cubeMap.cpp\
 			cubeMesh.cpp\
-			camera.cpp\
+			debug.cpp\
+			entity.cpp\
+			event.cpp\
+			init.cpp \
+			main.cpp \
 			minecraft.cpp\
-			
+			motor.cpp\
+			perlin_noise.cpp\
+			shader.cpp\
+			simplex_noise.cpp\
+			textDisplay.cpp\
+			texture.cpp\
+			thread.cpp\
+			VAO.cpp\
+			VBO.cpp\
 			
 
 NAME_SRC_C=glad.c \
@@ -73,7 +77,8 @@ CC			= gcc $(OPTIMISATION_FLAG)
 GPP			= g++ -std=c++11 $(OPTIMISATION_FLAG)
 
 
-all: $(NAME)
+
+all: install $(NAME)
 
 $(NAME) : $(OBJS)
 	@$(GPP) $^ -o $@ $(FRAMEWORK)
@@ -111,5 +116,8 @@ re: fclean all
 
 test: all
 	@./vox
+
+install:
+	@sh install.sh
 
 .PHONY: all re clean fclean lib silent

@@ -1,5 +1,5 @@
 ﻿#include "textDisplay.h"
-#include "minecraft.H"
+#include "minecraft.h"
 
 void TextDisplay::setProjection(float width, float height) {
     textShader.Activate();

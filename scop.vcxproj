@@ -118,7 +118,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,6 +139,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="srcs\perlin_noise.cpp" />
+    <ClCompile Include="srcs\motor.cpp" />
     <ClCompile Include="srcs\camera.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
     <ClCompile Include="srcs\cubeMap.cpp" />
@@ -146,6 +148,9 @@
     <ClCompile Include="srcs\event.cpp" />
     <ClCompile Include="srcs\init.cpp" />
     <ClCompile Include="srcs\main.cpp" />
+    <ClCompile Include="srcs\simplex_noise.cpp" />
+    <ClCompile Include="srcs\debug.cpp" />
+    <ClCompile Include="srcs\textDisplay.cpp" />
     <ClCompile Include="srcs\cubeMesh.cpp" />
     <ClCompile Include="srcs\minecraft.cpp" />
     <ClCompile Include="srcs\shader.cpp" />
@@ -162,10 +167,13 @@
     <ClInclude Include="includes\blocks.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
+    <ClInclude Include="includes\debug.h" />
+    <ClInclude Include="includes\motor.h" />
+    <ClInclude Include="includes\textDisplay.h" />
+    <ClInclude Include="includes\simplex_noise.h" />
     <ClInclude Include="includes\event.h" />
     <ClInclude Include="includes\frustum.h" />
     <ClInclude Include="includes\minecraft.h" />
-    <ClInclude Include="includes\noise.h" />
     <ClInclude Include="includes\player.h" />
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />
@@ -173,6 +181,7 @@
     <ClInclude Include="includes\UI.h" />
     <ClInclude Include="includes\VAO.h" />
     <ClInclude Include="includes\VBO.h" />
+    <ClInclude Include="includes\perlinNoise.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
@@ -184,6 +193,8 @@
     <None Include="shaders\cubeFS.glsl" />
     <None Include="shaders\wireFrameFS.glsl" />
     <None Include="shaders\wireFrameGS.glsl" />
+    <None Include="shaders\textFS.glsl" />
+    <None Include="shaders\textVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

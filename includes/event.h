@@ -7,7 +7,7 @@
 #include<glm/gtx/rotate_vector.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
-
+#include "debug.h"
 
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
@@ -16,24 +16,25 @@ class Event {
 	GLFWwindow* window;
 	glm::dvec2 mousePos;
 	char		keyPressed[256];
-	bool inMenu;
-	float speed;
-	float mouseSensitivity;
-	bool perspective;
+	bool		inMenu;
+	float		speed;
+	float		mouseSensitivity;
+	bool		perspective;
 
 public:
 	bool positionChanged;
 	bool lookChanged;
 	bool chunkShaderChanged;
 	bool sunMode;
-	
+	float frequence;
+
 	Event();
 
 	void Init(GLFWwindow* window);
 	void MovementEvent(Camera& camera, Player& player);
 	void MouseEvent(Camera& camera);
-	void KeyEvent(Player& player);
-	void GetEvents(Camera &camera, Player &player);
+	void KeyEvent(Player& player, Debug& debug);
+	void GetEvents(Camera &camera, Player &player, Debug &debug);
 private:
 	void removePointedCube(Camera& camera, Player& player);
 	void placeCube(Camera& camera, Player& player);

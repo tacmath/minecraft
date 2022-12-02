@@ -362,11 +362,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Remove librairies
-libraries/
-
 .vscode
 
 .objs
+
+libraries
 
 vox

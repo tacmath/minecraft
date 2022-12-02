@@ -1,6 +1,7 @@
 #include "chunk.h"
 #include "camera.h"
 #include "event.h"
+#include "debug.h"
 
 #define PLAYER_RANGE 5
 
@@ -132,17 +133,17 @@ void Event::Init(GLFWwindow* window) {
 glm::vec3  Event::spectatorMovement(Camera& camera, Player& player) {
     glm::vec3 newPos = glm::vec3(0);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        newPos += speed * camera.direction;
+        newPos += speed * frequence * camera.direction;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        newPos += speed * -glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += speed * frequence * -glm::normalize(glm::cross(camera.direction, camera.up));
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        newPos += speed * -camera.direction;
+        newPos += speed * frequence * -camera.direction;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        newPos += speed * glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += speed * frequence * glm::normalize(glm::cross(camera.direction, camera.up));
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        newPos += speed * camera.up;
+        newPos += speed * frequence * camera.up;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        newPos += speed * -camera.up;
+        newPos += speed * frequence * -camera.up;
     return newPos;
 }
 
@@ -152,16 +153,16 @@ void Event::MovementEvent(Camera& camera, Player& player) {
         newPos = spectatorMovement(camera, player);
     else {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            newPos += speed * camera.direction;
+            newPos += speed * frequence * camera.direction;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            newPos += speed * -glm::normalize(glm::cross(camera.direction, camera.up));
+            newPos += speed * frequence * -glm::normalize(glm::cross(camera.direction, camera.up));
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            newPos += speed * -camera.direction;
+            newPos += speed * frequence * -camera.direction;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            newPos += speed * glm::normalize(glm::cross(camera.direction, camera.up));
+            newPos += speed * frequence * glm::normalize(glm::cross(camera.direction, camera.up));
         newPos.y = 0;
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            newPos.y = speed;
+            newPos.y = speed * frequence;
         if (!newPos.y)
             newPos.y -= 1.0f;
     }
@@ -172,7 +173,7 @@ void Event::MovementEvent(Camera& camera, Player& player) {
     }
 }
 
-void Event::KeyEvent(Player& player) {
+void Event::KeyEvent(Player& player, Debug& debug) {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 10.0f;
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
@@ -203,6 +204,9 @@ void Event::KeyEvent(Player& player) {
     }
     else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
         keyPressed[GLFW_KEY_L] = 1;
+    if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS) {
+        debug.toggle();
+    }
 }
 
 void Event::MouseEvent(Camera &camera) {
@@ -237,13 +241,13 @@ void Event::MouseEvent(Camera &camera) {
     mousePos.y = posy;
 }
 
-void Event::GetEvents(Camera& camera, Player& player) {
+void Event::GetEvents(Camera& camera, Player& player, Debug& debug) {
     lookChanged = false;
     positionChanged = false;
     chunkShaderChanged = false;
     glfwPollEvents();
     MovementEvent(camera, player);
-    KeyEvent(player);
+    KeyEvent(player, debug);
     MouseEvent(camera);
     if (positionChanged || lookChanged) {
         camera.Update(perspective);

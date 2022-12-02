@@ -1,4 +1,5 @@
 #include "minecraft.h"
+#include "perlinNoise.h"
 #include "blocks.h"
 #include <fstream>
 #include <algorithm>
@@ -67,6 +68,7 @@ static void parseBlockData(std::vector<std::string> &textures) {
 
 Minecraft::Minecraft(void) {
     window = 0;
+    windowsSize = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
     initWindows();
     initSkybox();
     enableGlParam();
@@ -74,9 +76,8 @@ Minecraft::Minecraft(void) {
     normalChunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
     wireframeChunkShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
     changeShader(chunkShader, normalChunkShader);
+    camera.Init(windowsSize.x, windowsSize.y, glm::vec3(0.0f, 60.0f, 0.0f));
 
-    camera.Init((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec3(0.0f, 60.0f, 0.0f));
-    
     std::vector<std::string> textureNames;
     parseBlockData(textureNames);
     for (auto& name : textureNames)
@@ -84,10 +85,6 @@ Minecraft::Minecraft(void) {
     texAtlas.LoadArray(textureNames, 0);
     
     initUniforms();
-
-    seed = (int)((double)rand() / (RAND_MAX)) * UINT32_MAX;
-    global_noise.SetSeed(seed);
-
     initChunks(STARTING_RENDER_DISTANCE);
 
     loadedChunks = (Chunk**)calloc((DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1), sizeof(Chunk*));

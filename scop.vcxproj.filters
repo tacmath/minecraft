@@ -60,6 +60,21 @@
     <ClCompile Include="srcs\entity.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="srcs\simplex_noise.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\debug.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\textDisplay.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\motor.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="perlin_noise.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\minecraft.h">
@@ -116,6 +131,21 @@
     <ClInclude Include="includes\UI.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\simplex_noise.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\debug.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\textDisplay.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\motor.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="perlinNoise.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -143,6 +173,12 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\wireFrameFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\textFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\textVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>
