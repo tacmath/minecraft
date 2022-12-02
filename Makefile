@@ -6,7 +6,7 @@
 #    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/12/02 12:17:16 by matheme          ###   ########.fr        #
+#    Updated: 2022/12/02 14:10:01 by matheme          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,7 +77,8 @@ CC			= gcc $(OPTIMISATION_FLAG)
 GPP			= g++ -std=c++11 $(OPTIMISATION_FLAG)
 
 
-all: $(NAME)
+
+all: install $(NAME)
 
 $(NAME) : $(OBJS)
 	@$(GPP) $^ -o $@ $(FRAMEWORK)
@@ -115,5 +116,8 @@ re: fclean all
 
 test: all
 	@./vox
+
+install:
+	@sh install.sh
 
 .PHONY: all re clean fclean lib silent
