@@ -12,6 +12,7 @@ private:
     GLuint frameBufferID;
     Shader shadowShader;
     glm::mat4 projection;
+    glm::mat4 biasMatrix;
 
 public:
     Shadow() {
@@ -25,8 +26,10 @@ public:
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
              SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -40,12 +43,20 @@ public:
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        biasMatrix = {
+            0.5, 0.0, 0.0, 0.0,
+            0.0, 0.5, 0.0, 0.0,
+            0.0, 0.0, 0.5, 0.0,
+            0.5, 0.5, 0.5, 1.0
+        };
+
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
         projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, 100.0f, 400.0f);
     }
 
     void GenerateShadowMap(glm::vec3 sunPos, Minecraft &minecraft) {
+
         glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -58,9 +69,9 @@ public:
     /*    minecraft.chunkShader.setMat4("projection", projection);
         minecraft.chunkShader.setMat4("view", sunMat);*/
         sunMat = projection * sunMat;
-        minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
+        minecraft.chunkShader.setMat4("lightSpaceMatrix", biasMatrix * sunMat);
         shadowShader.Activate();
-        shadowShader.setMat4("matrix", sunMat);
+        shadowShader.setMat4("matrix",sunMat);
 
         renderChunks(minecraft);
 
@@ -82,7 +93,7 @@ private:
         Chunk *chunk;
 
         glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(2.0f, 1.0f);
+        glPolygonOffset(2.5f, 1.0f);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int x = 0; x < maxChunk; x++) {
             for (int z = 0; z < maxChunk; z++) {

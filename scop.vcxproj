@@ -160,6 +160,7 @@
     <ClInclude Include="includes\chunk_generation.h" />
     <ClInclude Include="includes\cubeMap.h" />
     <ClInclude Include="includes\blocks.h" />
+    <ClInclude Include="includes\debug_utils.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
     <ClInclude Include="includes\event.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="includes\noise.h" />
     <ClInclude Include="includes\player.h" />
     <ClInclude Include="includes\shader.h" />
+    <ClInclude Include="includes\shadow.h" />
     <ClInclude Include="includes\texture.h" />
     <ClInclude Include="includes\thread.h" />
     <ClInclude Include="includes\UI.h" />
@@ -178,6 +180,8 @@
     <None Include="cubes_settings" />
     <None Include="shaders\highlightFS.glsl" />
     <None Include="shaders\highlightVS.glsl" />
+    <None Include="shaders\shadowFS.glsl" />
+    <None Include="shaders\shadowVS.glsl" />
     <None Include="shaders\skyBoxFS.glsl" />
     <None Include="shaders\skyBoxVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />

@@ -8,9 +8,9 @@ in vec4	fragPosLightSpace;
 
 uniform vec3 lightDir;
 uniform sampler2DArray atlas;
-uniform sampler2D shadowMap;
+uniform sampler2DShadow shadowMap;
 
-
+/*
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
     // perform perspective divide
@@ -41,7 +41,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     shadow /= 9.0f;
 
     return shadow;
-}  
+}  */
 /*
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
@@ -58,7 +58,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 
-    float bias = max(0.0008f * (1.0f - dot(normal, lightDir)), 0.00005f);
+    float bias = 0.0f;//max(0.0008f * (1.0f - dot(normal, lightDir)), 0.00005f);
 
     float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
 
@@ -67,6 +67,9 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-    float shadow = 1.0f - ShadowCalculation(fragPosLightSpace) * 0.5f;
+    float shadow = 1.0f;
+    if (fragPosLightSpace.z < fragPosLightSpace.w)
+        shadow -= textureProj(shadowMap, fragPosLightSpace) * 0.5f;
+
     FragColor = vec4(vec3(texture(atlas, texCoord)) * luminosity * shadow, 1.0f);
 }
