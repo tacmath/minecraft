@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include "shader.h"
 
+#include "debug_utils.h"
+
 #define SHADOW_TEXTURE_SIZE 2048
 
 class Shadow {
@@ -12,6 +14,9 @@ private:
     GLuint frameBufferID;
     Shader shadowShader;
     glm::mat4 projection;
+
+
+    DebugUtils debug;
 
 public:
     Shadow() {
@@ -43,6 +48,8 @@ public:
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
         projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, 100.0f, 400.0f);
+
+        debug.initRenderFBO(512, 512, 4);
     }
 
     void GenerateShadowMap(glm::vec3 sunPos, Minecraft &minecraft) {
@@ -55,14 +62,22 @@ public:
         sunPos.x += minecraft.camera.position.x;
         sunPos.z += minecraft.camera.position.z;
         glm::mat4 sunMat = glm::lookAt(sunPos, glm::vec3(minecraft.camera.position.x, 60.0f, minecraft.camera.position.z), glm::vec3(0, 1, 0));
-    /*    minecraft.chunkShader.setMat4("projection", projection);
-        minecraft.chunkShader.setMat4("view", sunMat);*/
+        minecraft.chunkShader.setMat4("projection", projection);
+        minecraft.chunkShader.setMat4("view", sunMat);
         sunMat = projection * sunMat;
         minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
         shadowShader.Activate();
         shadowShader.setMat4("matrix", sunMat);
 
         renderChunks(minecraft);
+
+
+
+        debug.bindRenderFBO();
+        minecraft.chunkShader.Activate();
+        debugRenderChunks(minecraft);
+        minecraft.changeShader(minecraft.chunkShader, minecraft.chunkShader);
+
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
@@ -92,6 +107,26 @@ private:
                 if (x > DATA_RENDER_DISTANCE - 6 && x < DATA_RENDER_DISTANCE + 6
                     && z > DATA_RENDER_DISTANCE - 6 && z < DATA_RENDER_DISTANCE + 6)
                     chunk->Draw(shadowShader);
+            }
+        }
+        glDisable(GL_POLYGON_OFFSET_FILL);
+    }
+
+    void debugRenderChunks(Minecraft& minecraft) {
+        int maxChunk;
+        Chunk* chunk;
+
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(2.0f, 1.0f);
+        maxChunk = DATA_RENDER_DISTANCE << 1;
+        for (int x = 0; x < maxChunk; x++) {
+            for (int z = 0; z < maxChunk; z++) {
+                chunk = minecraft.loadedChunks[x * maxChunk + z];
+                if (!chunk)
+                    continue;
+                if (x > DATA_RENDER_DISTANCE - 6 && x < DATA_RENDER_DISTANCE + 6
+                    && z > DATA_RENDER_DISTANCE - 6 && z < DATA_RENDER_DISTANCE + 6)
+                    chunk->Draw(minecraft.chunkShader);
             }
         }
         glDisable(GL_POLYGON_OFFSET_FILL);

@@ -46,8 +46,7 @@ void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
     sunPos.z = 160 * -cos(glm::radians(time));
     sunPos.y = 160 * sin(glm::radians(time)) + 60;
     sunPos.x = 160 * -cos(glm::radians(time));
-    if (time < 85 || time > 90)
-        shadow.GenerateShadowMap(sunPos, minecraft);
+    shadow.GenerateShadowMap(sunPos, minecraft);
 }
 
 
@@ -58,12 +57,17 @@ void loop(Minecraft &minecraft) {
     bool    hasNormalShader;
     
     Shader debugShader;
+    Shader debugShader2;
     DebugUtils debugUtils;
 
 
     debugShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
     debugShader.Activate();
     debugShader.setInt("depthMap", 3);
+    debugShader2.Load("shaders/debugTextureVS.glsl", "shaders/quadFS.glsl");
+    debugShader2.Activate();
+    debugShader2.setInt("Texture", 4);
+
     hasNormalShader = true;
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
@@ -72,15 +76,18 @@ void loop(Minecraft &minecraft) {
     glfwSwapInterval(0);
     while (1) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        if (!event.sunMode) {
-            minecraft.Draw();
-            UI.DrawHighlight();
-        }
-        else {
-            
-                        debugShader.Activate();
-        debugUtils.renderQuad();
-     
+        minecraft.Draw();
+        UI.DrawHighlight();
+
+        if (event.debugMode) {
+             glm::vec3 pos(0.3f);
+             glm::vec3 size(0.7f);
+
+             debugShader.Activate();
+             debugUtils.renderQuad(pos, size);
+             debugShader2.Activate();
+             pos.y -= 0.7f;
+             debugUtils.renderQuad(pos, size);
 
         }
 

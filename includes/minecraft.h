@@ -18,8 +18,8 @@
 #include <GLFW/glfw3.h>
 
 # define   PI           3.14159265358979323846
-# define WINDOW_WIDTH   1200
-# define WINDOW_HEIGHT  900
+# define WINDOW_WIDTH   1700
+# define WINDOW_HEIGHT  1080
 
 
 # define STARTING_RENDER_DISTANCE 1

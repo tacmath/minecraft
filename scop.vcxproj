@@ -160,6 +160,7 @@
     <ClInclude Include="includes\chunk_generation.h" />
     <ClInclude Include="includes\cubeMap.h" />
     <ClInclude Include="includes\blocks.h" />
+    <ClInclude Include="includes\debug_utils.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
     <ClInclude Include="includes\event.h" />
@@ -176,8 +177,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
+    <None Include="shaders\debugTextureFS.glsl" />
+    <None Include="shaders\debugTextureVS.glsl" />
     <None Include="shaders\highlightFS.glsl" />
     <None Include="shaders\highlightVS.glsl" />
+    <None Include="shaders\quadFS.glsl" />
     <None Include="shaders\skyBoxFS.glsl" />
     <None Include="shaders\skyBoxVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />

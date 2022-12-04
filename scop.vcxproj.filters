@@ -116,6 +116,9 @@
     <ClInclude Include="includes\UI.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\debug_utils.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -143,6 +146,15 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\wireFrameFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\debugTextureFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\debugTextureVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\quadFS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

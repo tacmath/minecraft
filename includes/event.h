@@ -25,7 +25,7 @@ public:
 	bool positionChanged;
 	bool lookChanged;
 	bool chunkShaderChanged;
-	bool sunMode;
+	bool debugMode;
 	
 	Event();
 
