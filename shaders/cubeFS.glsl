@@ -21,10 +21,12 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     if(projCoords.z > 1.0f)
         return 0.0f;
 
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(shadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
+    
+    float test = dot(normal, -lightDir);        // if the angle of the light and normal = ~ 90° set the shadow to 1
+    if (test > -0.1f && test < 0.9f)
+        return 1.0f;
 
     float bias = 0.0f;//mix(0.0005f, 0.000005f, (1.0f - dot(normal, lightDir)));
 

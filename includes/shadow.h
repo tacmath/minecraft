@@ -14,6 +14,8 @@ private:
     GLuint frameBufferID;
     Shader shadowShader;
     glm::mat4 projection;
+    glm::mat4 view;
+    glm::vec4 frustumCorners[8];
 
 
     DebugUtils debug;
@@ -47,27 +49,17 @@ public:
 
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
-        projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, 100.0f, 400.0f);
+        projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, -100.0f, 100.0f);
 
         debug.initRenderFBO(512, 512, 4);
     }
 
-    void GenerateShadowMap(glm::vec3 sunPos, Minecraft &minecraft) {
+    void GenerateShadowMap(glm::vec3 lightDir, Minecraft &minecraft) {
         glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
         glClear(GL_DEPTH_BUFFER_BIT);
         
-        minecraft.chunkShader.Activate();
-        minecraft.chunkShader.setVec3("lightDir", glm::normalize(glm::vec3(sunPos.x, sunPos.y - 60.0f, sunPos.z)));
-        sunPos.x += minecraft.camera.position.x;
-        sunPos.z += minecraft.camera.position.z;
-        glm::mat4 sunMat = glm::lookAt(sunPos, glm::vec3(minecraft.camera.position.x, 60.0f, minecraft.camera.position.z), glm::vec3(0, 1, 0));
-        minecraft.chunkShader.setMat4("projection", projection);
-        minecraft.chunkShader.setMat4("view", sunMat);
-        sunMat = projection * sunMat;
-        minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
-        shadowShader.Activate();
-        shadowShader.setMat4("matrix", sunMat);
+        setLightViewProjectionMatrix(lightDir, minecraft);
 
         renderChunks(minecraft);
 
@@ -75,6 +67,8 @@ public:
 
         debug.bindRenderFBO();
         minecraft.chunkShader.Activate();
+        minecraft.chunkShader.setMat4("projection", projection);
+        minecraft.chunkShader.setMat4("view", view);
         debugRenderChunks(minecraft);
         minecraft.changeShader(minecraft.chunkShader, minecraft.chunkShader);
 
@@ -92,6 +86,76 @@ public:
     }
 
 private:
+
+    void getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view) {
+        const glm::mat4 inv = glm::inverse(proj * view);
+        int n;
+
+        n = 0;
+        for (unsigned int x = 0; x < 2; ++x)
+        {
+            for (unsigned int y = 0; y < 2; ++y)
+            {
+                for (unsigned int z = 0; z < 2; ++z)
+                {
+                    const glm::vec4 pt =
+                        inv * glm::vec4(
+                            2.0f * x - 1.0f,
+                            2.0f * y - 1.0f,
+                            2.0f * z - 1.0f,
+                            1.0f);
+                    frustumCorners[n++] = pt / pt.w;
+                }
+            }
+        }
+    }
+
+    void setLightViewProjectionMatrix(glm::vec3 &lightDir, Minecraft& minecraft) {
+        glm::mat4 projection1 = glm::perspective(glm::radians(90.0f), (float)(1700.0f / 1080.0f), 0.1f, 20.0f);
+        getFrustumCornersWorldSpace(projection1, minecraft.camera.view);
+
+        float minX = std::numeric_limits<float>::max();
+        float maxX = std::numeric_limits<float>::lowest();
+        float minY = std::numeric_limits<float>::max();
+        float maxY = std::numeric_limits<float>::lowest();
+        float minZ = std::numeric_limits<float>::max();
+        float maxZ = std::numeric_limits<float>::lowest();
+
+        glm::vec3 center = glm::vec3(0, 60, 0);
+        for (int n = 0; n < 8; n++)
+            center += glm::vec3(frustumCorners[n]);
+        center /= 8;
+
+        view = glm::lookAt(
+            center + lightDir,
+            center,
+            glm::vec3(0.0f, 1.0f, 0.0f)
+        );
+
+        for (int n = 0; n < 8; n++)
+        {
+            glm::vec4 trf = view * frustumCorners[n];
+            minX = std::min(minX, trf.x);
+            maxX = std::max(maxX, trf.x);
+            minY = std::min(minY, trf.y);
+            maxY = std::max(maxY, trf.y);
+            minZ = std::min(minZ, trf.z);
+            maxZ = std::max(maxZ, trf.z);
+        }
+
+        projection = glm::ortho(minX, maxX, minY, maxY, minZ - 128, maxZ + 128);
+
+
+        glm::mat4 sunMat = projection * view;
+
+        minecraft.chunkShader.Activate();
+        minecraft.chunkShader.setVec3("lightDir", lightDir);
+        minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
+
+        shadowShader.Activate();
+        shadowShader.setMat4("matrix", sunMat);
+    }
+
     void renderChunks(Minecraft& minecraft) {
         int maxChunk;
         Chunk *chunk;

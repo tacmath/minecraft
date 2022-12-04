@@ -38,15 +38,17 @@ int showFPS(GLFWwindow* window, Minecraft &minecraft) {
 
 void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
     static float time = 20.0f;
-    glm::vec3 sunPos;
+    glm::vec3 lightDir;
 
     time++;
     if (time >= 160.0f)
         time = 20.0f;
-    sunPos.z = 160 * -cos(glm::radians(time));
-    sunPos.y = 160 * sin(glm::radians(time)) + 60;
-    sunPos.x = 160 * -cos(glm::radians(time));
-    shadow.GenerateShadowMap(sunPos, minecraft);
+    lightDir.z = -cos(glm::radians(time));
+    lightDir.y = sin(glm::radians(time));
+    lightDir.x = -cos(glm::radians(time));
+    lightDir = glm::normalize(lightDir);
+    if (glm::dot(lightDir, glm::vec3(0.0f, 1.0f, 0.0f)) < 1)
+        shadow.GenerateShadowMap(lightDir, minecraft);
 }
 
 
