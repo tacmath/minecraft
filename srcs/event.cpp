@@ -198,11 +198,16 @@ void Event::KeyEvent(Player& player) {
         keyPressed[GLFW_KEY_Z] = 1;
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE && keyPressed[GLFW_KEY_L]) {
         debugMode = !debugMode;
-        lookChanged = true;
         keyPressed[GLFW_KEY_L] = 0;
     }
     else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
         keyPressed[GLFW_KEY_L] = 1;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_RELEASE && keyPressed[GLFW_KEY_RIGHT]) {
+        debugChanged = true;
+        keyPressed[GLFW_KEY_RIGHT] = 0;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        keyPressed[GLFW_KEY_RIGHT] = 1;
 }
 
 void Event::MouseEvent(Camera &camera) {
@@ -241,6 +246,7 @@ void Event::GetEvents(Camera& camera, Player& player) {
     lookChanged = false;
     positionChanged = false;
     chunkShaderChanged = false;
+    debugChanged = false;
     glfwPollEvents();
     MovementEvent(camera, player);
     KeyEvent(player);

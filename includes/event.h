@@ -15,7 +15,7 @@
 class Event {
 	GLFWwindow* window;
 	glm::dvec2 mousePos;
-	char		keyPressed[256];
+	char		keyPressed[512];
 	bool inMenu;
 	float speed;
 	float mouseSensitivity;
@@ -26,6 +26,7 @@ public:
 	bool lookChanged;
 	bool chunkShaderChanged;
 	bool debugMode;
+	bool debugChanged;
 	
 	Event();
 

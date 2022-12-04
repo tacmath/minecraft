@@ -61,6 +61,10 @@ public:
 
 	void Update(char perspective);
 
+	float GetFOV();
+
+	float GetScreenRatio();
+
 };
 
 #endif

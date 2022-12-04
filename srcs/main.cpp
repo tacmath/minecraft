@@ -74,7 +74,7 @@ void loop(Minecraft &minecraft) {
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
     event.Init(minecraft.window);
-    shadow.Init();
+    shadow.Init(&minecraft.camera);
     glfwSwapInterval(0);
     while (1) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -115,6 +115,9 @@ void loop(Minecraft &minecraft) {
             minecraft.LoadChunks();
             minecraft.thread.BindAllChunks();
             minecraft.thread.UnlockLoadedChunks();
+
+            if (event.debugChanged)
+                shadow.changeIndex();
             sun(minecraft, event, shadow);
         }
     }

@@ -8,25 +8,31 @@
 
 #define SHADOW_TEXTURE_SIZE 2048
 
+#define SHADOW_CASCADE_NB 3
+
 class Shadow {
 private:
 	GLuint textureID;
     GLuint frameBufferID;
     Shader shadowShader;
-    glm::mat4 projection;
-    glm::mat4 view;
-    glm::vec4 frustumCorners[8];
+    glm::mat4 projection[SHADOW_CASCADE_NB];
+    glm::mat4 view[SHADOW_CASCADE_NB];
+    Camera* playerCam;
 
-
+    int index;
     DebugUtils debug;
 
 public:
     Shadow() {
         textureID = 0;
         frameBufferID = 0;
+
+        index = 0;
     }
 
-    void Init() {
+    void Init(Camera* playerCam) {
+        this->playerCam = playerCam;
+
         glGenTextures(1, &textureID);
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -49,8 +55,6 @@ public:
 
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
 
-        projection = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f, -100.0f, 100.0f);
-
         debug.initRenderFBO(512, 512, 4);
     }
 
@@ -67,8 +71,8 @@ public:
 
         debug.bindRenderFBO();
         minecraft.chunkShader.Activate();
-        minecraft.chunkShader.setMat4("projection", projection);
-        minecraft.chunkShader.setMat4("view", view);
+        minecraft.chunkShader.setMat4("projection", projection[index]);
+        minecraft.chunkShader.setMat4("view", view[index]);
         debugRenderChunks(minecraft);
         minecraft.changeShader(minecraft.chunkShader, minecraft.chunkShader);
 
@@ -85,9 +89,14 @@ public:
         glDeleteTextures(1, &textureID);
     }
 
+    void changeIndex() {
+        index++;
+        index = index * (index < 3);
+    }
+
 private:
 
-    void getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view) {
+    void getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view, glm::vec4 *frustumCorners) {
         const glm::mat4 inv = glm::inverse(proj * view);
         int n;
 
@@ -110,43 +119,56 @@ private:
         }
     }
 
-    void setLightViewProjectionMatrix(glm::vec3 &lightDir, Minecraft& minecraft) {
-        glm::mat4 projection1 = glm::perspective(glm::radians(90.0f), (float)(1700.0f / 1080.0f), 0.1f, 20.0f);
-        getFrustumCornersWorldSpace(projection1, minecraft.camera.view);
+    void createLightViewProjectionMatrices(glm::vec3& lightDir) {
+        glm::mat4 perspectives[SHADOW_CASCADE_NB];
+        glm::vec4 frustumCorners[8];
 
-        float minX = std::numeric_limits<float>::max();
-        float maxX = std::numeric_limits<float>::lowest();
-        float minY = std::numeric_limits<float>::max();
-        float maxY = std::numeric_limits<float>::lowest();
-        float minZ = std::numeric_limits<float>::max();
-        float maxZ = std::numeric_limits<float>::lowest();
+        perspectives[0] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 0.1f, 10.0f);
+        perspectives[1] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 10.0f, 64.0f);
+        perspectives[2] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 64.0f, 320.0f);
 
-        glm::vec3 center = glm::vec3(0, 60, 0);
-        for (int n = 0; n < 8; n++)
-            center += glm::vec3(frustumCorners[n]);
-        center /= 8;
 
-        view = glm::lookAt(
-            center + lightDir,
-            center,
-            glm::vec3(0.0f, 1.0f, 0.0f)
-        );
+        for (int cascade = 0; cascade < SHADOW_CASCADE_NB; cascade++) {
+            getFrustumCornersWorldSpace(perspectives[cascade], playerCam->view, frustumCorners);        //maybe change to only une one perspective
 
-        for (int n = 0; n < 8; n++)
-        {
-            glm::vec4 trf = view * frustumCorners[n];
-            minX = std::min(minX, trf.x);
-            maxX = std::max(maxX, trf.x);
-            minY = std::min(minY, trf.y);
-            maxY = std::max(maxY, trf.y);
-            minZ = std::min(minZ, trf.z);
-            maxZ = std::max(maxZ, trf.z);
+            float minX = std::numeric_limits<float>::max();
+            float maxX = std::numeric_limits<float>::lowest();
+            float minY = std::numeric_limits<float>::max();
+            float maxY = std::numeric_limits<float>::lowest();
+            float minZ = std::numeric_limits<float>::max();
+            float maxZ = std::numeric_limits<float>::lowest();
+
+            glm::vec3 center = glm::vec3(0, 60, 0);
+            for (int n = 0; n < 8; n++)
+                center += glm::vec3(frustumCorners[n]);
+            center /= 8;
+
+            view[cascade] = glm::lookAt(
+                center + lightDir,
+                center,
+                glm::vec3(0.0f, 1.0f, 0.0f)
+            );
+
+            for (int n = 0; n < 8; n++)
+            {
+                glm::vec4 trf = view[cascade] * frustumCorners[n];
+                minX = std::min(minX, trf.x);
+                maxX = std::max(maxX, trf.x);
+                minY = std::min(minY, trf.y);
+                maxY = std::max(maxY, trf.y);
+                minZ = std::min(minZ, trf.z);
+                maxZ = std::max(maxZ, trf.z);
+            }
+
+            projection[cascade] = glm::ortho(minX, maxX, minY, maxY, minZ - 128, maxZ + 128);
         }
+    }
 
-        projection = glm::ortho(minX, maxX, minY, maxY, minZ - 128, maxZ + 128);
+    void setLightViewProjectionMatrix(glm::vec3 &lightDir, Minecraft& minecraft) {
 
+        createLightViewProjectionMatrices(lightDir);
 
-        glm::mat4 sunMat = projection * view;
+        glm::mat4 sunMat = projection[index] * view[index];
 
         minecraft.chunkShader.Activate();
         minecraft.chunkShader.setVec3("lightDir", lightDir);
@@ -158,10 +180,44 @@ private:
 
     void renderChunks(Minecraft& minecraft) {
         int maxChunk;
+        Chunk* chunk;
+        Frustum frustum;
+
+        frustum.calculate(projection[index] * view[index]);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(3.0f, 1.0f);
+        maxChunk = DATA_RENDER_DISTANCE << 1;
+        for (int n = 0; n < minecraft.chunks.size(); n++) {
+            chunk = minecraft.chunks[n];
+            if (frustum.chunkIsVisible(chunk->posx, chunk->posz))
+                chunk->Draw(shadowShader);
+        }
+        glDisable(GL_POLYGON_OFFSET_FILL);
+    }
+
+    void debugRenderChunks(Minecraft& minecraft) {
+        int maxChunk;
+        Chunk* chunk;
+        Frustum frustum;
+
+        frustum.calculate(projection[index] * view[index]);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(3.0f, 1.0f);
+        maxChunk = DATA_RENDER_DISTANCE << 1;
+        for (int n = 0; n < minecraft.chunks.size(); n++) {
+            chunk = minecraft.chunks[n];
+            if (frustum.chunkIsVisible(chunk->posx, chunk->posz))
+                chunk->Draw(minecraft.chunkShader);
+        }
+        glDisable(GL_POLYGON_OFFSET_FILL);
+    }
+    /*
+    void renderChunks(Minecraft& minecraft) {
+        int maxChunk;
         Chunk *chunk;
 
         glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(2.0f, 1.0f);
+        glPolygonOffset(3.0f, 1.0f);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int x = 0; x < maxChunk; x++) {
             for (int z = 0; z < maxChunk; z++) {
@@ -181,7 +237,7 @@ private:
         Chunk* chunk;
 
         glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(2.0f, 1.0f);
+        glPolygonOffset(3.0f, 1.0f);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int x = 0; x < maxChunk; x++) {
             for (int z = 0; z < maxChunk; z++) {
@@ -194,7 +250,7 @@ private:
             }
         }
         glDisable(GL_POLYGON_OFFSET_FILL);
-    }
+    }*/
 };
 
 #endif
