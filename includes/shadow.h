@@ -140,10 +140,13 @@ private:
             float minZ = std::numeric_limits<float>::max();
             float maxZ = std::numeric_limits<float>::lowest();
 
-            glm::vec3 center = glm::vec3(0, 60, 0);
+            glm::vec3 center = glm::vec3(0.0f);
             for (int n = 0; n < 8; n++)
                 center += glm::vec3(frustumCorners[n]);
             center /= 8;
+
+            if (center.y < 64.0f)
+                center.y = 64.0f;
 
             view[cascade] = glm::lookAt(
                 center + lightDir,

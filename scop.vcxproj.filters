@@ -163,5 +163,8 @@
     <None Include="shaders\shadowVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="shaders\cubeNoShadowFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

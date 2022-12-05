@@ -45,7 +45,7 @@ void sun(Minecraft& minecraft, Event &event, Shadow &shadow) {
         time = 20.0f;
     lightDir.z = -cos(glm::radians(time));
     lightDir.y = sin(glm::radians(time));
-    lightDir.x = -cos(glm::radians(time));
+    lightDir.x = /*0.15f **/ -cos(glm::radians(time));
     lightDir = glm::normalize(lightDir);
     if (glm::dot(lightDir, glm::vec3(0.0f, 1.0f, 0.0f)) < 1)
         shadow.GenerateShadowMap(lightDir, minecraft);
