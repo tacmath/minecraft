@@ -5,10 +5,11 @@ in vec3	normal;
 in vec3 texCoord;
 in float luminosity;
 in vec4	fragPosLightSpace;
+in float shadowMapLayer;
 
 uniform vec3 lightDir;
 uniform sampler2DArray atlas;
-uniform sampler2D shadowMap;
+uniform sampler2DArray shadowMap;
 
 
 float ShadowCalculation(vec4 fragPosLightSpace)
@@ -27,16 +28,16 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float test = dot(normal, -lightDir);        // if the angle of the light and normal = ~ 90° set the shadow to 1
     if (test > -0.1f && test < 0.9f)
         return 1.0f;
-
+        
     float bias = 0.0f;//mix(0.0005f, 0.000005f, (1.0f - dot(normal, lightDir)));
 
     float shadow = 0.0f;
-    vec2 texelSize = 1.0f / textureSize(shadowMap, 0);
+    vec2 texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, shadowMapLayer)).r; 
             shadow += currentDepth - bias > pcfDepth ? 1.0f : 0.0f;        
         }    
     }

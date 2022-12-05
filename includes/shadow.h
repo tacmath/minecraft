@@ -35,32 +35,34 @@ public:
 
         glGenTextures(1, &textureID);
         glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
-             SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
+        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT,
+             SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, SHADOW_CASCADE_NB + 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
         float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);  
-        glActiveTexture(GL_TEXTURE0);
+        glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor);
 
         glGenFramebuffers(1, &frameBufferID);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureID, 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
+        shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl", "shaders/shadowGS.glsl");
 
         debug.initRenderFBO(512, 512, 4);
     }
 
     void GenerateShadowMap(glm::vec3 lightDir, Minecraft &minecraft) {
-        glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_TEXTURE_2D_ARRAY, textureID, 0);
+        glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
         glClear(GL_DEPTH_BUFFER_BIT);
         
         setLightViewProjectionMatrix(lightDir, minecraft);
@@ -165,31 +167,31 @@ private:
     }
 
     void setLightViewProjectionMatrix(glm::vec3 &lightDir, Minecraft& minecraft) {
+        glm::mat4 lightSpaceMatrices[SHADOW_CASCADE_NB];
 
         createLightViewProjectionMatrices(lightDir);
 
-        glm::mat4 sunMat = projection[index] * view[index];
+        for (int n = 0; n < SHADOW_CASCADE_NB; n++)
+            lightSpaceMatrices[n] = projection[n] * view[n];
 
         minecraft.chunkShader.Activate();
         minecraft.chunkShader.setVec3("lightDir", lightDir);
-        minecraft.chunkShader.setMat4("lightSpaceMatrix", sunMat);
+        minecraft.chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
 
         shadowShader.Activate();
-        shadowShader.setMat4("matrix", sunMat);
+        shadowShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
     }
 
     void renderChunks(Minecraft& minecraft) {
         int maxChunk;
         Chunk* chunk;
-        Frustum frustum;
 
-        frustum.calculate(projection[index] * view[index]);
         glEnable(GL_POLYGON_OFFSET_FILL);
         glPolygonOffset(3.0f, 1.0f);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int n = 0; n < minecraft.chunks.size(); n++) {
             chunk = minecraft.chunks[n];
-            if (frustum.chunkIsVisible(chunk->posx, chunk->posz))
+            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 128))
                 chunk->Draw(shadowShader);
         }
         glDisable(GL_POLYGON_OFFSET_FILL);
@@ -198,15 +200,13 @@ private:
     void debugRenderChunks(Minecraft& minecraft) {
         int maxChunk;
         Chunk* chunk;
-        Frustum frustum;
 
-        frustum.calculate(projection[index] * view[index]);
         glEnable(GL_POLYGON_OFFSET_FILL);
         glPolygonOffset(3.0f, 1.0f);
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int n = 0; n < minecraft.chunks.size(); n++) {
             chunk = minecraft.chunks[n];
-            if (frustum.chunkIsVisible(chunk->posx, chunk->posz))
+            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 32))
                 chunk->Draw(minecraft.chunkShader);
         }
         glDisable(GL_POLYGON_OFFSET_FILL);

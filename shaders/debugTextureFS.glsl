@@ -3,10 +3,11 @@ out vec4 FragColor;
   
 in vec2 TexCoords;
 
-uniform sampler2D depthMap;
+uniform sampler2DArray depthMap;
+uniform float index;
 
 void main()
 {             
-    float depthValue = texture(depthMap, TexCoords).r;
-    FragColor = vec4(vec3(depthValue), 1.0);
+    float depthValue = texture(depthMap, vec3(TexCoords, index)).r;
+    FragColor = vec4(vec3(depthValue), 0.0f);
 }  

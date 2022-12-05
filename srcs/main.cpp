@@ -62,10 +62,13 @@ void loop(Minecraft &minecraft) {
     Shader debugShader2;
     DebugUtils debugUtils;
 
+    float index = 0.0f;
+
 
     debugShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
     debugShader.Activate();
     debugShader.setInt("depthMap", 3);
+    debugShader.setFloat("index", index);
     debugShader2.Load("shaders/debugTextureVS.glsl", "shaders/quadFS.glsl");
     debugShader2.Activate();
     debugShader2.setInt("Texture", 4);
@@ -116,8 +119,14 @@ void loop(Minecraft &minecraft) {
             minecraft.thread.BindAllChunks();
             minecraft.thread.UnlockLoadedChunks();
 
-            if (event.debugChanged)
+            if (event.debugChanged) {
                 shadow.changeIndex();
+                index++;
+                if (index > 2.0f)
+                    index = 0.0f;
+                debugShader.Activate();
+                debugShader.setFloat("index", index);
+            }
             sun(minecraft, event, shadow);
         }
     }
