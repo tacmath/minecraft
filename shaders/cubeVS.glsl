@@ -5,12 +5,10 @@ layout (location = 1) in uint data;
 out vec3	normal;
 out vec3	texCoord;
 out float	luminosity;
-out vec4	fragPosLightSpace;
-out float	shadowMapLayer;
+out vec3	fragPos;
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform mat4 lightSpaceMatrices[4];
 uniform vec2 chunkPos;
 
 const vec3 cubeNormal[6] = vec3[6] (
@@ -21,34 +19,6 @@ const vec3 cubeNormal[6] = vec3[6] (
 	vec3(0.0f, 0.0f, 1.0f),
 	vec3(0.0f, 0.0f, -1.0f)
 );
-
-const int cascadeNB = 3;
-
-const float cascadePlaneDistances[3] = float[3] (
-	10.0f,
-	64.0f,
-	320.0f
-);
-
-
-int getShadowLayer(float depthValue) {
-    
-	int layer = -1;
-	for (int i = 0; i < cascadeNB; ++i)
-	{
-		if (depthValue < cascadePlaneDistances[i])
-		{
-			layer = i;
-			break;
-		}
-	}
-	if (layer == -1)
-	{
-		layer = cascadeNB;
-	}
-	return layer;
-}
-
 
 void main()
 {
@@ -64,10 +34,7 @@ void main()
 
 	luminosity = 1.0f - (((vertex >> 28u) & 0xFu) / 3.0f) * 0.8f;
 
-	vec4 vertexPos = vec4(x + chunkPos.x, y, z + chunkPos.y, 1.0f);
+	fragPos = vec3(x + chunkPos.x, y, z + chunkPos.y);
 	
-	gl_Position = projection * view * vertexPos;
-	
-	shadowMapLayer = getShadowLayer(abs(gl_Position.z));
-	fragPosLightSpace = lightSpaceMatrices[int(shadowMapLayer)] * (vertexPos /*+ vec4(normal * 0.05f, 0.0f)*/);
+	gl_Position = projection * view * vec4(fragPos, 1.0f);
 }

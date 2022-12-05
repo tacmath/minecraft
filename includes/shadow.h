@@ -125,9 +125,9 @@ private:
         glm::mat4 perspectives[SHADOW_CASCADE_NB];
         glm::vec4 frustumCorners[8];
 
-        perspectives[0] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 0.1f, 10.0f);
-        perspectives[1] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 10.0f, 64.0f);
-        perspectives[2] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 64.0f, 320.0f);
+        perspectives[0] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 0.1f, 16.0f);
+        perspectives[1] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 16.0f, 48.0f);
+        perspectives[2] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 48.0f, 224.0f);
 
 
         for (int cascade = 0; cascade < SHADOW_CASCADE_NB; cascade++) {
@@ -191,7 +191,7 @@ private:
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int n = 0; n < minecraft.chunks.size(); n++) {
             chunk = minecraft.chunks[n];
-            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 128))
+            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 96))
                 chunk->Draw(shadowShader);
         }
         glDisable(GL_POLYGON_OFFSET_FILL);
@@ -206,7 +206,7 @@ private:
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int n = 0; n < minecraft.chunks.size(); n++) {
             chunk = minecraft.chunks[n];
-            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 32))
+            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 96))
                 chunk->Draw(minecraft.chunkShader);
         }
         glDisable(GL_POLYGON_OFFSET_FILL);

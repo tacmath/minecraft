@@ -3,17 +3,45 @@ out vec4 FragColor;
 
 in vec3	normal;
 in vec3 texCoord;
+in vec3 fragPos;
 in float luminosity;
-in vec4	fragPosLightSpace;
-in float shadowMapLayer;
 
+uniform mat4 view;
+uniform mat4 lightSpaceMatrices[4];
 uniform vec3 lightDir;
 uniform sampler2DArray atlas;
 uniform sampler2DArray shadowMap;
 
+const int cascadeNB = 3;
 
-float ShadowCalculation(vec4 fragPosLightSpace)
+const float cascadePlaneDistances[3] = float[3] (
+	16.0f,
+	48.0f,
+	224.0f
+);
+
+
+int getShadowLayer(float depthValue) {
+    
+	int layer = cascadeNB;
+	for (int i = 0; i < cascadeNB; ++i)
+	{
+		if (depthValue < cascadePlaneDistances[i])
+		{
+			layer = i;
+			break;
+		}
+	}
+	return layer;
+}
+
+
+
+float ShadowCalculation()
 {
+    vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
+    int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z));
+    vec4 fragPosLightSpace = lightSpaceMatrices[shadowMapLayer] * vec4(fragPos + normal * 0.05f, 1.0f);
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
@@ -70,6 +98,6 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-    float shadow = 1.0f - ShadowCalculation(fragPosLightSpace) * 0.5f;
+    float shadow = 1.0f - ShadowCalculation() * 0.5f;
     FragColor = vec4(vec3(texture(atlas, texCoord)) * luminosity * shadow, 1.0f);
 }
