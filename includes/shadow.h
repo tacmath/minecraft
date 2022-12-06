@@ -15,6 +15,7 @@ private:
 	GLuint textureID;
     GLuint frameBufferID;
     Shader shadowShader;
+    glm::mat4 biasMatrix;
     glm::mat4 projection[SHADOW_CASCADE_NB];
     glm::mat4 view[SHADOW_CASCADE_NB];
     Camera* playerCam;
@@ -38,6 +39,11 @@ public:
         glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT,
              SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, SHADOW_CASCADE_NB + 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+        /*
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
 
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -54,6 +60,13 @@ public:
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        biasMatrix = {
+            0.5, 0.0, 0.0, 0.0,
+            0.0, 0.5, 0.0, 0.0,
+            0.0, 0.0, 0.5, 0.0,
+            0.5, 0.5, 0.5, 1.0
+        };
+
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl", "shaders/shadowGS.glsl");
 
         debug.initRenderFBO(512, 512, 4);
@@ -67,6 +80,7 @@ public:
         
         setLightViewProjectionMatrix(lightDir, minecraft);
 
+        shadowShader.Activate();
         renderChunks(minecraft);
 
 
@@ -177,12 +191,15 @@ private:
         for (int n = 0; n < SHADOW_CASCADE_NB; n++)
             lightSpaceMatrices[n] = projection[n] * view[n];
 
+        shadowShader.Activate();
+        shadowShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
+
+        for (int n = 0; n < SHADOW_CASCADE_NB; n++)
+            lightSpaceMatrices[n] = biasMatrix * lightSpaceMatrices[n];
+
         minecraft.chunkShader.Activate();
         minecraft.chunkShader.setVec3("lightDir", lightDir);
         minecraft.chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
-
-        shadowShader.Activate();
-        shadowShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
     }
 
     void renderChunks(Minecraft& minecraft) {

@@ -1,4 +1,5 @@
 #version 400
+
 out vec4 FragColor;
 
 in vec3	normal;
@@ -11,6 +12,10 @@ uniform mat4 lightSpaceMatrices[4];
 uniform vec3 lightDir;
 uniform sampler2DArray atlas;
 uniform sampler2DArray shadowMap;
+
+//peux ètre faire des ifdef pour les options 
+//uniform sampler2DArrayShadow shadowMap;
+
 
 const int cascadeNB = 3;
 
@@ -35,26 +40,20 @@ int getShadowLayer(float depthValue) {
 	return layer;
 }
 
-
-
 float ShadowCalculation()
 {
     vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
-    int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z));
+    int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z)); 
     vec4 fragPosLightSpace = lightSpaceMatrices[shadowMapLayer] * vec4(fragPos + normal * 0.05f, 1.0f);
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // transform to [0,1] range
-    projCoords = projCoords * 0.5f + 0.5f;
 
     if(projCoords.z > 1.0f)
         return 0.0f;
 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-    
-    float test = dot(normal, -lightDir);        // if the angle of the light and normal = ~ 90° set the shadow to 1
-    if (test > -0.1f && test < 0.9f)
+    if (dot(normal, -lightDir) > 0.0f) // if the angle of the light and normal = ~ 90° set the shadow to 1
         return 1.0f;
         
     float bias = 0.0f;//mix(0.0005f, 0.000005f, (1.0f - dot(normal, lightDir)));
@@ -72,29 +71,26 @@ float ShadowCalculation()
     shadow /= 9.0f;
 
     return shadow;
-}  
+}
 /*
-float ShadowCalculation(vec4 fragPosLightSpace)
+float ShadowCalculation()
 {
+    vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
+    int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z)); 
+    vec4 fragPosLightSpace = lightSpaceMatrices[shadowMapLayer] * vec4(fragPos + normal * 0.05f, 1.0f);
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // transform to [0,1] range
-    projCoords = projCoords * 0.5f + 0.5f;
 
     if(projCoords.z > 1.0f)
         return 0.0f;
 
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(shadowMap, projCoords.xy).r; 
-    // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
+    if (dot(normal, -lightDir) > 0.0f) // if the angle of the light and normal = ~ 90° set the shadow to 1
+        return 1.0f;
 
-    float bias = max(0.0008f * (1.0f - dot(normal, lightDir)), 0.00005f);
-
-    float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
+    float shadow =  texture(shadowMap, vec4(projCoords.xy , shadowMapLayer, projCoords.z));
 
     return shadow;
-}  */
+}*/
 
 void main()
 {
