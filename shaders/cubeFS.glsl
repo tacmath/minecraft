@@ -22,17 +22,15 @@ const int cascadeNB = 3;
 const float cascadePlaneDistances[3] = float[3] (
 	16.0f,
 	48.0f,
-	224.0f
+	160.0f
 );
 
 
 int getShadowLayer(float depthValue) {
     
-	int layer = cascadeNB;
-	for (int i = 0; i < cascadeNB; ++i)
-	{
-		if (depthValue < cascadePlaneDistances[i])
-		{
+	int layer = cascadeNB - 1;
+	for (int i = 0; i < cascadeNB; ++i) {
+		if (depthValue < cascadePlaneDistances[i]) {
 			layer = i;
 			break;
 		}

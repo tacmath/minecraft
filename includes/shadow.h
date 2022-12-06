@@ -38,7 +38,7 @@ public:
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT,
-             SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, SHADOW_CASCADE_NB + 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+             SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE, SHADOW_CASCADE_NB, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
         /*
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
@@ -129,7 +129,9 @@ private:
                             2.0f * y - 1.0f,
                             2.0f * z - 1.0f,
                             1.0f);
-                    frustumCorners[n++] = pt / pt.w;
+                    frustumCorners[n] = pt / pt.w;
+                  //  frustumCorners[n].y = 60.0f;
+                    n++;
                 }
             }
         }
@@ -141,7 +143,7 @@ private:
 
         perspectives[0] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 0.1f, 16.0f);
         perspectives[1] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 16.0f, 48.0f);
-        perspectives[2] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 48.0f, 224.0f);
+        perspectives[2] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 48.0f, 160.0f);
 
 
         for (int cascade = 0; cascade < SHADOW_CASCADE_NB; cascade++) {
@@ -154,14 +156,11 @@ private:
             float minZ = std::numeric_limits<float>::max();
             float maxZ = std::numeric_limits<float>::lowest();
 
-            glm::vec3 center = glm::vec3(0.0f);
+            glm::vec3 center = glm::vec3(0.0f);     //change to fix the center to fix the center y to the coords 60
             for (int n = 0; n < 8; n++)
                 center += glm::vec3(frustumCorners[n]);
             center /= 8;
-
-            if (center.y < 64.0f)
-                center.y = 64.0f;
-
+            
             view[cascade] = glm::lookAt(
                 center + lightDir,
                 center,
