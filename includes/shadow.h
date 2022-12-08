@@ -130,7 +130,7 @@ private:
                             2.0f * z - 1.0f,
                             1.0f);
                     frustumCorners[n] = pt / pt.w;
-                  //  frustumCorners[n].y = 60.0f;
+                 //   frustumCorners[n].y = 60.0f; // il faut aussi changer le calcule dans le shader pour prendre en compte la distance en xz
                     n++;
                 }
             }
@@ -160,7 +160,7 @@ private:
             for (int n = 0; n < 8; n++)
                 center += glm::vec3(frustumCorners[n]);
             center /= 8;
-            
+
             view[cascade] = glm::lookAt(
                 center + lightDir,
                 center,
@@ -210,7 +210,7 @@ private:
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int n = 0; n < minecraft.chunks.size(); n++) {
             chunk = minecraft.chunks[n];
-            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 96))
+            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 48))
                 chunk->Draw(shadowShader);
         }
         glDisable(GL_POLYGON_OFFSET_FILL);
@@ -225,7 +225,7 @@ private:
         maxChunk = DATA_RENDER_DISTANCE << 1;
         for (int n = 0; n < minecraft.chunks.size(); n++) {
             chunk = minecraft.chunks[n];
-            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 96))
+            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 48))
                 chunk->Draw(minecraft.chunkShader);
         }
         glDisable(GL_POLYGON_OFFSET_FILL);
