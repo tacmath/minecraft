@@ -25,7 +25,7 @@ void loop(Minecraft &minecraft) {
     Motor           motor;
     Event           event;
 
-    debug.Init(&minecraft.windowSize, &minecraft.player, &minecraft.camera);
+    debug.Init(&minecraft.windowSize, &minecraft.player, &minecraft.camera, minecraft.window);
 
     UI.Init(minecraft.windowSize);
     UI.InitUniforms(minecraft.camera.projection);
@@ -68,8 +68,8 @@ void loop(Minecraft &minecraft) {
             }
             minecraft.Draw();
             UI.Draw(minecraft);
-            debug.fpsTitle(time, latence, minecraft);
-            debug.Draw(time, latence, minecraft);
+            debug.fpsTitle(time, latence);
+            debug.Draw(time, latence);
 
             glfwSwapBuffers(minecraft.window);
             previousFrameTime = time;

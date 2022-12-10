@@ -9,10 +9,11 @@ Debug::Debug() {
     previousUpdateTime = 0.0f;
 }
 
-void Debug::Init(glm::vec2 *windowSize, Player *player, Camera *camera) {
+void Debug::Init(glm::vec2 *windowSize, Player *player, Camera *camera, GLFWwindow *window) {
     this->windowSize = windowSize;
     this->player = player;
     this->camera = camera;
+    this->window = window;
     text.Init(windowSize->x, windowSize->y);
 }
 
@@ -38,20 +39,20 @@ void Debug::setProjection(float width, float height) {
     text.setProjection(width, height);
 }
 
-void Debug::fpsTitle(float time, float latence, Minecraft& minecraft) {
+void Debug::fpsTitle(float time, float latence) {
     static char title[100];
 
     frame_title += 1;
     diff = time - previousUpdateTime_title;
     if (diff >= 0.2f) {
         sprintf(title, "Minecraft :  FPS: %d (%.2f ms)", frame_title * 5, latence);
-        glfwSetWindowTitle(minecraft.window, title);
+        glfwSetWindowTitle(window, title);
         previousUpdateTime_title = time - (diff - 0.2f);
         frame_title = 0;
     }
 }
 
-void Debug::Draw(float time, float latence, Minecraft &minecraft) {
+void Debug::Draw(float time, float latence) {
     if (visible == false) return;
     frame += 1;
 

@@ -6,6 +6,7 @@
 #include "textDisplay.h"
 
 class Debug {
+    GLFWwindow  *window;
     Camera      *camera;
     Player      *player;
     glm::vec2   *windowSize;
@@ -28,7 +29,7 @@ public:
 
     Debug();
 
-    void Init(glm::vec2 *windowSize, Player *player, Camera *camera);
+    void Init(glm::vec2 *windowSize, Player *player, Camera *camera, GLFWwindow  *window);
 
     void setProjection(float width, float height);
 
@@ -38,9 +39,9 @@ public:
 
     void toggle();
 
-    void Draw(float time, float latence, Minecraft &minecraft);
+    void Draw(float time, float latence);
 
-    void fpsTitle(float time, float latence, Minecraft& minecraft);
+    void fpsTitle(float time, float latence);
 };
 
 #endif
