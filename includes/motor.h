@@ -6,6 +6,8 @@ class Motor {
     float diff;
 
 public:
+    Motor ();
+
     bool update(float time);
 };
 

@@ -68,7 +68,7 @@ static void parseBlockData(std::vector<std::string> &textures) {
 
 Minecraft::Minecraft(void) {
     window = 0;
-    windowsSize = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
+    windowSize = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
     initWindows();
     initSkybox();
     enableGlParam();
@@ -76,7 +76,7 @@ Minecraft::Minecraft(void) {
     normalChunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
     wireframeChunkShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
     changeShader(chunkShader, normalChunkShader);
-    camera.Init(windowsSize.x, windowsSize.y, glm::vec3(0.0f, 60.0f, 0.0f));
+    camera.Init(windowSize.x, windowSize.y, glm::vec3(0.0f, 60.0f, 0.0f));
 
     std::vector<std::string> textureNames;
     parseBlockData(textureNames);

@@ -1,13 +1,19 @@
 #include "debug.h"
 
-Debug::Debug(float width, float height) {
-    text.Init(width, height);
+Debug::Debug() {
     diff = 0;
     fps[0] = 0;
     xyz[0] = 0;
     frame = 0;
     visible = true;
     previousUpdateTime = 0.0f;
+}
+
+void Debug::Init(glm::vec2 *windowSize, Player *player, Camera *camera) {
+    this->windowSize = windowSize;
+    this->player = player;
+    this->camera = camera;
+    text.Init(windowSize->x, windowSize->y);
 }
 
 void Debug::toggle() {
@@ -61,10 +67,10 @@ void Debug::Draw(float time, float latence, Minecraft &minecraft) {
         if (diff >= 0.4) diff = 0.0f;
         previousUpdateTime = time - (diff - 0.2f);
     }
-    sprintf(xyz, "XYZ: %.3f / %.3f / %.3f", minecraft.camera.position.x, minecraft.camera.position.y, minecraft.camera.position.z);
+    sprintf(xyz, "XYZ: %.3f / %.3f / %.3f", camera->position.x, camera->position.y, camera->position.z);
 
 
-    Chunk *chunk = GetChunk((int)(minecraft.camera.position.x) >> 4, (int)(minecraft.camera.position.z) >> 4);
+    Chunk *chunk = GetChunk((int)(camera->position.x) >> 4, (int)(camera->position.z) >> 4);
     if (chunk != 0) {
         sprintf(xz, "Chunk: %d %d", chunk->posx, chunk->posz);
     }
@@ -72,9 +78,9 @@ void Debug::Draw(float time, float latence, Minecraft &minecraft) {
         sprintf(xz, "Chunk: undefined");
     }
 
-    sprintf(target, "target: %d %d %d", minecraft.player.selectedCube.position.x, minecraft.player.selectedCube.position.y, minecraft.player.selectedCube.position.z);
+    sprintf(target, "target: %d %d %d", player->selectedCube.position.x, player->selectedCube.position.y, player->selectedCube.position.z);
 
-    float y = minecraft.windowsSize.y - 15;
+    float y = windowSize->y - 15;
     float scale = (y / 600) / 5;
     float space = scale * 100.0f;
     text.display("Vox Version 0.1", 5.0f, y, scale, glm::vec3(1.0, 1.0f, 1.0f));

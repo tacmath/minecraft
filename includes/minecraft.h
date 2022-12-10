@@ -10,15 +10,12 @@
 #include "chunk.h"
 #include "thread.h"
 #include "player.h"
-#include "motor.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
 #include <ctime>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
-#include "simplex_noise.h"
 
 
 # define PI             3.14159265358979323846
@@ -28,7 +25,7 @@
 
 
 # define STARTING_RENDER_DISTANCE 1
-# define RENDER_DISTANCE 40
+# define RENDER_DISTANCE 20
 # define DATA_RENDER_DISTANCE (RENDER_DISTANCE + 1)
 # define UNLOAD_OFFSET 2
 
@@ -46,9 +43,7 @@ public:
     // the player
     Player      player;
 
-    Motor       motor;
-
-    glm::vec2 windowsSize;
+    glm::vec2 windowSize;
 
     // list of all the chunks loaded
 	std::vector<Chunk*> chunks;

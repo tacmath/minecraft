@@ -1,10 +1,15 @@
 #ifndef DEBUG_CLASS_H
 #define DEBUG_CLASS_H
 
-#include "minecraft.h"
+#include "player.h"
+#include "camera.h"
 #include "textDisplay.h"
 
 class Debug {
+    Camera      *camera;
+    Player      *player;
+    glm::vec2   *windowSize;
+
     int frame;
     int frame_title;
     float previousUpdateTime;
@@ -21,7 +26,9 @@ class Debug {
 
 public:
 
-    Debug(float width, float height);
+    Debug();
+
+    void Init(glm::vec2 *windowSize, Player *player, Camera *camera);
 
     void setProjection(float width, float height);
 

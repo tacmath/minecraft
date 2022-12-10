@@ -14,10 +14,13 @@ public:
     bool hasHighlight;
 
 
-    UserInterface(float width, float height) {
+    UserInterface() {
         initHighlight();
-        text.Init(width, height);
         hasHighlight = false;
+    }
+
+    void Init(glm::vec2 windowSize) {
+        text.Init(windowSize.x, windowSize.y);
     }
 
     void InitUniforms(glm::mat4& projection) {
@@ -37,7 +40,7 @@ public:
     void Draw(Minecraft &minecraft) {
         SetHighlight(minecraft.player.selectedCube);
         DrawHighlight();
-        DrawCross(minecraft.windowsSize.x / 2, minecraft.windowsSize.y / 2);
+        DrawCross(minecraft.windowSize.x / 2, minecraft.windowSize.y / 2);
     }
 
 private:

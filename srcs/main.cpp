@@ -9,9 +9,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H  
 #include "debug.h"
-#include <iomanip>
-
-#include "debug.h"
+#include "motor.h"
 #include <iomanip>
 
 
@@ -21,35 +19,20 @@ std::map<int64_t, Chunk*> chunksMap;
 
 ChunkGeneration     globalChunkGeneration;
 
-
-Event           event;
-Minecraft       minecraft;
-Debug           debug = Debug(minecraft.windowsSize.x, minecraft.windowsSize.y);
-UserInterface   UI = UserInterface(minecraft.windowsSize.x, minecraft.windowsSize.y);
-
-void sun(Minecraft& minecraft, Event& event) {
-    static float time = 0.0f;
-    glm::vec3 sunPos;
-
-    time++;
-    if (time >= 180.0f)
-        time = 0.0f;
-    if (!event.sunMode)
-        return;
-    sunPos.z = 500 * -cos(glm::radians(time));
-    sunPos.y = 500 * sin(glm::radians(time));
-    sunPos.x = 0;
-
-    glm::mat4 sunMat = glm::lookAt(sunPos + minecraft.camera.position, minecraft.camera.position, glm::vec3(0, 1, 0));
-    minecraft.chunkShader.Activate();
-    minecraft.chunkShader.setMat4("view", sunMat);
-    minecraft.skyboxShader.Activate();
-    minecraft.skyboxShader.setMat4("view", glm::mat4(glm::mat3(sunMat)));
-}
-
-
-
 void loop(Minecraft &minecraft) {
+    Debug           debug;
+    UserInterface   UI;
+    Motor           motor;
+    Event           event;
+
+    debug.Init(&minecraft.windowSize, &minecraft.player, &minecraft.camera);
+
+    UI.Init(minecraft.windowSize);
+    UI.InitUniforms(minecraft.camera.projection);
+    UI.SetViewMatrix(minecraft.camera.view);
+
+    event.Init(minecraft.window);
+
     bool hasNormalShader = false;
     float previousLoopTime = 0;
     float previousFrameTime = 0;
@@ -78,11 +61,10 @@ void loop(Minecraft &minecraft) {
                 else
                     minecraft.changeShader(minecraft.chunkShader, minecraft.wireframeChunkShader);
             }
-            if (minecraft.motor.update(time)) {
+            if (motor.update(time)) {
                 minecraft.LoadChunks();
                 minecraft.thread.BindAllChunks();
                 minecraft.thread.UnlockLoadedChunks();
-                sun(minecraft, event);
             }
             minecraft.Draw();
             UI.Draw(minecraft);
@@ -97,10 +79,8 @@ void loop(Minecraft &minecraft) {
 }
 
 int main(void) {
-    UI.InitUniforms(minecraft.camera.projection);
-    UI.SetViewMatrix(minecraft.camera.view);
-    event.Init(minecraft.window);
-    glfwSetWindowTitle(minecraft.window, "Minecraft");
+    Minecraft       minecraft;
+
     glfwSwapInterval(0);
     loop(minecraft);
     minecraft.thread.StopThreads();
