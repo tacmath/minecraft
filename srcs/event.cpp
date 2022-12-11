@@ -86,51 +86,99 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { /
 
 
 
-void Event::removePointedCube(Camera& camera, Player& player) {
+void Event::removePointedCube(Camera& camera) {
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player.selectedCube.id == AIR)
+    if (player->selectedCube.id == AIR)
         return;
-    pos = player.selectedCube.position;
+    pos = player->selectedCube.position;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player.selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+    player->selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
 }
 
-void Event::placeCube(Camera& camera, Player& player) {
+void Event::placeCube(Camera& camera) {
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player.selectedCube.id == AIR || player.selectedCube.range < 1.5)
+    if (player->selectedCube.id == AIR || player->selectedCube.range < 1.5)
         return;
-    pos = player.selectedCube.side;
+    pos = player->selectedCube.side;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(3, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player.selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+    player->selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+}
+
+struct ToggleData {
+    Debug *debug;
+    Player* player;
+    Minecraft* minecraft;
+
+    bool* perspective;
+    bool* lookChanged;
+};
+
+void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+    static bool hasNormalShader = true;
+
+    if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
+        toggleData->debug->toggle();
+
+    if (key == GLFW_KEY_C && action == GLFW_PRESS)
+        toggleData->player->hasCollision = !toggleData->player->hasCollision;
+
+    if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+        *toggleData->perspective = !(*toggleData->perspective);
+        *toggleData->lookChanged = true;
+    }
+
+    if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+        hasNormalShader = !hasNormalShader;
+        if (hasNormalShader)
+            toggleData->minecraft->changeShader(toggleData->minecraft->chunkShader, toggleData->minecraft->normalChunkShader);
+        else
+            toggleData->minecraft->changeShader(toggleData->minecraft->chunkShader, toggleData->minecraft->wireframeChunkShader);
+    }
+
 }
 
 Event::Event() {
     window = 0;
     mousePos = glm::dvec2(0);
-    memset(keyPressed, 0, 256);
     positionChanged = false;
     lookChanged = false;
-    chunkShaderChanged = false;
     inMenu = true;
-    sunMode = false;
     perspective = NORMAL_PERSPECTIVE;
     speed = 0.4f;
     mouseSensitivity = 0.1f;
 }
 
-void Event::Init(GLFWwindow* window) {
-    this->window = window;
+Event::~Event() {
+    free(glfwGetWindowUserPointer(window));
 }
 
-glm::vec3  Event::spectatorMovement(Camera& camera, Player& player) {
+void Event::Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft *minecraft) {
+    this->window = window;
+    this->player = player;
+
+    ToggleData* toggleData = (ToggleData*)calloc(1, sizeof(ToggleData));
+    if (!toggleData)
+        exit(1);
+    toggleData->debug = debug;
+    toggleData->player = player;
+    toggleData->minecraft = minecraft;
+    toggleData->lookChanged = &this->lookChanged;
+    toggleData->perspective = &this->perspective;
+    glfwSetWindowUserPointer(window, toggleData);
+    glfwSetKeyCallback(window, keyToogleCallback);
+}
+
+glm::vec3  Event::spectatorMovement(Camera& camera) {
     glm::vec3 newPos = glm::vec3(0);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         newPos += speed * frequence * camera.direction;
@@ -147,10 +195,15 @@ glm::vec3  Event::spectatorMovement(Camera& camera, Player& player) {
     return newPos;
 }
 
-void Event::MovementEvent(Camera& camera, Player& player) {
+void Event::MovementEvent(Camera& camera) {
     glm::vec3 newPos = glm::vec3(0);
-    if (!player.hasCollision)
-        newPos = spectatorMovement(camera, player);
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        speed = 10.0f;
+    else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+        speed = 0.4f;
+    if (!player->hasCollision)
+        newPos = spectatorMovement(camera);
     else {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             newPos += speed * frequence * camera.direction;
@@ -166,47 +219,15 @@ void Event::MovementEvent(Camera& camera, Player& player) {
         if (!newPos.y)
             newPos.y -= 1.0f;
     }
-    player.Move(newPos);
-    if (player.position != camera.position) {
-        camera.position = player.position;
+    player->Move(newPos);
+    if (player->position != camera.position) {
+        camera.position = player->position;
         positionChanged = true;
     }
 }
 
-void Event::KeyEvent(Player& player, Debug& debug) {
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        speed = 10.0f;
-    else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-        speed = 0.4f;
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE && keyPressed[GLFW_KEY_P]) {
-        perspective = !perspective;
-        lookChanged = true;
-        keyPressed[GLFW_KEY_P] = 0;
-    }
-    else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-        keyPressed[GLFW_KEY_P] = 1;
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_RELEASE && keyPressed[GLFW_KEY_C]) {
-        player.hasCollision = !player.hasCollision;
-        keyPressed[GLFW_KEY_C] = 0;
-    }
-    else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-        keyPressed[GLFW_KEY_C] = 1;
-    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_RELEASE && keyPressed[GLFW_KEY_Z]) {
-        chunkShaderChanged = !chunkShaderChanged;
-        keyPressed[GLFW_KEY_Z] = 0;
-    }
-    else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-        keyPressed[GLFW_KEY_Z] = 1;
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE && keyPressed[GLFW_KEY_L]) {
-        sunMode = !sunMode;
-        lookChanged = true;
-        keyPressed[GLFW_KEY_L] = 0;
-    }
-    else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-        keyPressed[GLFW_KEY_L] = 1;
-    if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS) {
-        debug.toggle();
-    }
+void Event::KeyEvent() {
+
 }
 
 void Event::MouseEvent(Camera &camera) {
@@ -241,20 +262,19 @@ void Event::MouseEvent(Camera &camera) {
     mousePos.y = posy;
 }
 
-void Event::GetEvents(Camera& camera, Player& player, Debug& debug) {
+void Event::GetEvents(Camera& camera) {
     lookChanged = false;
     positionChanged = false;
-    chunkShaderChanged = false;
     glfwPollEvents();
-    MovementEvent(camera, player);
-    KeyEvent(player, debug);
+    MovementEvent(camera);
+    KeyEvent();
     MouseEvent(camera);
     if (positionChanged || lookChanged) {
         camera.Update(perspective);
-        player.selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+        player->selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
     }
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-        removePointedCube(camera, player);
+        removePointedCube(camera);
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-        placeCube(camera, player);
+        placeCube(camera);
 }

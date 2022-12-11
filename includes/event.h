@@ -14,8 +14,8 @@
 
 class Event {
 	GLFWwindow* window;
-	glm::dvec2 mousePos;
-	char		keyPressed[256];
+	Player*		player;
+	glm::dvec2	mousePos;
 	bool		inMenu;
 	float		speed;
 	float		mouseSensitivity;
@@ -24,21 +24,21 @@ class Event {
 public:
 	bool positionChanged;
 	bool lookChanged;
-	bool chunkShaderChanged;
-	bool sunMode;
 	float frequence;
 
 	Event();
 
-	void Init(GLFWwindow* window);
-	void MovementEvent(Camera& camera, Player& player);
+	~Event();
+
+	void Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
+	void MovementEvent(Camera& camera);
 	void MouseEvent(Camera& camera);
-	void KeyEvent(Player& player, Debug& debug);
-	void GetEvents(Camera &camera, Player &player, Debug &debug);
+	void KeyEvent();
+	void GetEvents(Camera &camera);
 private:
-	void removePointedCube(Camera& camera, Player& player);
-	void placeCube(Camera& camera, Player& player);
-	glm::vec3 spectatorMovement(Camera& camera, Player& player);
+	void removePointedCube(Camera& camera);
+	void placeCube(Camera& camera);
+	glm::vec3 spectatorMovement(Camera& camera);
 }; 
 
 #endif

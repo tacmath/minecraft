@@ -111,7 +111,7 @@ class ChunkGeneration {
     private:
 
 	inline int groundHeight(int x, int z) {
-            int height = 30 + (int)(simplexNoise.noise(x * 0.001, z * 0.001) * 50);
+            int height = 30 + (int)(simplexNoise.noise(x * 0.001f, z * 0.001f) * 50);
            return height;
 	}
 

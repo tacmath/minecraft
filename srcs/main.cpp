@@ -31,9 +31,8 @@ void loop(Minecraft &minecraft) {
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
 
-    event.Init(minecraft.window);
+    event.Init(minecraft.window, &debug, &minecraft.player, &minecraft);
 
-    bool hasNormalShader = false;
     float previousLoopTime = 0;
     float previousFrameTime = 0;
     float diff = 0;
@@ -47,20 +46,13 @@ void loop(Minecraft &minecraft) {
             latence = ((time - previousFrameTime) * 1000);
 
             event.frequence = latence / 33.33f;
-            event.GetEvents(minecraft.camera, minecraft.player, debug);
+            event.GetEvents(minecraft.camera);
             if (event.lookChanged || event.positionChanged) {
                 minecraft.setChunksVisibility();
                 minecraft.LoadViewMatrix();
                 UI.SetViewMatrix(minecraft.camera.view);
             }
 
-            if (event.chunkShaderChanged) {
-                hasNormalShader = !hasNormalShader;
-                if (hasNormalShader)
-                    minecraft.changeShader(minecraft.chunkShader, minecraft.normalChunkShader);
-                else
-                    minecraft.changeShader(minecraft.chunkShader, minecraft.wireframeChunkShader);
-            }
             if (motor.update(time)) {
                 minecraft.LoadChunks();
                 minecraft.thread.BindAllChunks();
