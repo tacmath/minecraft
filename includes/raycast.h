@@ -5,9 +5,10 @@
 #include "chunk.h"
 
 struct RayCastInfo {
-    unsigned char id;
-    glm::ivec3 position;
-    glm::ivec3 side;
+    unsigned    char id;
+    glm::ivec3  position;
+    glm::ivec3  side;
+    glm::vec3   hit;
     float		range;
 
     RayCastInfo() {
@@ -17,6 +18,6 @@ struct RayCastInfo {
     }
 };
 
-RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range);
+RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range);
 
 #endif

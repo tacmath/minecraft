@@ -4,6 +4,7 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include<iostream>
+#include "raycast.h"
 
 unsigned char GetCubeAt(int x, int y, int z);
 
@@ -34,6 +35,24 @@ public:
 
 private:
 	void ApplyCollision(glm::vec3& movement) {
+		glm::vec3 origin = position + glm::vec3(0, -size.y, 0);
+		glm::vec3 norm = glm::normalize(movement);
+		float velocity = length(movement);
+		RayCastInfo info;
+
+		position += movement;
+		info = rayCastGetCube(origin, glm::vec3(0, movement.y, 0), abs(velocity * norm.y));
+		if (info.id != AIR && info.range <= abs(velocity * norm.y))
+			position.y = info.hit.y + size.y;
+		info = rayCastGetCube(origin, glm::vec3(0, 0, movement.z), abs(velocity * norm.z));
+		if (info.id != AIR && info.range <= abs(velocity * norm.z))
+			position.z = info.hit.z;
+		info = rayCastGetCube(origin, glm::vec3(movement.x, 0, 0), abs(velocity * norm.x));
+		if (info.id != AIR && info.range <= abs(velocity * norm.x))
+			position.x = info.hit.x;
+
+		
+		/*
 		position.y += movement.y;
 		if (movement.y < 0 && GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.y = floor(position.y + 1);
@@ -43,6 +62,8 @@ private:
 		position.z += movement.z;
 		if (GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.z = floor(position.z + (movement.z < 0)) - 0.001f * (movement.z >= 0);
+		*/
+
 	}
 };
 

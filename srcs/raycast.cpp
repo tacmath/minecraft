@@ -28,7 +28,7 @@ static inline void initDDA(glm::ivec3 &step, glm::vec3 &max, glm::vec3 &delta, g
     max *= delta;
 }
 
-RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { //need to modify it has some problem in certain coord
+RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) { //need to modify it has some problem in certain coord
     Chunk* chunk;
     glm::ivec3 step;
     glm::ivec3 pos;
@@ -47,6 +47,7 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { /
     if (chunk->GetCube(pos.x, pos.y, pos.z) != AIR) {
         result.id = chunk->GetCube(pos.x, pos.y, pos.z);
         result.position = glm::ivec3(floor(origin));
+        result.hit = origin;
         return (result);
     }
     initDDA(step, max, delta, origin, direction);
@@ -82,6 +83,7 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, int range) { /
             result.side.x += (chunk->posx << 4);
             result.side.z += (chunk->posz << 4);
             result.range = abs(distance);
+            result.hit = origin + direction * (distance - 0.0001f);
             return (result);
         }
     }

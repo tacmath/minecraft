@@ -119,6 +119,7 @@ glm::vec3  Event::spectatorMovement() {
 void Event::MovementEvent() {
     glm::vec3 newPos = glm::vec3(0);
     glm::vec3 oldPos = player->position;
+    glm::vec3 look = glm::normalize(glm::vec3(player->look.x, 0, player->look.z));
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 10.0f;
@@ -128,13 +129,13 @@ void Event::MovementEvent() {
         newPos = spectatorMovement();
     else {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            newPos += player->look;
+            newPos += look;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            newPos += -glm::normalize(glm::cross(player->look, glm::vec3(0.0f, 1.0f, 0.0f)));
+            newPos += -glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            newPos += -player->look;
+            newPos += -look;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            newPos += glm::normalize(glm::cross(player->look, glm::vec3(0.0f, 1.0f, 0.0f)));
+            newPos += glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
         newPos.y = 0;
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
             newPos.y = 1.0f;
