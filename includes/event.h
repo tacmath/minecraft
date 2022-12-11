@@ -22,6 +22,10 @@ class Event {
 	float		mouseSensitivity;
 	bool		perspective;
 
+	// Eular Angles
+	float Yaw;
+	float Pitch;
+
 public:
 	bool positionChanged;
 	bool lookChanged;

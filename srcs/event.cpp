@@ -4,8 +4,6 @@
 #include "debug.h"
 #include "raycast.h"
 
-
-
 void Event::removePointedCube(Camera& camera) {
     Chunk* chunk;
     glm::ivec3 pos;
@@ -76,6 +74,8 @@ Event::Event() {
     perspective = NORMAL_PERSPECTIVE;
     speed = 0.4f;
     mouseSensitivity = 0.1f;
+    Yaw = -90.0f;
+    Pitch = 0.0f;
 }
 
 Event::~Event() {
@@ -101,17 +101,17 @@ void Event::Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft *mi
 glm::vec3  Event::spectatorMovement(Camera& camera) {
     glm::vec3 newPos = glm::vec3(0);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        newPos += speed * frequence * camera.direction;
+        newPos += camera.direction;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        newPos += speed * frequence * -glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += -glm::normalize(glm::cross(camera.direction, camera.up));
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        newPos += speed * frequence * -camera.direction;
+        newPos += -camera.direction;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        newPos += speed * frequence * glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += glm::normalize(glm::cross(camera.direction, camera.up));
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        newPos += speed * frequence * camera.up;
+        newPos += camera.up;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        newPos += speed * frequence * -camera.up;
+        newPos += -camera.up;
     return newPos;
 }
 
@@ -126,19 +126,20 @@ void Event::MovementEvent(Camera& camera) {
         newPos = spectatorMovement(camera);
     else {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            newPos += speed * frequence * camera.direction;
+            newPos += camera.direction;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            newPos += speed * frequence * -glm::normalize(glm::cross(camera.direction, camera.up));
+            newPos += -glm::normalize(glm::cross(camera.direction, camera.up));
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            newPos += speed * frequence * -camera.direction;
+            newPos += -camera.direction;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            newPos += speed * frequence * glm::normalize(glm::cross(camera.direction, camera.up));
+            newPos += glm::normalize(glm::cross(camera.direction, camera.up));
         newPos.y = 0;
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            newPos.y = speed * frequence;
+            newPos.y = 1.0f;
         if (!newPos.y)
             newPos.y -= 1.0f;
     }
+    newPos *= speed * frequence;
     player->Move(newPos);
     if (player->position != camera.position) {
         camera.position = player->position;
@@ -149,7 +150,6 @@ void Event::MovementEvent(Camera& camera) {
 void Event::MouseEvent(Camera &camera) {
     int mouseState;
     double posx, posy;
-    float rotx, roty;
 
     mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     if (inMenu == true) {
@@ -163,17 +163,19 @@ void Event::MouseEvent(Camera &camera) {
     if (posx != mousePos.x || posy != mousePos.y)
         lookChanged = true;
 
-    rotx = (float)(posy - mousePos.y);
-    roty = (float)(posx - mousePos.x);
+    Pitch += (float)(posy - mousePos.y);
+    Yaw += (float)(posx - mousePos.x);
+    if (Pitch > 89.0f)
+        Pitch = 89.0f;
+    if (Pitch < -89.0f)
+       Pitch = -89.0f;
 
-    glm::vec3 newOrientation = glm::rotate(camera.direction, glm::radians(-rotx), glm::normalize(glm::cross(camera.direction, camera.up)));
+    glm::vec3 front;
+    front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+    front.y = -sin(glm::radians(Pitch));
+    front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 
-    // Decides whether or not the next vertical Orientation is legal or not
-    if (abs(glm::angle(newOrientation, camera.up) - glm::radians(90.0f)) <= glm::radians(85.0f)) //change the system
-        camera.direction = glm::normalize(newOrientation);
-
-    // Rotates the Orientation left and right
-    camera.direction = glm::rotate(camera.direction, glm::radians(-roty), camera.up);
+    camera.direction = glm::normalize(front);
     mousePos.x = posx;
     mousePos.y = posy;
 }
