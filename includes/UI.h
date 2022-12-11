@@ -7,6 +7,7 @@
 #include "textDisplay.h"
 
 class UserInterface {
+    glm::vec2* windowSize;
     Shader highlightShader;
     TextDisplay text;
     VAO highlight;
@@ -19,8 +20,9 @@ public:
         hasHighlight = false;
     }
 
-    void Init(glm::vec2 windowSize) {
-        text.Init(windowSize.x, windowSize.y);
+    void Init(glm::vec2 *windowSize) {
+        this->windowSize = windowSize;
+        text.Init(windowSize->x, windowSize->y);
     }
 
     void InitUniforms(glm::mat4& projection) {
@@ -37,10 +39,10 @@ public:
         highlightShader.setMat4("view", view);
     }
 
-    void Draw(Minecraft &minecraft) {
-        SetHighlight(minecraft.player.selectedCube);
+    void Draw(Player &player) {
+        SetHighlight(player.selectedCube);
         DrawHighlight();
-        DrawCross(minecraft.windowSize.x / 2, minecraft.windowSize.y / 2);
+        DrawCross(windowSize->x / 2, windowSize->y / 2);
     }
 
 private:

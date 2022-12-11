@@ -9,7 +9,6 @@
 #include "cubeMap.h"
 #include "chunk.h"
 #include "thread.h"
-#include "player.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
@@ -21,7 +20,6 @@
 # define PI             3.14159265358979323846
 # define DEFAULT_WINDOW_WIDTH  1920
 # define DEFAULT_WINDOW_HEIGHT  1080
-# define MAX_FPS        4000
 
 
 # define STARTING_RENDER_DISTANCE 1
@@ -39,9 +37,6 @@ public:
 
     // the camera
     Camera      camera;
-
-    // the player
-    Player      player;
 
     glm::vec2 windowSize;
 

@@ -1,10 +1,13 @@
 #ifndef TEXT_DISPLAY_CLASS_H
 #define TEXT_DISPLAY_CLASS_H
 
-#include "minecraft.h"
+#include <glm/glm.hpp>
+#include "shader.h"
+#include <map>
 #include <freetype/freetype.h>
 #include FT_FREETYPE_H
 #include <ft2build.h>
+
 
 
 class TextDisplay {

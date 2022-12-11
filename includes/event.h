@@ -8,6 +8,7 @@
 #include<glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include "debug.h"
+#include "minecraft.h"
 
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
@@ -33,7 +34,6 @@ public:
 	void Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
 	void MovementEvent(Camera& camera);
 	void MouseEvent(Camera& camera);
-	void KeyEvent();
 	void GetEvents(Camera &camera);
 private:
 	void removePointedCube(Camera& camera);

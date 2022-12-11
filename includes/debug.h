@@ -5,6 +5,8 @@
 #include "camera.h"
 #include "textDisplay.h"
 
+# define MAX_FPS        4000
+
 class Debug {
     GLFWwindow  *window;
     Camera      *camera;

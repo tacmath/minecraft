@@ -5,7 +5,7 @@ Debug::Debug() {
     fps[0] = 0;
     xyz[0] = 0;
     frame = 0;
-    visible = true;
+    visible = false;
     previousUpdateTime = 0.0f;
 }
 

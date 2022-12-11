@@ -20,18 +20,19 @@ std::map<int64_t, Chunk*> chunksMap;
 ChunkGeneration     globalChunkGeneration;
 
 void loop(Minecraft &minecraft) {
+    Player          player;
     Debug           debug;
     UserInterface   UI;
     Motor           motor;
     Event           event;
 
-    debug.Init(&minecraft.windowSize, &minecraft.player, &minecraft.camera, minecraft.window);
+    debug.Init(&minecraft.windowSize, &player, &minecraft.camera, minecraft.window);
 
-    UI.Init(minecraft.windowSize);
+    UI.Init(&minecraft.windowSize);
     UI.InitUniforms(minecraft.camera.projection);
     UI.SetViewMatrix(minecraft.camera.view);
 
-    event.Init(minecraft.window, &debug, &minecraft.player, &minecraft);
+    event.Init(minecraft.window, &debug, &player, &minecraft);
 
     float previousLoopTime = 0;
     float previousFrameTime = 0;
@@ -59,7 +60,7 @@ void loop(Minecraft &minecraft) {
                 minecraft.thread.UnlockLoadedChunks();
             }
             minecraft.Draw();
-            UI.Draw(minecraft);
+            UI.Draw(player);
             debug.fpsTitle(time, latence);
             debug.Draw(time, latence);
 

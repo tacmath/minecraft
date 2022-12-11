@@ -2,19 +2,9 @@
 #define PLAYER_CLASS_H
 
 #include "entity.h"
+#include "raycast.h"
 
-struct RayCastInfo {
-	unsigned char id;
-	glm::ivec3 position;
-	glm::ivec3 side;
-	float		range;
-
-	RayCastInfo() {
-		id = 0;
-		position = glm::ivec3(0);
-		range = 0;
-	}
-};
+#define PLAYER_RANGE 5
 
 class Player : public Entity {
 public:
