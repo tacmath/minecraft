@@ -13,8 +13,7 @@ Minecraft::Minecraft(void) {
     skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
     normalChunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
     wireframeChunkShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
-    changeShader(chunkShader, normalChunkShader);
-    camera.Init(windowSize.x, windowSize.y, glm::vec3(0.0f, 60.0f, 0.0f));
+    chunkShader = normalChunkShader;
 
     std::vector<std::string> textureNames;
     parseBlockData(textureNames);
@@ -22,7 +21,6 @@ Minecraft::Minecraft(void) {
         name = "texture/" + name;
     texAtlas.LoadArray(textureNames, 0);
     
-    initUniforms();
     initChunks(STARTING_RENDER_DISTANCE);
 
     loadedChunks = (Chunk**)calloc((DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1), sizeof(Chunk*));
@@ -49,7 +47,7 @@ void Minecraft::Draw(void) {
 
 
 //load the view matrix in all the shaders
-void Minecraft::LoadViewMatrix(void) {
+void Minecraft::LoadViewMatrix(Camera& camera) {
     chunkShader.Activate();
     chunkShader.setMat4("view", camera.view);
 
@@ -74,14 +72,14 @@ inline bool cmpChunk(Chunk* a, const Chunk* b) {
     return ((a->playerProximity + (!a->isVisible << 10)) < (b->playerProximity + (!b->isVisible << 10)));
 }
 
-void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks) {
+void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& position) {
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
     Chunk* chunk;
 
     maxChunk = DATA_RENDER_DISTANCE << 1;
-    playerPosx = ((int)camera.position.x >> 4) - DATA_RENDER_DISTANCE;
-    playerPosz = ((int)camera.position.z >> 4) - DATA_RENDER_DISTANCE;
+    playerPosx = ((int)position.x >> 4) - DATA_RENDER_DISTANCE;
+    playerPosz = ((int)position.z >> 4) - DATA_RENDER_DISTANCE;
     chunkNumber = (int)chunks.size();
     n = -1;
     while (++n < chunkNumber) {
@@ -102,23 +100,25 @@ void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks) {
     }
 }
 
-void Minecraft::sortChunksLoading(void) {
+void Minecraft::sortChunksLoading(glm::vec3& position, Camera& camera) {
     for (int n = 0; n < chunksLoading.size(); n++) {
         Chunk* chunk;
 
         chunk = chunksLoading[n];
-        chunk->SetPlayerProximity(camera.position); //sqrt take some time
+        chunk->SetPlayerProximity(position); //sqrt take some time
         chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 24);
     }
     std::sort(chunksLoading.begin(), chunksLoading.end(), cmpChunk); //instead sort from middle to borders and maybe limit the ammount of chunks in chunksLoading
 }
 
-void Minecraft::loadNewChunks(void) {
+
+
+void Minecraft::loadNewChunks(glm::vec3 &position) {
     int playerPosx, playerPosz, maxChunk;
 
     maxChunk = DATA_RENDER_DISTANCE << 1;
-    playerPosx = ((int)camera.position.x >> 4) - DATA_RENDER_DISTANCE;
-    playerPosz = ((int)camera.position.z >> 4) - DATA_RENDER_DISTANCE;
+    playerPosx = ((int)position.x >> 4) - DATA_RENDER_DISTANCE;
+    playerPosz = ((int)position.z >> 4) - DATA_RENDER_DISTANCE;
     //add all the chunk that are in loadedChunks but didn't exist
     for (int x = 0; x < maxChunk; x++)
         for (int z = 0; z < maxChunk; z++) {
@@ -133,22 +133,22 @@ void Minecraft::loadNewChunks(void) {
         }
 }
 
-void Minecraft::LoadChunks(void) {
+void Minecraft::LoadChunks(glm::vec3 &position, Camera& camera) {
 
     memset(loadedChunks, 0, (DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1) * sizeof(Chunk*));
 
-    fillLoadedChunks(chunks);
-    fillLoadedChunks(chunksLoading);
+    fillLoadedChunks(chunks, position);
+    fillLoadedChunks(chunksLoading, position);
 
-    loadNewChunks();
+    loadNewChunks(position);
 
-    sortChunksLoading();
+    sortChunksLoading(position, camera);
 
     thread.LoadChunk(chunksLoading);
     thread.CreateMesh(chunks, chunksLoading);
 }
 
-void Minecraft::setChunksVisibility(void) {
+void Minecraft::setChunksVisibility(Camera &camera) {
     Chunk* chunk;
 
     for (unsigned n = 0; n < chunks.size(); n++) {
@@ -156,9 +156,4 @@ void Minecraft::setChunksVisibility(void) {
         if (chunk->status == CHUNK_LOADED)
             chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
     }
-}
-
-void Minecraft::changeShader(Shader& currentShader, Shader& newShader) {
-    currentShader = newShader;
-    initUniforms();
 }

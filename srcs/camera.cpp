@@ -23,31 +23,32 @@ void Camera::Init(float windowWidth, float windowHeight, glm::vec3 pos) {
 }
 
 // treat inputs to change the camera
-void Camera::Update(char perspective) {
+void Camera::Update() {
 	view = glm::lookAt(position, position + direction, up);
 	frustum.calculate(projection * view);
-	if (perspective == UP_PERSPECTIVE)
-		view = glm::lookAt(position + glm::vec3(-10, 300, 0), position, up);
 }
+
+// treat inputs to change the camera view
+void Camera::UpdateView() {
+	view = glm::lookAt(position, position + direction, up);
+}
+
 
 // set the position of the camera with 3 float
 void Camera::SetPosition(float x, float y, float z) {
 	position.x = x;
 	position.y = y;
 	position.z = z;
-	view = glm::lookAt(position, position + direction, up);
 }
 
 // set the position of the camera with a vec3
 void Camera::SetPosition(glm::vec3 pos) {
 	position = pos;
-	view = glm::lookAt(position, position + direction, up);
 }
 
 //set the divection of the camera
 void Camera::SetDirection(glm::vec3 direction) {
 	this->direction = direction;
-	view = glm::lookAt(position, position + direction, up);
 }
 
 // change the prespective matrix

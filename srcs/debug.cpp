@@ -9,10 +9,9 @@ Debug::Debug() {
     previousUpdateTime = 0.0f;
 }
 
-void Debug::Init(glm::vec2 *windowSize, Player *player, Camera *camera, GLFWwindow *window) {
+void Debug::Init(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
     this->windowSize = windowSize;
     this->player = player;
-    this->camera = camera;
     this->window = window;
     text.Init(windowSize->x, windowSize->y);
 }
@@ -68,10 +67,10 @@ void Debug::Draw(float time, float latence) {
         if (diff >= 0.4) diff = 0.0f;
         previousUpdateTime = time - (diff - 0.2f);
     }
-    sprintf(xyz, "XYZ: %.3f / %.3f / %.3f", camera->position.x, camera->position.y, camera->position.z);
+    sprintf(xyz, "XYZ: %.3f / %.3f / %.3f", player->position.x, player->position.y, player->position.z);
 
 
-    Chunk *chunk = GetChunk((int)(camera->position.x) >> 4, (int)(camera->position.z) >> 4);
+    Chunk *chunk = GetChunk((int)(player->position.x) >> 4, (int)(player->position.z) >> 4);
     if (chunk != 0) {
         sprintf(xz, "Chunk: %d %d", chunk->posx, chunk->posz);
     }

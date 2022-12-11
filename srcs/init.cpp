@@ -30,13 +30,13 @@ void Minecraft::initChunks(int radius) {
             Chunk* chunk = chunksLoading[x * diameter + z];
             chunk->createMeshData();
             chunk->Bind();
-            chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
+            chunk->isVisible = true;
             chunks.push_back(chunk);
             chunksLoading.erase(chunksLoading.begin() + x * diameter + z);
         }
 }
 
-void Minecraft::initUniforms(void) {
+void Minecraft::initUniforms(Camera &camera) {
     chunkShader.Activate();
     chunkShader.setInt("atlas", 0);
     chunkShader.setMat4("projection", camera.projection);

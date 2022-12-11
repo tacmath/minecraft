@@ -36,13 +36,13 @@ public:
 	~Event();
 
 	void Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
-	void MovementEvent(Camera& camera);
-	void MouseEvent(Camera& camera);
-	void GetEvents(Camera &camera);
+	void MovementEvent();
+	void MouseEvent();
+	void GetEvents();
 private:
-	void removePointedCube(Camera& camera);
-	void placeCube(Camera& camera);
-	glm::vec3 spectatorMovement(Camera& camera);
+	void removePointedCube();
+	void placeCube();
+	glm::vec3 spectatorMovement();
 }; 
 
 #endif

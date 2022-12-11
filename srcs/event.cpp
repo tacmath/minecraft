@@ -4,7 +4,7 @@
 #include "debug.h"
 #include "raycast.h"
 
-void Event::removePointedCube(Camera& camera) {
+void Event::removePointedCube() {
     Chunk* chunk;
     glm::ivec3 pos;
 
@@ -14,10 +14,10 @@ void Event::removePointedCube(Camera& camera) {
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+    player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
 }
 
-void Event::placeCube(Camera& camera) {
+void Event::placeCube() {
     Chunk* chunk;
     glm::ivec3 pos;
 
@@ -27,7 +27,7 @@ void Event::placeCube(Camera& camera) {
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(3, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+    player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
 }
 
 struct ToggleData {
@@ -58,9 +58,10 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
         hasNormalShader = !hasNormalShader;
         if (hasNormalShader)
-            toggleData->minecraft->changeShader(toggleData->minecraft->chunkShader, toggleData->minecraft->normalChunkShader);
+            toggleData->minecraft->chunkShader = toggleData->minecraft->normalChunkShader;
         else
-            toggleData->minecraft->changeShader(toggleData->minecraft->chunkShader, toggleData->minecraft->wireframeChunkShader);
+            toggleData->minecraft->chunkShader = toggleData->minecraft->wireframeChunkShader;
+        toggleData->minecraft->initUniforms(toggleData->player->camera);
     }
 
 }
@@ -98,41 +99,42 @@ void Event::Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft *mi
     glfwSetKeyCallback(window, keyToogleCallback);
 }
 
-glm::vec3  Event::spectatorMovement(Camera& camera) {
+glm::vec3  Event::spectatorMovement() {
     glm::vec3 newPos = glm::vec3(0);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        newPos += camera.direction;
+        newPos += player->look;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        newPos += -glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += -glm::normalize(glm::cross(player->look, glm::vec3(0.0f, 1.0f, 0.0f)));
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        newPos += -camera.direction;
+        newPos += -player->look;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        newPos += glm::normalize(glm::cross(camera.direction, camera.up));
+        newPos += glm::normalize(glm::cross(player->look, glm::vec3(0.0f, 1.0f, 0.0f)));
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        newPos += camera.up;
+        newPos.y += 1.0f;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        newPos += -camera.up;
+        newPos.y += -1.0f;
     return newPos;
 }
 
-void Event::MovementEvent(Camera& camera) {
+void Event::MovementEvent() {
     glm::vec3 newPos = glm::vec3(0);
+    glm::vec3 oldPos = player->position;
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 10.0f;
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
         speed = 0.4f;
     if (!player->hasCollision)
-        newPos = spectatorMovement(camera);
+        newPos = spectatorMovement();
     else {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            newPos += camera.direction;
+            newPos += player->look;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            newPos += -glm::normalize(glm::cross(camera.direction, camera.up));
+            newPos += -glm::normalize(glm::cross(player->look, glm::vec3(0.0f, 1.0f, 0.0f)));
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            newPos += -camera.direction;
+            newPos += -player->look;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            newPos += glm::normalize(glm::cross(camera.direction, camera.up));
+            newPos += glm::normalize(glm::cross(player->look, glm::vec3(0.0f, 1.0f, 0.0f)));
         newPos.y = 0;
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
             newPos.y = 1.0f;
@@ -141,13 +143,13 @@ void Event::MovementEvent(Camera& camera) {
     }
     newPos *= speed * frequence;
     player->Move(newPos);
-    if (player->position != camera.position) {
-        camera.position = player->position;
+    if (player->position != oldPos) {
+        player->Update();
         positionChanged = true;
     }
 }
 
-void Event::MouseEvent(Camera &camera) {
+void Event::MouseEvent() {
     int mouseState;
     double posx, posy;
 
@@ -175,23 +177,26 @@ void Event::MouseEvent(Camera &camera) {
     front.y = -sin(glm::radians(Pitch));
     front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 
-    camera.direction = glm::normalize(front);
+    player->look = glm::normalize(front);
+    player->Update();
     mousePos.x = posx;
     mousePos.y = posy;
 }
 
-void Event::GetEvents(Camera& camera) {
+void Event::GetEvents() {
     lookChanged = false;
     positionChanged = false;
     glfwPollEvents();
-    MovementEvent(camera);
-    MouseEvent(camera);
+    MovementEvent();
+    MouseEvent();
     if (positionChanged || lookChanged) {
-        camera.Update(perspective);
-        player->selectedCube = rayCastGetCube(camera.position, camera.direction, PLAYER_RANGE);
+        if (perspective)
+            player->camera.view = glm::lookAt(glm::vec3(player->position.x , 300, player->position.z),
+                glm::vec3(player->position.x + 1, 60, player->position.z), glm::vec3(0, 1, 0));
+        player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
     }
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-        removePointedCube(camera);
+        removePointedCube();
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-        placeCube(camera);
+        placeCube();
 }

@@ -20,11 +20,6 @@ private:
 	float height;
 	float fov;
 
-public:
-	// the frustum of the camera
-	// https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
-	Frustum frustum;
-
 	//position of the camera
 	glm::vec3 position;
 
@@ -32,6 +27,11 @@ public:
 	glm::vec3 direction;
 
 	glm::vec3 up;
+
+public:
+	// the frustum of the camera
+	// https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
+	Frustum frustum;
 
 	// the view matrix
 	glm::mat4 view;
@@ -59,8 +59,11 @@ public:
 	// change the prespective matrix
 	void ChangePerspective(float FOV, float windowWidth, float windowHeight, float near, float far);
 
-	void Update(char perspective);
+	// update the camera matrice using its data
+	void Update();
 
+	// treat inputs to change the camera view
+	void UpdateView();
 };
 
 #endif

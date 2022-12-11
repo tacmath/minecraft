@@ -26,11 +26,14 @@ void loop(Minecraft &minecraft) {
     Motor           motor;
     Event           event;
 
-    debug.Init(&minecraft.windowSize, &player, &minecraft.camera, minecraft.window);
+    player.Init(minecraft.windowSize);
+    minecraft.initUniforms(player.camera);
+
+    debug.Init(&minecraft.windowSize, &player, minecraft.window);
 
     UI.Init(&minecraft.windowSize);
-    UI.InitUniforms(minecraft.camera.projection);
-    UI.SetViewMatrix(minecraft.camera.view);
+    UI.InitUniforms(player.camera.projection);
+    UI.SetViewMatrix(player.camera.view);
 
     event.Init(minecraft.window, &debug, &player, &minecraft);
 
@@ -47,15 +50,15 @@ void loop(Minecraft &minecraft) {
             latence = ((time - previousFrameTime) * 1000);
 
             event.frequence = latence / 33.33f;
-            event.GetEvents(minecraft.camera);
+            event.GetEvents();
             if (event.lookChanged || event.positionChanged) {
-                minecraft.setChunksVisibility();
-                minecraft.LoadViewMatrix();
-                UI.SetViewMatrix(minecraft.camera.view);
+                minecraft.setChunksVisibility(player.camera);
+                minecraft.LoadViewMatrix(player.camera);
+                UI.SetViewMatrix(player.camera.view);
             }
 
             if (motor.update(time)) {
-                minecraft.LoadChunks();
+                minecraft.LoadChunks(player.position, player.camera);
                 minecraft.thread.BindAllChunks();
                 minecraft.thread.UnlockLoadedChunks();
             }

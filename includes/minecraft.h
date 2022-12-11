@@ -35,9 +35,6 @@ public:
     // the window context
     GLFWwindow* window;
 
-    // the camera
-    Camera      camera;
-
     glm::vec2 windowSize;
 
     // list of all the chunks loaded
@@ -78,25 +75,24 @@ public:
     void Draw(void);
 
     //load the view matrix in all the shaders
-    void LoadViewMatrix(void);
+    void LoadViewMatrix(Camera& camera);
 
     // create and delete chunks based on the render distance
-    void LoadChunks(void);
+    void LoadChunks(glm::vec3& position, Camera& camera);
 
     // set the visibility of each chunk
-    void setChunksVisibility(void);
+    void setChunksVisibility(Camera& camera);
 
-    void changeShader(Shader &currentShader, Shader &newShader);
+    void initUniforms(Camera& camera);
 
 private:
     void initWindows(void);
     void initSkybox(void);
     void initChunks(int radius);
-    void initUniforms(void);
     void enableGlParam(void);
-    void fillLoadedChunks(std::vector<Chunk*>& chunks);
-    void sortChunksLoading(void);
-    void loadNewChunks(void);
+    void fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3 &position);
+    void sortChunksLoading(glm::vec3& position, Camera &camera);
+    void loadNewChunks(glm::vec3& position);
 };
 
 #endif

@@ -31,7 +31,7 @@ public:
 
     Debug();
 
-    void Init(glm::vec2 *windowSize, Player *player, Camera *camera, GLFWwindow  *window);
+    void Init(glm::vec2 *windowSize, Player *player, GLFWwindow  *window);
 
     void setProjection(float width, float height);
 
