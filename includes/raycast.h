@@ -8,7 +8,6 @@ struct RayCastInfo {
     unsigned    char id;
     glm::ivec3  position;
     glm::ivec3  side;
-    glm::vec3   hit;
     float		range;
 
     RayCastInfo() {

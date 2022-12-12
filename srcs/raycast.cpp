@@ -47,7 +47,6 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) {
     if (chunk->GetCube(pos.x, pos.y, pos.z) != AIR) {
         result.id = chunk->GetCube(pos.x, pos.y, pos.z);
         result.position = glm::ivec3(floor(origin));
-        result.hit = origin;
         return (result);
     }
     initDDA(step, max, delta, origin, direction);
@@ -83,7 +82,6 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) {
             result.side.x += (chunk->posx << 4);
             result.side.z += (chunk->posz << 4);
             result.range = abs(distance);
-            result.hit = origin + direction * (distance - 0.0001f);
             return (result);
         }
     }

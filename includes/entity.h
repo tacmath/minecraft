@@ -35,7 +35,7 @@ public:
 
 private:
 	void ApplyCollision(glm::vec3& movement) {
-		glm::vec3 origin = position + glm::vec3(0, -size.y, 0);
+		/*glm::vec3 origin = position + glm::vec3(0, -size.y, 0);
 		glm::vec3 norm = glm::normalize(movement);
 		float velocity = length(movement);
 		RayCastInfo info;
@@ -49,10 +49,10 @@ private:
 			position.z = info.hit.z;
 		info = rayCastGetCube(origin, glm::vec3(movement.x, 0, 0), abs(velocity * norm.x));
 		if (info.id != AIR && info.range <= abs(velocity * norm.x))
-			position.x = info.hit.x;
+			position.x = info.hit.x;*/
 
 		
-		/*
+		
 		position.y += movement.y;
 		if (movement.y < 0 && GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.y = floor(position.y + 1);
@@ -62,7 +62,7 @@ private:
 		position.z += movement.z;
 		if (GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
 			position.z = floor(position.z + (movement.z < 0)) - 0.001f * (movement.z >= 0);
-		*/
+		
 
 	}
 };
