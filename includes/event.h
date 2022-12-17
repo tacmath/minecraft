@@ -13,6 +13,15 @@
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
 
+struct ToggleData {
+    Debug *debug;
+    Player* player;
+    Minecraft* minecraft;
+
+    bool* perspective;
+    bool* lookChanged;
+};
+
 class Event {
 	GLFWwindow* window;
 	Player*		player;
@@ -35,7 +44,7 @@ public:
 
 	~Event();
 
-	void Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
+	void Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
 	void MovementEvent();
 	void MouseEvent();
 	void GetEvents();

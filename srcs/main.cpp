@@ -15,7 +15,7 @@
 
 // all the globals needed
 Block blocks[256];
-std::map<int64_t, Chunk*> chunksMap;
+std::unordered_map<int64_t, Chunk*> chunksMap;
 
 ChunkGeneration     globalChunkGeneration;
 
@@ -29,13 +29,13 @@ void loop(Minecraft &minecraft) {
     player.Init(minecraft.windowSize);
     minecraft.initUniforms(player.camera);
 
-    debug.Init(&minecraft.windowSize, &player, minecraft.window);
+    debug.Link(&minecraft.windowSize, &player, minecraft.window);
 
-    UI.Init(&minecraft.windowSize);
+    UI.Link(&minecraft.windowSize);
     UI.InitUniforms(player.camera.projection);
     UI.SetViewMatrix(player.camera.view);
 
-    event.Init(minecraft.window, &debug, &player, &minecraft);
+    event.Link(minecraft.window, &debug, &player, &minecraft);
 
     float previousLoopTime = 0;
     float previousFrameTime = 0;

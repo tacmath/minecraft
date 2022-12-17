@@ -9,7 +9,7 @@ Debug::Debug() {
     previousUpdateTime = 0.0f;
 }
 
-void Debug::Init(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
+void Debug::Link(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
     this->windowSize = windowSize;
     this->player = player;
     this->window = window;

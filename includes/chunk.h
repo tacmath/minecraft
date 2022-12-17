@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <VAO.h>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include "shader.h"
 
 // id of air
@@ -50,7 +50,8 @@
 
 class Chunk;
 
-extern std::map<int64_t, Chunk*> chunksMap;
+
+extern std::unordered_map<int64_t, Chunk*> chunksMap;
 
 class Chunk
 {
@@ -72,7 +73,14 @@ public:
 	// chunk proximity to the player
 	unsigned int playerProximity;
 	// pointer to every neighbour of the chunk
-	Chunk** neighbour;			//remove the vector if needed
+	Chunk** neighbour;
+
+	// pointer to each neighbours
+	Chunk* frontNeighbour;
+	Chunk* backNeighbour;
+	Chunk* rightNeighbour;
+	Chunk* leftNeighbour;
+
 	// loading status of the chunk
 	char status;
 	//the thread status of the chunk 

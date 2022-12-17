@@ -30,15 +30,6 @@ void Event::placeCube() {
     player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
 }
 
-struct ToggleData {
-    Debug *debug;
-    Player* player;
-    Minecraft* minecraft;
-
-    bool* perspective;
-    bool* lookChanged;
-};
-
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
@@ -83,7 +74,7 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Init(GLFWwindow* window, Debug *debug, Player *player, Minecraft *minecraft) {
+void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *minecraft) {
     this->window = window;
     this->player = player;
 

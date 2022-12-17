@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
+#    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/12/02 14:10:01 by matheme          ###   ########.fr        #
+#    Updated: 2022/12/17 14:51:53 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,6 +58,8 @@ NAME_SRC=	camera.cpp\
 			thread.cpp\
 			VAO.cpp\
 			VBO.cpp\
+			parseConfig.cpp\
+			raycast.cpp\
 			
 
 NAME_SRC_C=glad.c \

@@ -20,7 +20,7 @@ public:
         hasHighlight = false;
     }
 
-    void Init(glm::vec2 *windowSize) {
+    void Link(glm::vec2 *windowSize) {
         this->windowSize = windowSize;
         text.Init(windowSize->x, windowSize->y);
     }
@@ -50,7 +50,7 @@ private:
 
     void SetHighlight(RayCastInfo selectedCube) {
         hasHighlight = false;
-        if (selectedCube.id == AIR || selectedCube.range < 1)
+        if (selectedCube.id == AIR || selectedCube.range == 0)
             return;
         highlightShader.Activate();
         highlightShader.setVec3("cubePos", selectedCube.position);
