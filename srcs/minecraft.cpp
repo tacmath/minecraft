@@ -60,6 +60,8 @@ Minecraft::~Minecraft(void) {
     //std::cout << "Minecraft destructor has been called" << std::endl;
     for (int n = 0; n < chunks.size(); n++)
         delete chunks[n];
+    for (int n = 0; n < chunksLoading.size(); n++)
+        delete chunksLoading[n];
     free(loadedChunks);
     normalChunkShader.Delete();
     wireframeChunkShader.Delete();
