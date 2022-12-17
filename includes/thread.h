@@ -19,7 +19,9 @@ class Thread;
 void DataThreadRoutine(Thread& dataThread);
 void MeshThreadRoutine(Thread& meshThread);
 
-class Thread {			//no need to have the two classes they are too similar
+class Thread {
+private:
+	void *memPtr;
 public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
@@ -29,13 +31,13 @@ public:
 	Thread() {
 		chunkLeft = 0;
 		status = THREAD_ALIVE;
-		chunkListLeft = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
-		chunkListDone = (Chunk**)calloc(MAX_CHUNK_PER_THREAD, sizeof(Chunk*));
+		memPtr = calloc(MAX_CHUNK_PER_THREAD * 2, sizeof(Chunk*));
+		chunkListLeft = (Chunk**)memPtr;
+		chunkListDone = ((Chunk**)memPtr) + MAX_CHUNK_PER_THREAD;
 	}
 
 	~Thread() {
-		free(chunkListLeft);
-		free(chunkListDone);
+		free(memPtr);
 	}
 
 	void Launch(void (*routine)(Thread&)) {
