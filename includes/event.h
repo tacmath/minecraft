@@ -38,16 +38,15 @@ class Event {
 public:
 	bool positionChanged;
 	bool lookChanged;
-	float frequence;
 
 	Event();
 
 	~Event();
 
 	void Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
-	void MovementEvent();
+	void MovementEvent(float latency);
 	void MouseEvent();
-	void GetEvents();
+	void GetEvents(float latency);
 private:
 	void removePointedCube();
 	void placeCube();

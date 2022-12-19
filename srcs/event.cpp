@@ -64,7 +64,7 @@ Event::Event() {
     lookChanged = false;
     inMenu = true;
     perspective = NORMAL_PERSPECTIVE;
-    speed = 0.4f;
+    speed = 10.0f;
     mouseSensitivity = 0.1f;
     Yaw = -90.0f;
     Pitch = 0.0f;
@@ -107,15 +107,15 @@ glm::vec3  Event::spectatorMovement() {
     return newPos;
 }
 
-void Event::MovementEvent() {
+void Event::MovementEvent(float latency) {
     glm::vec3 newPos = glm::vec3(0);
     glm::vec3 oldPos = player->position;
     glm::vec3 look = glm::normalize(glm::vec3(player->look.x, 0, player->look.z));
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        speed = 10.0f;
+        speed = 160.0f;
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-        speed = 0.4f;
+        speed = 10.0f;
     if (!player->hasCollision)
         newPos = spectatorMovement();
     else {
@@ -133,7 +133,7 @@ void Event::MovementEvent() {
         if (!newPos.y)
             newPos.y -= 1.0f;
     }
-    newPos *= speed * frequence;
+    newPos *= speed * latency;
     player->Move(newPos);
     if (player->position != oldPos) {
         player->Update();
@@ -175,11 +175,11 @@ void Event::MouseEvent() {
     mousePos.y = posy;
 }
 
-void Event::GetEvents() {
+void Event::GetEvents(float latency) {
     lookChanged = false;
     positionChanged = false;
     glfwPollEvents();
-    MovementEvent();
+    MovementEvent(latency);
     MouseEvent();
     if (positionChanged || lookChanged) {
         if (perspective)

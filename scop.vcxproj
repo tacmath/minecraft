@@ -139,9 +139,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="srcs\application.cpp" />
     <ClCompile Include="srcs\parseConfig.cpp" />
     <ClCompile Include="srcs\perlin_noise.cpp" />
-    <ClCompile Include="srcs\motor.cpp" />
     <ClCompile Include="srcs\camera.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
     <ClCompile Include="srcs\cubeMap.cpp" />
@@ -162,6 +162,7 @@
     <ClCompile Include="srcs\VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\application.h" />
     <ClInclude Include="includes\camera.h" />
     <ClInclude Include="includes\chunk.h" />
     <ClInclude Include="includes\chunk_generation.h" />
@@ -170,7 +171,6 @@
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
     <ClInclude Include="includes\debug.h" />
-    <ClInclude Include="includes\motor.h" />
     <ClInclude Include="includes\raycast.h" />
     <ClInclude Include="includes\textDisplay.h" />
     <ClInclude Include="includes\simplex_noise.h" />

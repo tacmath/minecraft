@@ -44,7 +44,7 @@ void Debug::fpsTitle(float time, float latence) {
     frame_title += 1;
     diff = time - previousUpdateTime_title;
     if (diff >= 0.2f) {
-        sprintf(title, "Minecraft :  FPS: %d (%.2f ms)", frame_title * 5, latence);
+        sprintf(title, "Minecraft :  FPS: %d (%.3f ms)", frame_title * 5, latence * 1000);
         glfwSetWindowTitle(window, title);
         previousUpdateTime_title = time - (diff - 0.2f);
         frame_title = 0;
@@ -58,7 +58,7 @@ void Debug::Draw(float time, float latence) {
     diff = time - previousUpdateTime;
     if (diff >= 0.2f) {
         if (previousUpdateTime > 10.0) {
-            sprintf(fps, "FPS: %d  (max %d / latence: %.2f ms)", frame * 5, MAX_FPS, latence);
+            sprintf(fps, "FPS: %d  (max %d / latence: %.3f ms)", frame * 5, MAX_FPS, latence * 1000.0f);
         }
         else {
             sprintf(fps, "FPS: calculate...");
