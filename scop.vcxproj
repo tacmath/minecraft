@@ -185,6 +185,7 @@
     <ClInclude Include="includes\VAO.h" />
     <ClInclude Include="includes\VBO.h" />
     <ClInclude Include="includes\perlinNoise.h" />
+    <ClInclude Include="includes\window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />

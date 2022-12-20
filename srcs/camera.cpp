@@ -4,7 +4,7 @@
 Camera::Camera() {
 	width = 0;
 	height = 0;
-	fov = 90;
+	fov = 80;
 	position = glm::vec3(0.0f);
 	direction = glm::vec3(0.0f, 0.0f, -1.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);

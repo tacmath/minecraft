@@ -5,9 +5,6 @@
 void parseBlockData(std::vector<std::string>& textures);
 
 Minecraft::Minecraft(void) {
-    window = 0;
-    windowSize = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
-    initWindows();
     initSkybox();
     enableGlParam();
     skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
@@ -66,8 +63,6 @@ Minecraft::~Minecraft(void) {
     normalChunkShader.Delete();
     wireframeChunkShader.Delete();
     skyboxShader.Delete();
-    glfwDestroyWindow(window);
-    glfwTerminate();
 }
 
 inline bool cmpChunk(Chunk* a, const Chunk* b) {

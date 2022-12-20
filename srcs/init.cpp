@@ -1,18 +1,6 @@
 #include "minecraft.h"
 #include "EBO.h"
 
-
-#ifdef _WIN32
-#include <direct.h>
-// MSDN recommends against using getcwd & chdir names
-#define cwd _getcwd
-#define cd _chdir
-#else
-#include "unistd.h"
-#define cwd getcwd
-#define cd chdir
-#endif
-
 void Minecraft::initChunks(int radius) {
     long diameter = (radius + 1) * 2;
 
@@ -53,33 +41,6 @@ void Minecraft::enableGlParam(void) {
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-}
-
-void Minecraft::initWindows(void) {
-    char path[1024];
-
-    cwd(path, 1024);
-    if (!glfwInit()) {
-        printf("Glfw failed to init\n");
-        exit(-1);
-    }
-    cd(path);
-//    glfwWindowHint(GLFW_SAMPLES, 4);      // no multisampling
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Pour rendre MacOS heureux ; ne devrait pas �tre n�cessaire
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // On ne veut pas l'ancien OpenGL
-    if (!(window = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, "Minecraft", NULL, NULL))) {
-        glfwTerminate();
-        printf("Glfw failed to create a window\n");
-        exit(-1);
-    }
-    glfwMakeContextCurrent(window);
-
-    gladLoadGL();
-    glViewport(0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Minecraft::initSkybox(void) {

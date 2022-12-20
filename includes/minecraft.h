@@ -18,9 +18,6 @@
 
 
 # define PI             3.14159265358979323846
-# define DEFAULT_WINDOW_WIDTH  1700
-# define DEFAULT_WINDOW_HEIGHT  1080
-
 
 # define STARTING_RENDER_DISTANCE 1
 # define RENDER_DISTANCE 20
@@ -32,10 +29,6 @@ private:
     //list of all the chunks in the render distance
     Chunk** loadedChunks;
 public:
-    // the window context
-    GLFWwindow* window;
-
-    glm::vec2 windowSize;
 
     // list of all the chunks loaded
 	std::vector<Chunk*> chunks;
@@ -86,7 +79,6 @@ public:
     void initUniforms(Camera& camera);
 
 private:
-    void initWindows(void);
     void initSkybox(void);
     void initChunks(int radius);
     void enableGlParam(void);
