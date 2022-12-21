@@ -46,10 +46,6 @@ Minecraft::~Minecraft(void) {
     chunkShader.Delete();
 }
 
-inline bool cmpChunk(Chunk* a, const Chunk* b) {
-    return ((a->playerProximity + (!a->isVisible << 10)) < (b->playerProximity + (!b->isVisible << 10)));
-}
-
 void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& position) {
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
@@ -86,7 +82,11 @@ void Minecraft::sortChunksLoading(glm::vec3& position, Camera& camera) {
         chunk->SetPlayerProximity(position); //sqrt take some time
         chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz, 24);
     }
-    std::sort(chunksLoading.begin(), chunksLoading.end(), cmpChunk); //instead sort from middle to borders and maybe limit the ammount of chunks in chunksLoading
+
+    //instead sort from middle to borders and maybe limit the ammount of chunks in chunksLoading
+    std::sort(chunksLoading.begin(), chunksLoading.end(), [](Chunk* a, Chunk* b) {
+        return ((a->playerProximity + (!a->isVisible << 10)) < (b->playerProximity + (!b->isVisible << 10)));
+     });
 }
 
 

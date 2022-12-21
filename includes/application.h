@@ -47,6 +47,9 @@ public:
 	void Stop();
 
 private:
+	// set modules callbacks
+	void SetCallbacks();
+
 	// called on each frame with the time of the application the latency since last frame in seconds
 	void EveryFrames(float time, float latency);
 

@@ -4,11 +4,15 @@
 #include "entity.h"
 #include "raycast.h"
 #include "camera.h"
+#include <functional>
 
 #define PLAYER_RANGE 5
 
 class Player : public Entity {
 private:
+	// the updateCallback
+	std::function<void(Player&)> updateCallback;
+
 	glm::vec3 cameraOffset;
 public:
 	RayCastInfo selectedCube;
@@ -20,6 +24,7 @@ public:
 		position = glm::vec3(0, 60, 0);
 		cameraOffset = glm::vec3(0);
 		hasCollision = false;
+		updateCallback = [](Player) {};
 	}
 
 	void Init(glm::vec2 windowSize) {
@@ -29,9 +34,19 @@ public:
 	}
 
 	void Update() {
+		selectedCube = rayCastGetCube(position, look, PLAYER_RANGE);
 		camera.SetPosition(position + cameraOffset);
 		camera.SetDirection(look);
 		camera.Update();
+		updateCallback(*this);
+	}
+
+	void SetUpdateCallback(std::function<void(Player&)> callback) {
+		updateCallback = callback;
+	}
+
+	void UpdateCallback() {
+		updateCallback(*this);
 	}
 };
 

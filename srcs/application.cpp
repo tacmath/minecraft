@@ -21,6 +21,7 @@ void Application::Start() {
     minecraft.initUniforms(player.camera);
     background.initUniforms(player.camera);
 
+    SetCallbacks();
     glfwSwapInterval(0);
     status = APPLICATION_RUNNIG;
 }
@@ -58,13 +59,6 @@ void Application::Stop() {
 
 void Application::EveryFrames(float time, float latency) {
     event.GetEvents(latency);
-    if (event.lookChanged || event.positionChanged) {
-        minecraft.setChunksVisibility(player.camera);
-        minecraft.LoadViewMatrix(player.camera);
-        background.LoadViewMatrix(player.camera);
-        UI.SetViewMatrix(player.camera.view);
-    }
-
     if (glfwGetKey(window.context, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
         glfwWindowShouldClose(window.context) == 1)
         status = 0;
@@ -81,7 +75,16 @@ void Application::EveryFrames(float time, float latency) {
 }
 
 void Application::EveryTicks() {
-    minecraft.LoadChunks(player.position, player.camera);
+    minecraft.LoadChunks(player.position, player.camera); // place in a callback called when player change chunk
     minecraft.thread.BindAllChunks();
     minecraft.thread.UnlockLoadedChunks();
+}
+
+void Application::SetCallbacks() {
+    player.SetUpdateCallback([&](Player &player) {
+        minecraft.setChunksVisibility(player.camera);
+        minecraft.LoadViewMatrix(player.camera);
+        background.LoadViewMatrix(player.camera);
+        UI.SetViewMatrix(player.camera.view);
+     });
 }

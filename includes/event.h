@@ -35,9 +35,9 @@ class Event {
 	float Yaw;
 	float Pitch;
 
+	bool playerUpdated;
+
 public:
-	bool positionChanged;
-	bool lookChanged;
 
 	Event();
 

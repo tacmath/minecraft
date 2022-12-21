@@ -57,8 +57,7 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
 Event::Event() {
     window = 0;
     mousePos = glm::dvec2(0);
-    positionChanged = false;
-    lookChanged = false;
+    playerUpdated = false;
     inMenu = true;
     perspective = NORMAL_PERSPECTIVE;
     speed = 10.0f;
@@ -81,7 +80,7 @@ void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *mi
     toggleData->debug = debug;
     toggleData->player = player;
     toggleData->minecraft = minecraft;
-    toggleData->lookChanged = &this->lookChanged;
+    toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;
     glfwSetWindowUserPointer(window, toggleData);
     glfwSetKeyCallback(window, keyToogleCallback);
@@ -132,10 +131,8 @@ void Event::MovementEvent(float latency) {
     }
     newPos *= speed * latency;
     player->Move(newPos);
-    if (player->position != oldPos) {
-        player->Update();
-        positionChanged = true;
-    }
+    if (player->position != oldPos)
+        playerUpdated = true;
 }
 
 void Event::MouseEvent() {
@@ -152,7 +149,7 @@ void Event::MouseEvent() {
     }
     glfwGetCursorPos(window, &posx, &posy);
     if (posx != mousePos.x || posy != mousePos.y)
-        lookChanged = true;
+        playerUpdated = true;
 
     Pitch += (float)(posy - mousePos.y);
     Yaw += (float)(posx - mousePos.x);
@@ -167,22 +164,22 @@ void Event::MouseEvent() {
     front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 
     player->look = glm::normalize(front);
-    player->Update();
     mousePos.x = posx;
     mousePos.y = posy;
 }
 
 void Event::GetEvents(float latency) {
-    lookChanged = false;
-    positionChanged = false;
+    playerUpdated = false;
     glfwPollEvents();
     MovementEvent(latency);
     MouseEvent();
-    if (positionChanged || lookChanged) {
-        if (perspective)
-            player->camera.view = glm::lookAt(glm::vec3(player->position.x , 300, player->position.z),
+    if (playerUpdated) {
+        player->Update();
+        if (perspective) {
+            player->camera.view = glm::lookAt(glm::vec3(player->position.x, 300, player->position.z),
                 glm::vec3(player->position.x + 1, 60, player->position.z), glm::vec3(0, 1, 0));
-        player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
+            player->UpdateCallback();
+        }
     }
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         removePointedCube();
