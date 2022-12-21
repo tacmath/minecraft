@@ -14,6 +14,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 #include <glm/vec2.hpp>
 
 # define DEFAULT_WINDOW_WIDTH  1700
@@ -30,7 +31,7 @@ public:
 
         cwd(path, 1024);
         if (!glfwInit()) {
-            printf("Glfw failed to init\n");
+            std::cerr << "Glfw failed to init\n";
             exit(-1);
         }
         cd(path);
@@ -41,7 +42,7 @@ public:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // On ne veut pas l'ancien OpenGL
         if (!(context = glfwCreateWindow(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, "Minecraft", NULL, NULL))) {
             glfwTerminate();
-            printf("Glfw failed to create a window\n");
+            std::cerr << "Glfw failed to create a window\n";
             exit(-1);
         }
         glfwMakeContextCurrent(context);
@@ -51,7 +52,15 @@ public:
         glfwSetInputMode(context, GLFW_STICKY_KEYS, GL_TRUE);
         glfwSetInputMode(context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         size = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
+        enableGlParam();
 	}
+
+    void enableGlParam(void) {
+    //    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
+        glEnable(GL_DEPTH_TEST);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+    }
 
     ~Window() {
         glfwDestroyWindow(context);

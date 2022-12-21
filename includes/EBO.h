@@ -4,7 +4,6 @@
 #include<glad/glad.h>
 #include<vector>
 
-template <typename T = GLuint>
 class EBO
 {
 public:
@@ -15,9 +14,9 @@ public:
 		ID = 0;
 	}
 
-	// Constructor that generates a Elements Buffer Object and links it to indices
-	EBO(std::vector<T>& indices)
-	{
+	// generates an Elements Buffer Object and links it to indices
+	template <typename T = GLuint>
+	void Init(std::vector<T>& indices) {
 		glGenBuffers(1, &ID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(T), indices.data(), GL_STATIC_DRAW);

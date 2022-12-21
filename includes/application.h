@@ -3,6 +3,7 @@
 
 #include "window.h"
 #include "minecraft.h"
+#include "background.h"
 #include "player.h"
 #include "debug.h"
 #include "UI.h"
@@ -26,6 +27,7 @@ private:
 	// modules
 	Window			window;
 	Minecraft		minecraft;
+	Background		background;
 	Player          player;
 	Debug           debug;
 	UserInterface   UI;

@@ -5,12 +5,7 @@
 void parseBlockData(std::vector<std::string>& textures);
 
 Minecraft::Minecraft(void) {
-    initSkybox();
-    enableGlParam();
-    skyboxShader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
-    normalChunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
-    wireframeChunkShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
-    chunkShader = normalChunkShader;
+    chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
 
     std::vector<std::string> textureNames;
     parseBlockData(textureNames);
@@ -26,15 +21,6 @@ Minecraft::Minecraft(void) {
 }
 
 void Minecraft::Draw(void) {
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    glDepthFunc(GL_LEQUAL);
-    skyboxShader.Activate();
-    skybox.Bind();
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glDepthFunc(GL_LESS);
-
-
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
     for (int n = 0; n < chunks.size(); n++)
@@ -47,9 +33,6 @@ void Minecraft::Draw(void) {
 void Minecraft::LoadViewMatrix(Camera& camera) {
     chunkShader.Activate();
     chunkShader.setMat4("view", camera.view);
-
-    skyboxShader.Activate();
-    skyboxShader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
 }
 
 //destructor
@@ -60,9 +43,7 @@ Minecraft::~Minecraft(void) {
     for (int n = 0; n < chunksLoading.size(); n++)
         delete chunksLoading[n];
     free(loadedChunks);
-    normalChunkShader.Delete();
-    wireframeChunkShader.Delete();
-    skyboxShader.Delete();
+    chunkShader.Delete();
 }
 
 inline bool cmpChunk(Chunk* a, const Chunk* b) {
@@ -153,4 +134,15 @@ void Minecraft::setChunksVisibility(Camera &camera) {
         if (chunk->status == CHUNK_LOADED)
             chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
     }
+}
+
+void Minecraft::ReloadShader(bool wireframeMode) {
+    Shader newShader;
+    
+    if (wireframeMode)
+        newShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
+    else
+        newShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+    chunkShader.Delete();
+    chunkShader = newShader;
 }

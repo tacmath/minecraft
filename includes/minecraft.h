@@ -6,7 +6,6 @@
 #include "VAO.h"
 #include "texture.h"
 #include "camera.h"
-#include "cubeMap.h"
 #include "chunk.h"
 #include "thread.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,34 +25,24 @@
 
 class Minecraft {
 private:
-    //list of all the chunks in the render distance
-    Chunk** loadedChunks;
-public:
-
     // list of all the chunks loaded
 	std::vector<Chunk*> chunks;
 
     // list of all the chunks loading
     std::vector<Chunk*> chunksLoading;
 
-    // multithreading object
-    ThreadControleur thread;
-    
-    //normal chunk shader
-    Shader  normalChunkShader;
-    //wireframe chunk shader
-    Shader  wireframeChunkShader;
+    //list of all the chunks in the render distance
+    Chunk** loadedChunks;
+
     //chunk shader
     Shader  chunkShader;
     // texture atlas
     Texture texAtlas;
 
-    // skybox vexter array object
-	VAO         skybox;
-    // skybox shader
-    Shader  skyboxShader;
-    // skybox cubemap
-    CubeMap skyboxCubemap;
+public:
+
+    // multithreading object
+    ThreadControleur thread;
     
     // seed used to generate random chunk
     unsigned int seed;
@@ -76,12 +65,13 @@ public:
     // set the visibility of each chunk
     void setChunksVisibility(Camera& camera);
 
+    // use options to reload the chunk shader
+    void ReloadShader(bool wireframeMode);
+
     void initUniforms(Camera& camera);
 
 private:
-    void initSkybox(void);
     void initChunks(int radius);
-    void enableGlParam(void);
     void fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3 &position);
     void sortChunksLoading(glm::vec3& position, Camera &camera);
     void loadNewChunks(glm::vec3& position);

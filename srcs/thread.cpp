@@ -1,8 +1,7 @@
 #include "thread.h"
 
 ThreadControleur::ThreadControleur(void) {
-	std::cout << "cores = " << std::thread::hardware_concurrency() << std::endl;
-
+//	std::cout << "cores = " << std::thread::hardware_concurrency() << std::endl;
 	dataThreads = new Thread[DATA_THREAD_NUMBER];
 	meshThreads = new Thread[MESH_THREAD_NUMBER];
 	for (int n = 0; n < DATA_THREAD_NUMBER; n++)

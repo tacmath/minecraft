@@ -6,7 +6,7 @@
 #    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/12/17 14:51:53 by mtaquet          ###   ########.fr        #
+#    Updated: 2022/12/21 14:43:51 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,6 +60,8 @@ NAME_SRC=	camera.cpp\
 			VBO.cpp\
 			parseConfig.cpp\
 			raycast.cpp\
+			application.cpp\
+			background.cpp\
 			
 
 NAME_SRC_C=glad.c \

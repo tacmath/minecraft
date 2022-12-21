@@ -33,7 +33,7 @@ void Event::placeCube() {
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
-    static bool hasNormalShader = true;
+    static bool wireFrameMode = false;
 
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
         toggleData->debug->toggle();
@@ -47,11 +47,8 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     }
 
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
-        hasNormalShader = !hasNormalShader;
-        if (hasNormalShader)
-            toggleData->minecraft->chunkShader = toggleData->minecraft->normalChunkShader;
-        else
-            toggleData->minecraft->chunkShader = toggleData->minecraft->wireframeChunkShader;
+        wireFrameMode = !wireFrameMode;
+        toggleData->minecraft->ReloadShader(wireFrameMode);
         toggleData->minecraft->initUniforms(toggleData->player->camera);
     }
 

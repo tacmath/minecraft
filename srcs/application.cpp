@@ -19,6 +19,7 @@ void Application::Start() {
     UI.InitUniforms(player.camera.projection);
     UI.SetViewMatrix(player.camera.view);
     minecraft.initUniforms(player.camera);
+    background.initUniforms(player.camera);
 
     glfwSwapInterval(0);
     status = APPLICATION_RUNNIG;
@@ -60,6 +61,7 @@ void Application::EveryFrames(float time, float latency) {
     if (event.lookChanged || event.positionChanged) {
         minecraft.setChunksVisibility(player.camera);
         minecraft.LoadViewMatrix(player.camera);
+        background.LoadViewMatrix(player.camera);
         UI.SetViewMatrix(player.camera.view);
     }
 
@@ -67,6 +69,9 @@ void Application::EveryFrames(float time, float latency) {
         glfwWindowShouldClose(window.context) == 1)
         status = 0;
 
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    background.Draw();
     minecraft.Draw();
     UI.Draw(player);
     debug.fpsTitle(time, latency);
