@@ -19,11 +19,13 @@
 
 // all the possible status of a chunk
 
-#define CHUNK_UNLOADED 0
+#define CHUNK_UNASSIGNED 0
+
+#define CHUNK_UNLOADED 1
 // CHUNK_DATA_LOADED the chunk cube data is loaded
-#define CHUNK_DATA_LOADED 1
+#define CHUNK_DATA_LOADED 2
 // CHUNK_LOADED means that the chunk mesh is done but incomplete 
-#define CHUNK_LOADED 2
+#define CHUNK_LOADED 3
 
 
 #define CHUNK_NOT_PROCESSING 0
@@ -102,6 +104,9 @@ public:
 
 	// Destructor
 	~Chunk();
+
+	// clean the chunk
+	void Clean();
 
 	// Set the position of the chunk
 	void SetPosistion(int x, int z);

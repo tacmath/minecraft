@@ -25,6 +25,9 @@
 
 class Minecraft {
 private:
+    // list of all the chunks
+    Chunk *chunkList/*[(DATA_RENDER_DISTANCE + UNLOAD_OFFSET) << 1]*/;
+
     // list of all the chunks loaded
 	std::vector<Chunk*> chunks;
 
@@ -52,6 +55,8 @@ public:
 	Minecraft(void);
     // destructor
     ~Minecraft(void);
+
+    Chunk* GetNewChunk(void);
 
     // draw the chunks and the skybox
     void Draw(void);

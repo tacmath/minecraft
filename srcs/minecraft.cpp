@@ -13,11 +13,23 @@ Minecraft::Minecraft(void) {
         name = "texture/" + name;
     texAtlas.LoadArray(textureNames, 0);
     
+    chunkList = new Chunk [(int)pow(((DATA_RENDER_DISTANCE + UNLOAD_OFFSET) << 1), 2)];
+
     initChunks(STARTING_RENDER_DISTANCE);
 
     loadedChunks = (Chunk**)calloc((DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1), sizeof(Chunk*));
     if (!loadedChunks)
         exit(1);
+}
+
+Chunk* Minecraft::GetNewChunk(void) {
+    for (int n = 0; n < ((DATA_RENDER_DISTANCE + UNLOAD_OFFSET) << 1) * ((DATA_RENDER_DISTANCE + UNLOAD_OFFSET) << 1); n++) {
+        if (chunkList[n].status == CHUNK_UNASSIGNED) {
+            chunkList[n].status = CHUNK_UNLOADED;
+            return (&chunkList[n]);
+        }
+    }
+    return (0);
 }
 
 void Minecraft::Draw(void) {
@@ -38,10 +50,7 @@ void Minecraft::LoadViewMatrix(Camera& camera) {
 //destructor
 Minecraft::~Minecraft(void) {
     //std::cout << "Minecraft destructor has been called" << std::endl;
-    for (int n = 0; n < chunks.size(); n++)
-        delete chunks[n];
-    for (int n = 0; n < chunksLoading.size(); n++)
-        delete chunksLoading[n];
+    delete[] chunkList;
     free(loadedChunks);
     chunkShader.Delete();
 }
@@ -63,7 +72,7 @@ void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& positio
 
         // check if a chunk is too far away and delete it if nessesary
         if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunk->threadStatus == CHUNK_NOT_PROCESSING) {
-            delete chunk; // delete (chunk destructor) = 60 % of the function perf
+            chunk->Clean(); // delete (chunk destructor) = 60 % of the function perf
             chunks.erase(chunks.begin() + n);
             n--;
             chunkNumber--;
@@ -102,7 +111,7 @@ void Minecraft::loadNewChunks(glm::vec3 &position) {
         for (int z = 0; z < maxChunk; z++) {
             // load new chunks if it is in the render distance but didn't exist
             if (!loadedChunks[x * maxChunk + z] /*&& VEC2_LEN((x - DATA_RENDER_DISTANCE), (z - DATA_RENDER_DISTANCE)) <= DATA_RENDER_DISTANCE*/) {
-                Chunk* newChunk = new Chunk;
+                Chunk* newChunk = GetNewChunk();
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
                 chunksLoading.push_back(newChunk);

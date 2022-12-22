@@ -10,16 +10,24 @@ Chunk::Chunk() {
 	posz = 0;
 	cubes = 0;
 	VBO = 0;
-	status = CHUNK_UNLOADED;
+	status = CHUNK_UNASSIGNED;
 	threadStatus = CHUNK_NOT_PROCESSING;
 	neighbour = &frontNeighbour;
 	memset(neighbour, 0, 4 * sizeof(Chunk*));
+	cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE);
+	VAO.Gen();
 };
 
 // Destructor
 Chunk::~Chunk() {
 	//	std::cout << "chunk has been destroyed" << std::endl;
 	//	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
+	chunksMap.erase(GET_CHUNK_ID(posx, posz));
+	free(cubes);
+	glDeleteBuffers(1, &VBO);
+}
+
+void Chunk::Clean() {
 	chunksMap.erase(GET_CHUNK_ID(posx, posz));
 	if (neighbour[CHUNK_FRONT_SIDE])
 		neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = 0;
@@ -29,8 +37,19 @@ Chunk::~Chunk() {
 		neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = 0;
 	if (neighbour[CHUNK_LEFT_SIDE])
 		neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = 0;
-	free(cubes);
+
+	
+
+	VAO.Bind();
 	glDeleteBuffers(1, &VBO);
+	isVisible = false;
+	verticesNumber = 0;
+	posx = 0;
+	posz = 0;
+	VBO = 0;
+	status = CHUNK_UNASSIGNED;
+	threadStatus = CHUNK_NOT_PROCESSING;
+	memset(neighbour, 0, 4 * sizeof(Chunk*));
 }
 
 // Set the position of the chunk
@@ -56,8 +75,7 @@ void Chunk::GetNeighbour() {
 
 // Generate the chunk cubes data
 void Chunk::Generate() {
-	if (!(cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE)))
-		return;
+	memset(cubes, 0, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE);
 	globalChunkGeneration.generate(CHUNK_SIZE, posx, posz, cubes);
 	status = CHUNK_DATA_LOADED;
 }
@@ -82,7 +100,6 @@ void Chunk::Bind() {
 		threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 		return;
 	}
-	VAO.Gen();
 	VAO.Bind();
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
