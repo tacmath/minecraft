@@ -16,6 +16,7 @@ Chunk::Chunk() {
 	memset(neighbour, 0, 4 * sizeof(Chunk*));
 	cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE);
 	VAO.Gen();
+	glGenBuffers(1, &VBO);
 };
 
 // Destructor
@@ -40,13 +41,17 @@ void Chunk::Clean() {
 
 	
 
-	VAO.Bind();
+
 	glDeleteBuffers(1, &VBO);
+	glGenBuffers(1, &VBO);
+	VAO.Delete();
+	VAO.Gen();
+	
+	
 	isVisible = false;
 	verticesNumber = 0;
 	posx = 0;
 	posz = 0;
-	VBO = 0;
 	status = CHUNK_UNASSIGNED;
 	threadStatus = CHUNK_NOT_PROCESSING;
 	memset(neighbour, 0, 4 * sizeof(Chunk*));
@@ -101,7 +106,6 @@ void Chunk::Bind() {
 		return;
 	}
 	VAO.Bind();
-	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(unsigned int) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
