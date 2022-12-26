@@ -119,7 +119,13 @@ public:
 	void Bind();
 
 	// Draw the chunk 
-	void Draw(Shader& shader);
+	void Draw(Shader& shader) {
+		if (!isVisible)
+			return;
+		VAO.Bind();
+		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
+		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+	}
 
 	//reload the chunk by recreating the mesh and changing the VBO
 	void Update();

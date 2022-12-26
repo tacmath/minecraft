@@ -161,6 +161,12 @@
     <ClInclude Include="includes\background.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\sun.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\quad.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -194,6 +200,12 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\textVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\sunFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\sunVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

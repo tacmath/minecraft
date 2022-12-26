@@ -13,24 +13,34 @@ Background::~Background(void) {
 
 // draw the skybox
 void Background::Draw(void) {
+    glDepthMask(false);
     glDepthFunc(GL_LEQUAL);
     shader.Activate();
     VAO.Bind();
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    sun.Draw();
     glDepthFunc(GL_LESS);
+    glDepthMask(true);
 }
 
 //load the view matrix in all the shaders
 void Background::LoadViewMatrix(Camera& camera) {
+    glm::mat4 view = glm::mat4(glm::mat3(camera.view));
+
     shader.Activate();
-    shader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
+    shader.setMat4("view", view);
+    sun.SetView(view);
 }
 
 void Background::initUniforms(Camera& camera) {
+    glm::mat4 view = glm::mat4(glm::mat3(camera.view));
+
     shader.Activate();
     shader.setInt("skybox", 0);
     shader.setMat4("projection", camera.projection);
-    shader.setMat4("view", glm::mat4(glm::mat3(camera.view)));
+    shader.setMat4("view", view);
+    sun.SetView(view);
+    sun.SetProjection(camera.projection);
 }
 
 

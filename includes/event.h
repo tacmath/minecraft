@@ -44,10 +44,11 @@ public:
 	~Event();
 
 	void Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
+	void GetEvents(float latency);
+
+private:
 	void MovementEvent(float latency);
 	void MouseEvent();
-	void GetEvents(float latency);
-private:
 	void removePointedCube();
 	void placeCube();
 	glm::vec3 spectatorMovement();

@@ -17,7 +17,7 @@ void Event::removePointedCube() {
     player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
 }
 
-void Event::placeCube() {
+void Event::placeCube() { // maybe place the function inside the player class
     Chunk* chunk;
     glm::ivec3 pos;
 

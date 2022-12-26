@@ -94,15 +94,6 @@ void Chunk::Bind() {
 	mesh.clear();
 }
 
-// Draw the chunk 
-void Chunk::Draw(Shader& shader) {
-	if (!isVisible)
-		return;
-	VAO.Bind();
-	shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
-	glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
-}
-
 void Chunk::Update() {
 	if (threadStatus & CHUNK_PROCESSING || status < CHUNK_LOADED) // almost never needed be we nerver know
 		return;

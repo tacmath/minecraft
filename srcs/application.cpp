@@ -64,9 +64,9 @@ void Application::EveryFrames(float time, float latency) {
         status = 0;
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-    background.Draw();
+    
     minecraft.Draw();
+    background.Draw();
     UI.Draw(player);
     debug.fpsTitle(time, latency);
     debug.Draw(time, latency);
@@ -78,6 +78,7 @@ void Application::EveryTicks() {
     minecraft.LoadChunks(player.position, player.camera); // place in a callback called when player change chunk
     minecraft.thread.BindAllChunks();
     minecraft.thread.UnlockLoadedChunks();
+    background.sun.tick();
 }
 
 void Application::SetCallbacks() {

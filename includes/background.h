@@ -7,6 +7,7 @@
 #include "texture.h"
 #include "cubeMap.h"
 #include "camera.h"
+#include "sun.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -22,6 +23,8 @@ private:
     // skybox cubemap
     CubeMap cubemap;
 public:
+    // the sun
+    Sun     sun;
 
     // constuctor
 	Background(void);
