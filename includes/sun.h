@@ -7,6 +7,7 @@
 #include "quad.h"
 
 class Sun {
+	glm::mat4	model;
 	glm::vec3	position;
 	Shader		shader;
 	Texture		texture;
@@ -18,7 +19,8 @@ public:
 	Sun() {
 		ticks = 0;
 		position = glm::vec3(0.0f);
-		texture.Load("texture/sun.png", 2);
+		model = glm::mat4(1.0f);
+		texture.LoadArray({"texture/sun.png", "texture/moon.png"}, 2);
 		quad.Init(glm::vec2(-0.5f), glm::vec2(1.0f));
 		shader.Load("shaders/sunVS.glsl", "shaders/sunFS.glsl");
 		shader.Activate();
@@ -26,19 +28,28 @@ public:
 		Update();
 	};
 
+	~Sun() {
+		shader.Delete();
+	}
+
 	void Draw() {
 		shader.Activate();
+		shader.setInt("phase", 0);
+		shader.setMat4("model", glm::translate(glm::mat4(1.0f), position) * model);
+		quad.Render();
+
+		shader.setInt("phase", 1);
+		shader.setMat4("model", glm::translate(glm::mat4(1.0f), -position) * model);
 		quad.Render();
 	}
 
 	void Update() {
 		float angle;
 
-		angle = glm::radians(ticks / 1.0f);
+		angle = glm::radians(ticks / 10.0f);
 		position.z = -cos(angle);
 		position.y = sin(angle);
-		shader.Activate();
-		shader.setVec3("position", position);
+		model = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	void SetView(glm::mat4 &view) {

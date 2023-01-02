@@ -15,6 +15,11 @@ public:
 		VBO = 0;
 	};
 
+	~Quad() {
+		glDeleteBuffers(1, &VBO);
+		glDeleteVertexArrays(1, &VAO);
+	};
+
 	void Init() {
 		float quadVertices[] = {
 			// positions        // texture Coords

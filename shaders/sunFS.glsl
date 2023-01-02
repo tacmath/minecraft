@@ -1,9 +1,9 @@
 #version 400
 out vec4 FragColor;
 
-in vec2 texCoord;
+in vec3 texCoord;
 
-uniform sampler2D sunTexture;
+uniform sampler2DArray sunTexture;
 
 void main()
 {
