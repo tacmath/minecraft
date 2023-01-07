@@ -25,7 +25,7 @@ void Event::placeCube() { // maybe place the function inside the player class
         return;
     pos = player->selectedCube.side;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
-    chunk->SetCube(3, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
+    chunk->SetCube(player->selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
     player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
 }
@@ -51,7 +51,16 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
         toggleData->minecraft->ReloadShader(wireFrameMode);
         toggleData->minecraft->initUniforms(toggleData->player->camera);
     }
-
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+        toggleData->player->selectedItem = 1;
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+        toggleData->player->selectedItem = 2;
+    if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+        toggleData->player->selectedItem = 3;
+    if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+        toggleData->player->selectedItem = 4;
+    if (key == GLFW_KEY_5 && action == GLFW_PRESS)
+        toggleData->player->selectedItem = 5;
 }
 
 Event::Event() {

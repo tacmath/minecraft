@@ -17,6 +17,7 @@ private:
 public:
 	RayCastInfo selectedCube;
 	Camera		camera;
+	char		selectedItem; //later use an inventory and an index to the selected slot
 
 	Player() {
 		look = glm::vec3(0, 0, -1);
@@ -24,6 +25,7 @@ public:
 		position = glm::vec3(0, 60, 0);
 		cameraOffset = glm::vec3(0);
 		hasCollision = false;
+		selectedItem = 4;
 		updateCallback = [](Player) {};
 	}
 

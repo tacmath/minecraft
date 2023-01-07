@@ -16,6 +16,12 @@ Name Stone
 	Side	stone.png
 	Bottom	stone.png
 
+Name Planck
+	ID		4
+	Top		planks_oak.png
+	Side	planks_oak.png
+	Bottom	planks_oak.png
+
 Name BedRock
 	ID		5
 	Top		bedrock.png
