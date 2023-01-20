@@ -13,7 +13,7 @@ void Application::Start() {
     player.Init(window.size);
     debug.Link(&window.size, &player, window.context);
     UI.Link(&window.size);
-    event.Link(window.context, &debug, &player, &minecraft);
+    event.Link(window.context, &debug, &player, &minecraft, &cooldowns);
 
 
     UI.InitUniforms(player.camera.projection);
@@ -58,6 +58,7 @@ void Application::Stop() {
 }
 
 void Application::EveryFrames(float time, float latency) {
+    cooldowns.Update();
     event.GetEvents(latency);
     if (glfwGetKey(window.context, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
         glfwWindowShouldClose(window.context) == 1)

@@ -8,6 +8,7 @@
 #include "debug.h"
 #include "UI.h"
 #include "event.h"
+#include "cooldown.h"
 
 #include "chunk_generation.h"
 #include "blocks.h"
@@ -32,6 +33,7 @@ private:
 	Debug           debug;
 	UserInterface   UI;
 	Event           event;
+	Cooldowns		cooldowns;
 
 public:
 	//default constructor

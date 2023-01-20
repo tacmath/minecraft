@@ -1,14 +1,13 @@
 #include "chunk.h"
 #include "camera.h"
 #include "event.h"
-#include "debug.h"
 #include "raycast.h"
 
 void Event::removePointedCube() {
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player->selectedCube.id == AIR)
+    if (player->selectedCube.id == AIR || !cooldowns->Use(ACTION_COOLDOWN))
         return;
     pos = player->selectedCube.position;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
@@ -21,7 +20,7 @@ void Event::placeCube() { // maybe place the function inside the player class
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player->selectedCube.id == AIR || player->selectedCube.range < 1.5)
+    if (player->selectedCube.id == AIR || player->selectedCube.range < 1.5 || !cooldowns->Use(ACTION_COOLDOWN))
         return;
     pos = player->selectedCube.side;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
@@ -79,9 +78,10 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *minecraft) {
+void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *minecraft, Cooldowns* cooldowns) {
     this->window = window;
     this->player = player;
+    this->cooldowns = cooldowns;
 
     ToggleData* toggleData = (ToggleData*)calloc(1, sizeof(ToggleData));
     if (!toggleData)

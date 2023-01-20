@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 #include "debug.h"
 #include "minecraft.h"
+#include "cooldown.h"
 
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
@@ -25,6 +26,7 @@ struct ToggleData {
 class Event {
 	GLFWwindow* window;
 	Player*		player;
+	Cooldowns*	cooldowns;
 	glm::dvec2	mousePos;
 	bool		inMenu;
 	float		speed;
@@ -43,7 +45,7 @@ public:
 
 	~Event();
 
-	void Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft);
+	void Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft, Cooldowns *cooldowns);
 	void GetEvents(float latency);
 
 private:
