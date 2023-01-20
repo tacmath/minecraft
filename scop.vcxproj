@@ -163,6 +163,7 @@
     <ClCompile Include="srcs\VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\aabb.h" />
     <ClInclude Include="includes\application.h" />
     <ClInclude Include="includes\background.h" />
     <ClInclude Include="includes\camera.h" />

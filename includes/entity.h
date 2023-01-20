@@ -5,6 +5,7 @@
 #include<glm/gtc/type_ptr.hpp>
 #include<iostream>
 #include "raycast.h"
+#include "aabb.h"
 
 unsigned char GetCubeAt(int x, int y, int z);
 
@@ -32,6 +33,10 @@ public:
 	void SetSize(float x, float y, float z);
 	void SetLook(glm::vec3 look);
 	void SetLook(float x, float y, float z);
+
+	AABB aabb() {
+		return AABB(position, position + size);
+	}
 
 private:
 	void ApplyCollision(glm::vec3& movement) {
