@@ -107,7 +107,51 @@ int GetColliders(AABB area, std::vector<AABB> &colliders) {
         for (y = 0; y < size.y; y++)
             for (x = 0; x < size.x; x++) {
                 if (chunk->GetCube(start.x + x, start.y + y, start.z + z) != AIR)
-                    colliders.push_back(AABB(area.min + glm::vec3(x, y, z), area.min + glm::vec3(x + 1, y + 1, z + 1)));
+                    colliders.push_back(AABB::unit().translate(area.min + glm::vec3(x, y, z)));
     }
     return 0;
+}
+
+#define EPSILON 0.05f
+
+float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3 axis) {
+    glm::vec3 d_v = axis * movement;
+    float sign = glm::sign(movement);
+    int index = axis.x != 0 ? 0 : (axis.y != 0 ? 1 : 2);
+
+    AABB moved = box.translate(d_v);
+
+    for (const auto& c : colliders) {
+        if (!moved.collide(c)) {
+            continue;
+        }
+
+        auto depth = moved.depth(c)[index];
+        d_v[index] += -sign * (depth + EPSILON);
+        moved = box.translate(d_v);
+
+        if (glm::abs(d_v[index]) <= EPSILON) {
+            d_v[index] = 0.0f;
+            break;
+        }
+    }
+
+    auto result = d_v[index];
+    return glm::abs(result) <= glm::epsilon<float>() ? 0.0f : result;
+}
+
+glm::vec3 Move(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
+    glm::vec3 result;
+    AABB current = box;
+
+    for (int i = 0; i < 3; i++) {
+        glm::vec3 axis(0);
+        axis[i] = 1.0f;
+
+        float movement_axis = MoveAxis(box, movement[i], colliders, axis);
+        current = current.translate(axis * movement_axis);
+        result[i] = movement_axis;
+    }
+
+    return result;
 }
