@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
+#    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/12/21 14:43:51 by mtaquet          ###   ########.fr        #
+#    Updated: 2023/01/23 16:45:27 by matheme          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,6 @@ NAME_SRC=	camera.cpp\
 			init.cpp \
 			main.cpp \
 			minecraft.cpp\
-			motor.cpp\
 			perlin_noise.cpp\
 			shader.cpp\
 			simplex_noise.cpp\
