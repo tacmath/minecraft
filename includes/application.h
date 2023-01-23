@@ -19,7 +19,7 @@
 
 #define MIN_TICK_DELAY  1.0f / GAME_TPS
 
-#define APPLICATION_RUNNIG 1
+#define APPLICATION_RUNNING 1
 
 class Application {
 private:

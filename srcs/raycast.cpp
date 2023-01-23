@@ -1,4 +1,6 @@
 #include "raycast.h"
+#include "aabb.h"
+#include <vector>
 
 //http://www.cse.yorku.ca/~amana/research/grid.pdf
 
@@ -86,4 +88,26 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) {
         }
     }
     return (result);
+}
+
+int GetColliders(AABB area, std::vector<AABB> &colliders) {
+    int x, y, z;
+    Chunk *chunk;
+    glm::ivec3 start, size;
+
+    area.min = floor(area.min);
+    area.max = ceil(area.max);
+    size = glm::ivec3(area.size());
+    start = glm::ivec3(area.min);
+     if (!(chunk = GetChunk(start.x >> 4, start.z >> 4)))
+        return 0;
+    start.x &= 0xF;
+    start.z &= 0xF;
+    for (z = 0; z < size.z; z++)
+        for (y = 0; y < size.y; y++)
+            for (x = 0; x < size.x; x++) {
+                if (chunk->GetCube(start.x + x, start.y + y, start.z + z) != AIR)
+                    colliders.push_back(AABB(area.min + glm::vec3(x, y, z), area.min + glm::vec3(x + 1, y + 1, z + 1)));
+    }
+    return 0;
 }

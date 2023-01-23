@@ -23,7 +23,7 @@ void Application::Start() {
 
     SetCallbacks();
     glfwSwapInterval(0);
-    status = APPLICATION_RUNNIG;
+    status = APPLICATION_RUNNING;
 }
 
 void Application::Run() {
