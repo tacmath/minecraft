@@ -10,7 +10,7 @@
 #include "event.h"
 #include "cooldown.h"
 
-#include "chunk_generation.h"
+#include "generation.h"
 #include "blocks.h"
 
 #define MIN_FRAME_DELAY 1.0f / MAX_FPS

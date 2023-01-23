@@ -1,5 +1,5 @@
 #include "chunk.h"
-#include "chunk_generation.h"
+#include "generation.h"
 
 // Default constructor
 Chunk::Chunk() {

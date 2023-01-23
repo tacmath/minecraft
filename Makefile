@@ -6,7 +6,7 @@
 #    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2023/01/23 16:45:27 by matheme          ###   ########.fr        #
+#    Updated: 2023/01/23 18:14:12 by matheme          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,7 @@ NAME_SRC=	camera.cpp\
 			event.cpp\
 			init.cpp \
 			main.cpp \
+			generation.cpp \
 			minecraft.cpp\
 			perlin_noise.cpp\
 			shader.cpp\
