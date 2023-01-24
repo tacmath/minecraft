@@ -1,6 +1,4 @@
 #include "raycast.h"
-#include "aabb.h"
-#include <vector>
 
 //http://www.cse.yorku.ca/~amana/research/grid.pdf
 
@@ -88,70 +86,4 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) {
         }
     }
     return (result);
-}
-
-int GetColliders(AABB area, std::vector<AABB> &colliders) {
-    int x, y, z;
-    Chunk *chunk;
-    glm::ivec3 start, size;
-
-    area.min = floor(area.min);
-    area.max = ceil(area.max);
-    size = glm::ivec3(area.size());
-    start = glm::ivec3(area.min);
-     if (!(chunk = GetChunk(start.x >> 4, start.z >> 4)))
-        return 0;
-    start.x &= 0xF;
-    start.z &= 0xF;
-    for (z = 0; z < size.z; z++)
-        for (y = 0; y < size.y; y++)
-            for (x = 0; x < size.x; x++) {
-                if (chunk->GetCube(start.x + x, start.y + y, start.z + z) != AIR)
-                    colliders.push_back(AABB::unit().translate(area.min + glm::vec3(x, y, z)));
-    }
-    return 0;
-}
-
-#define EPSILON 0.05f
-
-float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3 axis) {
-    glm::vec3 d_v = axis * movement;
-    float sign = glm::sign(movement);
-    int index = axis.x != 0 ? 0 : (axis.y != 0 ? 1 : 2);
-
-    AABB moved = box.translate(d_v);
-
-    for (const auto& c : colliders) {
-        if (!moved.collide(c)) {
-            continue;
-        }
-
-        auto depth = moved.depth(c)[index];
-        d_v[index] += -sign * (depth + EPSILON);
-        moved = box.translate(d_v);
-
-        if (glm::abs(d_v[index]) <= EPSILON) {
-            d_v[index] = 0.0f;
-            break;
-        }
-    }
-
-    auto result = d_v[index];
-    return glm::abs(result) <= glm::epsilon<float>() ? 0.0f : result;
-}
-
-glm::vec3 Move(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
-    glm::vec3 result;
-    AABB current = box;
-
-    for (int i = 0; i < 3; i++) {
-        glm::vec3 axis(0);
-        axis[i] = 1.0f;
-
-        float movement_axis = MoveAxis(box, movement[i], colliders, axis);
-        current = current.translate(axis * movement_axis);
-        result[i] = movement_axis;
-    }
-
-    return result;
 }

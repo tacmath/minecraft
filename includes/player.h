@@ -13,17 +13,17 @@ private:
 	// the updateCallback
 	std::function<void(Player&)> updateCallback;
 
-	glm::vec3 cameraOffset;
 public:
+	glm::vec3 cameraOffset;
 	RayCastInfo selectedCube;
 	Camera		camera;
 	char		selectedItem; //later use an inventory and an index to the selected slot
 
 	Player() {
 		look = glm::vec3(0, 0, -1);
-		size = glm::vec3(0, 2, 0);
+		size = glm::vec3(0.4f, 1.6f, 0.4f);
 		position = glm::vec3(0, 60, 0);
-		cameraOffset = glm::vec3(0);
+		cameraOffset = glm::vec3(0.2f, 1.5f, 0.2f);
 		hasCollision = false;
 		selectedItem = 4;
 		updateCallback = [](Player) {};
@@ -36,7 +36,7 @@ public:
 	}
 
 	void Update() {
-		selectedCube = rayCastGetCube(position, look, PLAYER_RANGE);
+		selectedCube = rayCastGetCube(position + cameraOffset, look, PLAYER_RANGE);
 		camera.SetPosition(position + cameraOffset);
 		camera.SetDirection(look);
 		camera.Update();

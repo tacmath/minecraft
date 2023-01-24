@@ -13,7 +13,7 @@ void Event::removePointedCube() {
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
+    player->selectedCube = rayCastGetCube(player->position + player->cameraOffset, player->look, PLAYER_RANGE);
 }
 
 void Event::placeCube() { // maybe place the function inside the player class
@@ -26,7 +26,7 @@ void Event::placeCube() { // maybe place the function inside the player class
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(player->selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
+    player->selectedCube = rayCastGetCube(player->position + player->cameraOffset, player->look, PLAYER_RANGE);
 }
 
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
