@@ -21,7 +21,7 @@ public:
 
 	Player() {
 		look = glm::vec3(0, 0, -1);
-		size = glm::vec3(0.4f, 1.6f, 0.4f);
+		size = glm::vec3(0.4f, 1.65f, 0.4f);
 		position = glm::vec3(0, 60, 0);
 		cameraOffset = glm::vec3(0.2f, 1.5f, 0.2f);
 		hasCollision = false;

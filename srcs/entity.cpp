@@ -89,7 +89,7 @@ float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3
         }
     }
 
-    auto result = d_v[index];
+    float result = d_v[index];
     return glm::abs(result) <= glm::epsilon<float>() ? 0.0f : result;
 }
 
@@ -97,13 +97,13 @@ glm::vec3 MoveBox(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
     glm::vec3 result;
     AABB current = box;
 
-    for (int i = 0; i < 3; i++) {
+    for (int n = 0; n < 3; n++) {
         glm::vec3 axis(0);
-        axis[i] = 1.0f;
+        axis[n] = 1.0f;
 
-        float movement_axis = MoveAxis(box, movement[i], colliders, axis);
+        float movement_axis = MoveAxis(box, movement[n], colliders, axis);
         current = current.translate(axis * movement_axis);
-        result[i] = movement_axis;
+        result[n] = movement_axis;
     }
 
     return result;
