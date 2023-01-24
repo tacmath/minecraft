@@ -57,6 +57,15 @@ int GetColliders(AABB area, std::vector<AABB> &colliders) {
     return n;
 }
 
+void OccludeColliders(AABB area, std::vector<AABB> &colliders) {
+    for (unsigned int n = 0; n < colliders.size(); n++) {
+        if (area.collide(colliders[n])) {
+            colliders.erase(colliders.begin() + n);
+            n--;
+        }
+    }
+}
+
 float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3 axis) {
 	float depth;
     glm::vec3 d_v = axis * movement;
@@ -110,8 +119,12 @@ void Entity::Move(glm::vec3 &movement) {
 
 void Entity::ApplyCollision(glm::vec3& movement) {
 	std::vector<AABB> colliders;
+    AABB entityAABB;
 
-	GetColliders(this->aabb().translate(movement), colliders);
-	position += MoveBox(this->aabb(), movement, colliders);
-
+    entityAABB = this->aabb();
+	if (GetColliders(entityAABB.translate(movement), colliders) >= 0) {
+        OccludeColliders(entityAABB, colliders);
+        movement = MoveBox(entityAABB, movement, colliders);
+    }
+	position += movement;
 }
