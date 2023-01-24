@@ -12,9 +12,9 @@ class Player : public Entity {
 private:
 	// the updateCallback
 	std::function<void(Player&)> updateCallback;
+	glm::vec3 cameraOffset;
 
 public:
-	glm::vec3 cameraOffset;
 	RayCastInfo selectedCube;
 	Camera		camera;
 	char		selectedItem; //later use an inventory and an index to the selected slot
@@ -33,6 +33,10 @@ public:
 		camera.Init(windowSize.x, windowSize.y, position + cameraOffset);
 		camera.SetDirection(look);
 		camera.Update();
+	}
+
+	void UpdateRayCast() {
+		selectedCube = rayCastGetCube(position + cameraOffset, look, PLAYER_RANGE);
 	}
 
 	void Update() {

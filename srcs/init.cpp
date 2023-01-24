@@ -1,6 +1,6 @@
-#include "minecraft.h"
+#include "world_area.h"
 
-void Minecraft::initChunks(int radius) {
+void WorldArea::initChunks(int radius) {
     long diameter = (radius + 1) * 2;
 
     chunksLoading.resize(diameter * diameter);
@@ -23,7 +23,7 @@ void Minecraft::initChunks(int radius) {
         }
 }
 
-void Minecraft::initUniforms(Camera &camera) {
+void WorldArea::initUniforms(Camera &camera) {
     chunkShader.Activate();
     chunkShader.setInt("atlas", 0);
     chunkShader.setMat4("projection", camera.projection);

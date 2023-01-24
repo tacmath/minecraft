@@ -13,7 +13,7 @@ void Event::removePointedCube() {
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(player->position + player->cameraOffset, player->look, PLAYER_RANGE);
+    player->UpdateRayCast();
 }
 
 void Event::placeCube() { // maybe place the function inside the player class
@@ -26,7 +26,7 @@ void Event::placeCube() { // maybe place the function inside the player class
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(player->selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(player->position + player->cameraOffset, player->look, PLAYER_RANGE);
+    player->UpdateRayCast();
 }
 
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -47,8 +47,8 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
 
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
         wireFrameMode = !wireFrameMode;
-        toggleData->minecraft->ReloadShader(wireFrameMode);
-        toggleData->minecraft->initUniforms(toggleData->player->camera);
+        toggleData->worldArea->ReloadShader(wireFrameMode);
+        toggleData->worldArea->initUniforms(toggleData->player->camera);
     }
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         toggleData->player->selectedItem = 1;
@@ -78,7 +78,7 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *minecraft, Cooldowns* cooldowns) {
+void Event::Link(GLFWwindow* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns) {
     this->window = window;
     this->player = player;
     this->cooldowns = cooldowns;
@@ -88,7 +88,7 @@ void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *mi
         exit(1);
     toggleData->debug = debug;
     toggleData->player = player;
-    toggleData->minecraft = minecraft;
+    toggleData->worldArea = worldArea;
     toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;
     glfwSetWindowUserPointer(window, toggleData);

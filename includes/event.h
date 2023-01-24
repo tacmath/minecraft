@@ -8,7 +8,7 @@
 #include<glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include "debug.h"
-#include "minecraft.h"
+#include "world_area.h"
 #include "cooldown.h"
 
 #define NORMAL_PERSPECTIVE 0
@@ -17,7 +17,7 @@
 struct ToggleData {
     Debug *debug;
     Player* player;
-    Minecraft* minecraft;
+    WorldArea* worldArea;
 
     bool* perspective;
     bool* lookChanged;
@@ -45,7 +45,7 @@ public:
 
 	~Event();
 
-	void Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft* minecraft, Cooldowns *cooldowns);
+	void Link(GLFWwindow* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns *cooldowns);
 	void GetEvents(float latency);
 
 private:

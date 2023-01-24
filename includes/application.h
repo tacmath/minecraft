@@ -2,7 +2,7 @@
 # define APPLICATION_H
 
 #include "window.h"
-#include "minecraft.h"
+#include "world_area.h"
 #include "background.h"
 #include "player.h"
 #include "debug.h"
@@ -27,7 +27,7 @@ private:
 
 	// modules
 	Window			window;
-	Minecraft		minecraft;
+	WorldArea		worldArea;
 	Background		background;
 	Player          player;
 	Debug           debug;
