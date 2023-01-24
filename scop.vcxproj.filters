@@ -21,9 +21,6 @@
     <ClCompile Include="srcs\main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="srcs\minecraft.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\shader.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -84,11 +81,11 @@
     <ClCompile Include="srcs\background.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="srcs\world_area.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="includes\minecraft.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="includes\shader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -171,6 +168,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="includes\aabb.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\world_area.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

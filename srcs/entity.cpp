@@ -34,7 +34,7 @@ AABB Entity::aabb() {
 
 
 int GetColliders(AABB area, std::vector<AABB> &colliders) {
-    unsigned int x, y, z, n;
+    int x, y, z, n;
     Chunk *chunk;
     glm::ivec3 start, size;
 
@@ -69,7 +69,7 @@ void OccludeColliders(AABB area, std::vector<AABB> &colliders) {
 float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3 axis) {
 	float depth;
     glm::vec3 d_v = axis * movement;
-    float sign = glm::sign(movement);
+    float sign = movement < 0.0f ? -1.0f : 1.0f;
     int index = axis.x != 0 ? 0 : (axis.y != 0 ? 1 : 2);
 
     AABB moved = box.translate(d_v);
