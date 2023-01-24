@@ -20,7 +20,7 @@ void Event::placeCube() { // maybe place the function inside the player class
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player->selectedCube.id == AIR || player->selectedCube.range < 1.5 || !cooldowns->Use(ACTION_COOLDOWN))
+    if (player->selectedCube.id == AIR || player->aabb().collide(AABB::unit().translate(player->selectedCube.side)) || !cooldowns->Use(ACTION_COOLDOWN))
         return;
     pos = player->selectedCube.side;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
