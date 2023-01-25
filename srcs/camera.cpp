@@ -54,6 +54,8 @@ void Camera::SetDirection(glm::vec3 direction) {
 // change the prespective matrix
 void Camera::ChangePerspective(float FOV, float windowWidth, float windowHeight, float near, float far) {
 	fov = FOV;
+	width = windowWidth;
+	height = windowHeight;
 	projection = glm::perspective(glm::radians(FOV), (float)(windowWidth / windowHeight), near, far);
 	frustum.calculate(projection);
 }

@@ -13,7 +13,7 @@ void Application::Start() {
     player.Init(window.size);
     debug.Link(&window.size, &player, window.context);
     UI.Link(&window.size);
-    event.Link(window.context, &debug, &player, &worldArea, &cooldowns);
+    event.Link(&window, &debug, &player, &worldArea, &cooldowns);
 
 
     UI.InitUniforms(player.camera.projection);
@@ -88,5 +88,12 @@ void Application::SetCallbacks() {
         worldArea.LoadViewMatrix(player.camera);
         background.LoadViewMatrix(player.camera);
         UI.SetViewMatrix(player.camera.view);
+     });
+
+    event.SetWindowSizeCallback([&](int width, int height) {
+        player.camera.ChangePerspective(80, width, height, 0.1f, 1000.0f);
+        worldArea.initUniforms(player.camera);
+        background.initUniforms(player.camera);
+        UI.InitUniforms(player.camera.projection);
      });
 }

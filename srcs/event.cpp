@@ -33,7 +33,15 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
 {
     static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
     static bool wireFrameMode = false;
-
+    static bool fullScreen = false;
+    
+    if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
+        fullScreen = !fullScreen;
+        if (fullScreen)
+            toggleData->window->Windowed();
+        else
+            toggleData->window->FullScreen();
+    }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
         toggleData->debug->toggle();
 
@@ -78,8 +86,8 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(GLFWwindow* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns) {
-    this->window = window;
+void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns) {
+    this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
 
@@ -89,10 +97,24 @@ void Event::Link(GLFWwindow* window, Debug *debug, Player *player, WorldArea* wo
     toggleData->debug = debug;
     toggleData->player = player;
     toggleData->worldArea = worldArea;
+    toggleData->window = window;
     toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;
-    glfwSetWindowUserPointer(window, toggleData);
-    glfwSetKeyCallback(window, keyToogleCallback);
+    toggleData->windowSizeCallback = [](int width, int height) {};
+    glfwSetWindowUserPointer(this->window, toggleData);
+    glfwSetKeyCallback(this->window, keyToogleCallback);
+    glfwSetWindowSizeCallback(this->window, [](GLFWwindow* window, int width, int height) {
+        static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+        
+        toggleData->windowSizeCallback(width, height);
+        glfwGetFramebufferSize(window, &width, &height);
+        glViewport(0, 0, width, height);
+    });
+}
+
+void Event::SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback) {
+    ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+    toggleData->windowSizeCallback = windowSizeCallback;
 }
 
 glm::vec3  Event::spectatorMovement() {
