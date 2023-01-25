@@ -14,6 +14,7 @@ void Application::Start() {
     debug.Link(&window.size, &player, window.context);
     UI.Link(&window.size);
     event.Link(&window, &debug, &player, &worldArea, &cooldowns);
+    shadow.Link(window.context, &player.camera, &worldArea);
 
 
     UI.InitUniforms(player.camera.projection);
@@ -21,6 +22,7 @@ void Application::Start() {
     worldArea.initUniforms(player.camera);
     background.initUniforms(player.camera);
 
+    shadow.Init();
     SetCallbacks();
     glfwSwapInterval(0);
     status = APPLICATION_RUNNING;

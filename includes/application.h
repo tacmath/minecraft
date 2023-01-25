@@ -9,6 +9,7 @@
 #include "UI.h"
 #include "event.h"
 #include "cooldown.h"
+#include "shadow.h"
 
 #include "chunk_generation.h"
 #include "blocks.h"
@@ -34,6 +35,7 @@ private:
 	UserInterface   UI;
 	Event           event;
 	Cooldowns		cooldowns;
+	Shadow			shadow;
 
 public:
 	//default constructor

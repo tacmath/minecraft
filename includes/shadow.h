@@ -111,7 +111,6 @@ private:
                             2.0f * z - 1.0f,
                             1.0f);
                     frustumCorners[n] = pt / pt.w;
-                 //   frustumCorners[n].y = 60.0f; // il faut aussi changer le calcule dans le shader pour prendre en compte la distance en xz
                     n++;
                 }
             }
@@ -128,7 +127,7 @@ private:
 
 
         for (int cascade = 0; cascade < SHADOW_CASCADE_NB; cascade++) {
-            getFrustumCornersWorldSpace(perspectives[cascade], playerCam->view, frustumCorners);        //maybe change to only une one perspective
+            getFrustumCornersWorldSpace(perspectives[cascade], playerCam->view, frustumCorners);
 
             float minX = std::numeric_limits<float>::max();
             float maxX = std::numeric_limits<float>::lowest();
