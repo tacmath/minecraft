@@ -36,11 +36,11 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     static bool fullScreen = false;
     
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
-        fullScreen = !fullScreen;
         if (fullScreen)
             toggleData->window->Windowed();
         else
             toggleData->window->FullScreen();
+        fullScreen = !fullScreen;
     }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
         toggleData->debug->toggle();

@@ -68,7 +68,7 @@ public:
     void Windowed(void) {
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-        glfwSetWindowMonitor(context, nullptr, 0, 0, size.x, size.y, 60);
+        glfwSetWindowMonitor(context, nullptr, 0, 0, (int)size.x, (int)size.y, 60);
     }
 
     void enableGlParam(void) {

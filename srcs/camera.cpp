@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "world_area.h"
 
 // Default constructor
 Camera::Camera() {
@@ -18,7 +19,7 @@ void Camera::Init(float windowWidth, float windowHeight, glm::vec3 pos) {
 	height = windowHeight;
 	position = pos;
 	view = glm::lookAt(position, position + direction, up);
-	projection = glm::perspective(glm::radians(fov), (float)(windowWidth / windowHeight), 0.1f, 1000.0f);
+	projection = glm::perspective(glm::radians(fov), (float)(windowWidth / windowHeight), 0.1f, 24.0f * RENDER_DISTANCE);
 	frustum.calculate(projection * view);
 }
 

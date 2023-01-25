@@ -91,7 +91,7 @@ void Application::SetCallbacks() {
      });
 
     event.SetWindowSizeCallback([&](int width, int height) {
-        player.camera.ChangePerspective(80, width, height, 0.1f, 1000.0f);
+        player.camera.ChangePerspective(80, (float)width, (float)height, 0.1f, 24.0f * RENDER_DISTANCE);
         worldArea.initUniforms(player.camera);
         background.initUniforms(player.camera);
         UI.InitUniforms(player.camera.projection);
