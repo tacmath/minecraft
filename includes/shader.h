@@ -29,6 +29,9 @@ public:
     void setMat4(const char* name, const glm::mat4& matrix) {
         glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, &matrix[0][0]);
     }
+    void setMat4(const char* name, int numbers, const glm::mat4* matrix) {
+        glUniformMatrix4fv(glGetUniformLocation(ID, name), numbers, GL_FALSE, &matrix[0][0][0]);
+    }
     void setVec3(const char* name, const glm::vec3& vector) {
         glUniform3fv(glGetUniformLocation(ID, name), 1, &vector[0]);
     }

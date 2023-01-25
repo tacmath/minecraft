@@ -173,6 +173,9 @@
     <ClInclude Include="includes\world_area.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\shadow.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -212,6 +215,15 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\sunVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\shadowFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\shadowGS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\shadowVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

@@ -146,3 +146,11 @@ void WorldArea::ReloadShader(bool wireframeMode) {
     chunkShader.Delete();
     chunkShader = newShader;
 }
+
+std::vector<Chunk*>& WorldArea::GetChunks() {
+    return chunks;
+}
+
+Shader& WorldArea::GetShader() {
+    return chunkShader;
+}
