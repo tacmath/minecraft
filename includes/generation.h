@@ -21,10 +21,16 @@ class ChunkGeneration {
     void generate(int ChunkSize, int posx, int posz, unsigned char *cubes);
 
     private:
-    Biome biome(int ChunkSize, int posx, int posz);
-    int groundHeight(int x, int z);
-};
+    int     groundHeight(long x, long z);
 
-extern ChunkGeneration globalChunkGeneration;
+    void    generateBiome(long posX, long posZ, unsigned char *cubes);
+    void    generatePlaine(long posX, long posZ, unsigned char *cubes);
+    void    generateDesert(long posX, long posZ, unsigned char *cubes);
+    void    generateMontagne(long posX, long posZ, unsigned char *cubes);
+    void    generateMer(long posX, long posZ, unsigned char *cubes);
+    void    generateMarais(long posX, long posZ, unsigned char *cubes);
+    void    generateForet(long posX, long posZ, unsigned char *cubes);
+    void    generateNeige(long posX, long posZ, unsigned char *cubes);
+};
 
 #endif

@@ -1,29 +1,145 @@
 Name Grass
 	ID		1
-	Top		grass_top.png
-	Side	grass_side.png
-	Bottom	dirt.png
+	Top		grass/grass_top.png
+	Side	grass/grass_side.png
+	Bottom	grass/dirt.png
 
 Name Dirt
 	ID		2
-	Top		dirt.png
-	Side	dirt.png
-	Bottom	dirt.png
+	Top		dirt/dirt.png
+	Side	dirt/dirt.png
+	Bottom	dirt/dirt.png
 
 Name Stone
 	ID		3
-	Top		stone.png
-	Side	stone.png
-	Bottom	stone.png
+	Top		stone/stone.png
+	Side	stone/stone.png
+	Bottom	stone/stone.png
 
-Name Planck
+Name OakPlanck
 	ID		4
-	Top		planks_oak.png
-	Side	planks_oak.png
-	Bottom	planks_oak.png
+	Top		oak/planks_oak.png
+	Side	oak/planks_oak.png
+	Bottom	oak/planks_oak.png
 
 Name BedRock
 	ID		5
-	Top		bedrock.png
-	Side	bedrock.png
-	Bottom	bedrock.png
+	Top		bedrock/bedrock.png
+	Side	bedrock/bedrock.png
+	Bottom	bedrock/bedrock.png
+
+Name OakLeaves
+	ID		6
+	Top		oak/leaves_oak.png
+	Side	oak/leaves_oak.png
+	Bottom	oak/leaves_oak.png
+
+Name OakLog
+	ID		7
+	Top		oak/log_oak_top.png
+	Side	oak/log_oak.png
+	Bottom	oak/log_oak_top.png
+
+Name PackedIce
+	ID		8
+	Top		packed_ice/packed_ice.png
+	Side	packed_ice/packed_ice.png
+	Bottom	packed_ice/packed_ice.png
+
+Name Sand
+	ID		9
+	Top		sand/sand.png
+	Side	sand/sand.png
+	Bottom	sand/sand.png
+
+Name Sandstone
+	ID		10
+	Top		sand_stone/sandstone_top.png
+	Side	sand_stone/sandstone.png
+	Bottom	sand_stone/sandstone_bottom.png
+
+Name GrassSnow
+	ID		11
+	Top		grass_snow/snow.png
+	Side	grass_snow/grass_block_snow.png
+	Bottom	grass_snow/dirt.png
+
+Name Snow
+	ID		12
+	Top		snow/snow.png
+	Side	snow/snow.png
+	Bottom	snow/snow.png
+
+
+Name LapisOre
+	ID		13
+	Top		ores/lapis_ore.png
+	Side	ores/lapis_ore.png
+	Bottom	ores/lapis_ore.png
+
+Name IronOre
+	ID		14
+	Top		ores/iron_ore.png
+	Side	ores/iron_ore.png
+	Bottom	ores/iron_ore.png
+
+Name GoldOre
+	ID		15
+	Top		ores/gold_ore.png
+	Side	ores/gold_ore.png
+	Bottom	ores/gold_ore.png
+
+Name EmeraldOre
+	ID		16
+	Top		ores/emerald_ore.png
+	Side	ores/emerald_ore.png
+	Bottom	ores/emerald_ore.png
+
+Name DiamondOre
+	ID		17
+	Top		ores/diamond_ore.png
+	Side	ores/diamond_ore.png
+	Bottom	ores/diamond_ore.png
+
+
+Name CoalOre
+	ID		18
+	Top		ores/coal_ore.png
+	Side	ores/coal_ore.png
+	Bottom	ores/coal_ore.png
+
+Name BirchLog
+	ID		19
+	Top		birch/birch_log_top.png
+	Side	birch/birch_log.png
+	Bottom	birch/birch_log_top.png
+
+Name BirchPlank
+	ID		20
+	Top		birch/birch_planks.png
+	Side	birch/birch_planks.png
+	Bottom	birch/birch_planks.png
+
+Name BirchLeaves
+	ID		21
+	Top		birch/birch_leaves.png
+	Side	birch/birch_leaves.png
+	Bottom	birch/birch_leaves.png
+
+Name Andesite
+	ID		22
+	Top		andesite/andesite.png
+	Side	andesite/andesite.png
+	Bottom	andesite/andesite.png
+
+Name Water
+	ID		23
+	Top		water/water.png
+	Side	water/water.png
+	Bottom	water/water.png
+
+Name Lava
+	ID		24
+	Top		lava/lava.png
+	Side	lava/lava.png
+	Bottom	lava/lava.png
