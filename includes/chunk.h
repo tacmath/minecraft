@@ -6,6 +6,8 @@
 #include <vector>
 #include <unordered_map>
 #include "shader.h"
+#include "blocks.h"
+#include "generation.h"
 
 // id of air
 #define AIR 0
@@ -50,9 +52,6 @@
 
 class Chunk;
 
-
-extern std::unordered_map<int64_t, Chunk*> chunksMap;
-
 class Chunk
 {
 private:
@@ -68,6 +67,12 @@ private:
 	GLuint VBO;
 
 public:
+	static Block blocks[256];
+
+	static std::unordered_map<int64_t, Chunk*> chunksMap;
+
+	static ChunkGeneration globalChunkGeneration;
+
 	// the visibility of the chunk
 	bool isVisible;
 	// chunk proximity to the player

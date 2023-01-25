@@ -1,6 +1,13 @@
 #include "chunk.h"
 #include "generation.h"
 
+Block Chunk::blocks[256];
+
+std::unordered_map<int64_t, Chunk*> Chunk::chunksMap;
+
+ChunkGeneration Chunk::globalChunkGeneration;
+
+
 // Default constructor
 Chunk::Chunk() {
 	//	std::cout << "constructor called" << std::endl;
@@ -33,6 +40,7 @@ Chunk::~Chunk() {
 	glDeleteBuffers(1, &VBO);
 }
 
+
 // Set the position of the chunk
 void Chunk::SetPosistion(int x, int z) {
 	//	std::cout << "SetPosistion called  and addr = " << cubes << "x = " << posx << "z = " << posz << std::endl;
@@ -45,6 +53,7 @@ void Chunk::SetPosistion(int x, int z) {
 // get all the neighbours of the chunk
 void Chunk::GetNeighbour() {
 	if ((neighbour[CHUNK_FRONT_SIDE] = GetChunk(posx - 1, posz)))
+
 		neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = this;
 	if ((neighbour[CHUNK_BACK_SIDE] = GetChunk(posx + 1, posz)))
 		neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = this;
@@ -130,8 +139,8 @@ void Chunk::UpdateCube(int x, int z) { // maybe use a switch case
 
 // return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
 Chunk* GetChunk(int x, int z) {
-	auto search = chunksMap.find(GET_CHUNK_ID(x, z));
-	if (search != chunksMap.end())
+	auto search = Chunk::chunksMap.find(GET_CHUNK_ID(x, z));
+	if (search != Chunk::chunksMap.end())
 		return (search->second);
 	else
 		return (0);

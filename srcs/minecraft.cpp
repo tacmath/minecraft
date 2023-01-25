@@ -104,7 +104,7 @@ void Minecraft::loadNewChunks(glm::vec3 &position) {
             if (!loadedChunks[x * maxChunk + z] /*&& VEC2_LEN((x - DATA_RENDER_DISTANCE), (z - DATA_RENDER_DISTANCE)) <= DATA_RENDER_DISTANCE*/) {
                 Chunk* newChunk = new Chunk;
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
-                chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
+                Chunk::chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
                 chunksLoading.push_back(newChunk);
                 loadedChunks[x * maxChunk + z] = newChunk;
             }

@@ -1,8 +1,6 @@
 #include "chunk.h"
 #include "blocks.h"
 
-extern Block blocks[256];
-
 void Chunk::addVisibleVertices(int x, int y, int z) {
 
 	if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)

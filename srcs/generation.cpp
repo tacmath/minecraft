@@ -34,13 +34,6 @@ void ChunkGeneration::generate(int ChunkSize, int posx, int posz, unsigned char 
 }
 
 int ChunkGeneration::groundHeight(int x, int z) {
-            int height = 30 + (int)(perlinNoise.noise(x * (1.0f / 500.0f), z * (1.0f / 500.0f)) * 25
-			+ perlinNoise.noise(x * (1.0f / 50.0f), z * (1.0f / 50.0f)) * 15
-			+ perlinNoise.noise(x * (1.0f / 20.0f), z * (1.0f / 20.0f)) * 7
-			- perlinNoise.noise(x * (1.0f / 300.0f), z * (1.0f / 300.0f)) * 30);
-
-            float nice =  perlinNoise.noise(x * (1.0f / 30.0f), z * (1.0f / 30.0f));
-            if (nice < 0.5) nice = 0.5;
-            height += (int)(nice * 30);
-           return height;
+    int height = 30 + perlinNoise.noise(x * (1.0f / 100.0f), z * (1.0f / 100.0f)) * 4;
+    return height;
 }

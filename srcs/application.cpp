@@ -1,9 +1,5 @@
 #include "application.h"
 
-Block blocks[256];
-std::unordered_map<int64_t, Chunk*> chunksMap;
-ChunkGeneration     globalChunkGeneration;
-
 Application::Application() {
     status = 0;
 }

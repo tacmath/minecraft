@@ -8,7 +8,7 @@ void Minecraft::initChunks(int radius) {
         for (int z = 0; z < diameter; z++) {
             Chunk *newChunk = new Chunk;
             newChunk->SetPosistion(x - (radius + 1), z - (radius + 1));
-            chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
+            Chunk::chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
             newChunk->Generate();
             chunksLoading[x * diameter + z] = newChunk;
         }

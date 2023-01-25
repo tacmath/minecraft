@@ -1,9 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "blocks.h"
-
-extern Block blocks[256];
+#include "chunk.h"
 
 static void split(std::string& str, std::vector<std::string>& result) {
     int n;
@@ -37,7 +35,7 @@ void parseBlockData(std::vector<std::string>& textures) {
         if (!line.size())
             continue;
         if (line.substr(0, 4) == "Name") {
-            blocks[blockID] = block;
+            Chunk::blocks[blockID] = block;
             blockID = 0;
             block.SetTextures(0, 0, 0);
         }
@@ -62,5 +60,5 @@ void parseBlockData(std::vector<std::string>& textures) {
             }
         }
     }
-    blocks[blockID] = block;
+    Chunk::blocks[blockID] = block;
 }
