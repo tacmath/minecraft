@@ -13,17 +13,17 @@ void Application::Start() {
     player.Init(window.size);
     debug.Link(&window.size, &player, window.context);
     UI.Link(&window.size);
-    event.Link(window.context, &debug, &player, &minecraft, &cooldowns);
+    event.Link(&window, &debug, &player, &worldArea, &cooldowns);
 
 
     UI.InitUniforms(player.camera.projection);
     UI.SetViewMatrix(player.camera.view);
-    minecraft.initUniforms(player.camera);
+    worldArea.initUniforms(player.camera);
     background.initUniforms(player.camera);
 
     SetCallbacks();
     glfwSwapInterval(0);
-    status = APPLICATION_RUNNIG;
+    status = APPLICATION_RUNNING;
 }
 
 void Application::Run() {
@@ -54,7 +54,7 @@ void Application::Run() {
 }
 
 void Application::Stop() {
-    minecraft.thread.StopThreads();
+    worldArea.thread.StopThreads();
 }
 
 void Application::EveryFrames(float time, float latency) {
@@ -66,7 +66,7 @@ void Application::EveryFrames(float time, float latency) {
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     
-    minecraft.Draw();
+    worldArea.Draw();
     background.Draw();
     UI.Draw(player);
     debug.fpsTitle(time, latency);
@@ -76,17 +76,24 @@ void Application::EveryFrames(float time, float latency) {
 }
 
 void Application::EveryTicks() {
-    minecraft.LoadChunks(player.position, player.camera); // place in a callback called when player change chunk
-    minecraft.thread.BindAllChunks();
-    minecraft.thread.UnlockLoadedChunks();
+    worldArea.LoadChunks(player.position, player.camera); // place in a callback called when player change chunk
+    worldArea.thread.BindAllChunks();
+    worldArea.thread.UnlockLoadedChunks();
     background.sun.tick();
 }
 
 void Application::SetCallbacks() {
     player.SetUpdateCallback([&](Player &player) {
-        minecraft.setChunksVisibility(player.camera);
-        minecraft.LoadViewMatrix(player.camera);
+        worldArea.setChunksVisibility(player.camera);
+        worldArea.LoadViewMatrix(player.camera);
         background.LoadViewMatrix(player.camera);
         UI.SetViewMatrix(player.camera.view);
+     });
+
+    event.SetWindowSizeCallback([&](int width, int height) {
+        player.camera.ChangePerspective(80, (float)width, (float)height, 0.1f, 24.0f * RENDER_DISTANCE);
+        worldArea.initUniforms(player.camera);
+        background.initUniforms(player.camera);
+        UI.InitUniforms(player.camera.projection);
      });
 }

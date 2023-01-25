@@ -6,7 +6,7 @@
 #    By: mtaquet <mtaquet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2022/12/21 14:43:51 by mtaquet          ###   ########.fr        #
+#    Updated: 2023/01/24 14:36:37 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,8 +48,7 @@ NAME_SRC=	camera.cpp\
 			event.cpp\
 			init.cpp \
 			main.cpp \
-			minecraft.cpp\
-			motor.cpp\
+			world_area.cpp\
 			perlin_noise.cpp\
 			shader.cpp\
 			simplex_noise.cpp\

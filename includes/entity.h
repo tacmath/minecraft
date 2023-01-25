@@ -19,13 +19,7 @@ public:
 
 	Entity();
 
-	void Move(glm::vec3 &movement) {
-		if (hasCollision) {
-			ApplyCollision(movement);
-			return;
-		}
-		position += movement;
-	}
+	void Move(glm::vec3 &movement);
 
 	void SetPosition(glm::vec3 pos);
 	void SetPosition(float x, float y, float z);
@@ -33,43 +27,10 @@ public:
 	void SetSize(float x, float y, float z);
 	void SetLook(glm::vec3 look);
 	void SetLook(float x, float y, float z);
-
-	AABB aabb() {
-		return AABB(position, position + size);
-	}
+	AABB aabb();
 
 private:
-	void ApplyCollision(glm::vec3& movement) {
-		/*glm::vec3 origin = position + glm::vec3(0, -size.y, 0);
-		glm::vec3 norm = glm::normalize(movement);
-		float velocity = length(movement);
-		RayCastInfo info;
-
-		position += movement;
-		info = rayCastGetCube(origin, glm::vec3(0, movement.y, 0), abs(velocity * norm.y));
-		if (info.id != AIR && info.range <= abs(velocity * norm.y))
-			position.y = info.hit.y + size.y;
-		info = rayCastGetCube(origin, glm::vec3(0, 0, movement.z), abs(velocity * norm.z));
-		if (info.id != AIR && info.range <= abs(velocity * norm.z))
-			position.z = info.hit.z;
-		info = rayCastGetCube(origin, glm::vec3(movement.x, 0, 0), abs(velocity * norm.x));
-		if (info.id != AIR && info.range <= abs(velocity * norm.x))
-			position.x = info.hit.x;*/
-
-		
-		
-		position.y += movement.y;
-		if (movement.y < 0 && GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
-			position.y = floor(position.y + 1);
-		position.x += movement.x;
-		if (GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
-			position.x = floor(position.x + (movement.x < 0)) - 0.001f * (movement.x >= 0);
-		position.z += movement.z;
-		if (GetCubeAt((int)floor(position.x), (int)floor(position.y - size.y), (int)floor(position.z)))
-			position.z = floor(position.z + (movement.z < 0)) - 0.001f * (movement.z >= 0);
-		
-
-	}
+	void ApplyCollision(glm::vec3& movement);
 };
 
 #endif

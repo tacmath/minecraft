@@ -1,5 +1,5 @@
-#ifndef MINECRAFT_H
-# define MINECRAFT_H
+#ifndef WORLD_AREA_H
+# define WORLD_AREA_H
 
 #include "stb_image.h"
 #include "shader.h"
@@ -23,7 +23,7 @@
 # define DATA_RENDER_DISTANCE (RENDER_DISTANCE + 1)
 # define UNLOAD_OFFSET 2
 
-class Minecraft {
+class WorldArea {
 private:
     // list of all the chunks loaded
 	std::vector<Chunk*> chunks;
@@ -49,9 +49,9 @@ public:
 
 
     // constuctor
-	Minecraft(void);
+	WorldArea(void);
     // destructor
-    ~Minecraft(void);
+    ~WorldArea(void);
 
     // draw the chunks and the skybox
     void Draw(void);

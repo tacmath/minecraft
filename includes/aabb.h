@@ -22,11 +22,15 @@ struct AABB {
 		this->max = max;
 	}
 
-    AABB translate(glm::vec3 &v) const {
+    static AABB unit() {
+        return AABB(glm::vec3(0), glm::vec3(1));
+    }
+
+    AABB translate(glm::vec3 v) const {
         return AABB(min + v, max + v);
     }
 
-    AABB scale(glm::vec3& v) const {
+    AABB scale(glm::vec3 v) const {
         return AABB(min, size() * v);
     }
 
@@ -40,6 +44,17 @@ struct AABB {
 
     glm::vec3 size() const {
         return max - min;
+    }
+
+    glm::vec3 depth(const AABB &other) const {
+        const AABB& a = *this, & b = other;
+        glm::vec3 res,
+            c_a = a.center(),
+            c_b = b.center();
+
+        for (unsigned i = 0; i < 3; i++)
+            res[i] = c_a[i] < c_b[i] ? a.max[i] - b.min[i] : b.max[i] - a.min[i];
+        return res;
     }
 
     bool collide(const AABB &other) const {
