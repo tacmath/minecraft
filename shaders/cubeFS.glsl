@@ -40,7 +40,7 @@ float ShadowCalculation()
 {
     vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
     int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z)); 
-    vec4 fragPosLightSpace = lightSpaceMatrices[shadowMapLayer] * vec4(fragPos + normal * 0.05f, 1.0f);
+    vec4 fragPosLightSpace = lightSpaceMatrices[shadowMapLayer] * vec4(fragPos + normal * 0.05f * (1 + shadowMapLayer), 1.0f);
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 
@@ -49,7 +49,8 @@ float ShadowCalculation()
 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-    if (dot(normal, -lightDir) > 0.0f) // if the angle of the light and normal = ~ 90� set the shadow to 1
+    float dotNL = dot(normal, -lightDir);
+    if (dotNL > 0.0f) // if the angle of the light and normal = ~ 90� set the shadow to 1
         return 1.0f;
 
     float shadow = 0.0f;
@@ -63,6 +64,9 @@ float ShadowCalculation()
         }    
     }
     shadow /= 9.0f;
+
+    if (shadow < 0.9f && dotNL > - 0.1f)
+        return 0.5;
 
     return shadow;
 }
