@@ -11,6 +11,7 @@
 #include "world_area.h"
 #include "cooldown.h"
 #include "window.h"
+#include "shadow.h"
 
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
@@ -20,6 +21,7 @@ struct ToggleData {
     Player*		player;
     WorldArea*	worldArea;
 	Window*		window;
+	Shadow		*shadow;
 
 	std::function<void(int width, int height)> windowSizeCallback;
 
@@ -49,7 +51,7 @@ public:
 
 	~Event();
 
-	void Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns *cooldowns);
+	void Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns *cooldowns, Shadow *shadow);
 	void GetEvents(float latency);
 
 	void SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback);

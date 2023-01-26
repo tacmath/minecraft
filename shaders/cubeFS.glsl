@@ -8,9 +8,11 @@ in vec3 fragPos;
 in float luminosity;
 
 uniform mat4 view;
-uniform mat4 lightSpaceMatrices[4];
 uniform vec3 lightDir;
 uniform sampler2DArray atlas;
+
+#ifdef SHADOW
+uniform mat4 lightSpaceMatrices[4];
 uniform sampler2DArray shadowMap;
 
 const int cascadeNB = 3;
@@ -64,12 +66,16 @@ float ShadowCalculation()
 
     return shadow;
 }
+#endif
 
 void main()
 {
     float day = clamp((lightDir.y - 0.1f) * 3.0f, 0.0f, 1.0f);
     float shadow = 1.0f - (1.0f - day) * 0.7f;
+
+    #ifdef SHADOW
     if (day > 0.1f)
         shadow -= ShadowCalculation() * 0.5f * day;
+    #endif
     FragColor = vec4(vec3(texture(atlas, texCoord)) * luminosity * shadow, 1.0f);
 }

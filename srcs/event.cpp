@@ -34,6 +34,7 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
     static bool wireFrameMode = false;
     static bool fullScreen = false;
+    static bool shadow = true;
     
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         if (fullScreen)
@@ -41,6 +42,20 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
         else
             toggleData->window->FullScreen();
         fullScreen = !fullScreen;
+    }
+    if (key == GLFW_KEY_F2 && action == GLFW_PRESS) {
+        std::vector<std::string> shaderOption;
+        shadow = !shadow;
+
+        if (shadow) {
+            shaderOption.push_back("SHADOW");
+            toggleData->shadow->Activate();
+        }
+        else {
+            toggleData->shadow->Delete();
+        }
+        toggleData->worldArea->ReloadShader(wireFrameMode, shaderOption);
+        toggleData->worldArea->initUniforms(toggleData->player->camera);
     }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
         toggleData->debug->toggle();
@@ -54,8 +69,12 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     }
 
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+        std::vector<std::string> shaderOption;
+        if (shadow)
+            shaderOption.push_back("SHADOW");
+
         wireFrameMode = !wireFrameMode;
-        toggleData->worldArea->ReloadShader(wireFrameMode);
+        toggleData->worldArea->ReloadShader(wireFrameMode, shaderOption);
         toggleData->worldArea->initUniforms(toggleData->player->camera);
     }
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
@@ -86,7 +105,7 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns) {
+void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns, Shadow *shadow) {
     this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
@@ -98,6 +117,7 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
     toggleData->player = player;
     toggleData->worldArea = worldArea;
     toggleData->window = window;
+    toggleData->shadow = shadow;
     toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;
     toggleData->windowSizeCallback = [](int width, int height) {};

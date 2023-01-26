@@ -5,6 +5,8 @@
 #include<fstream>
 #include<iostream>
 #include<glm/gtc/type_ptr.hpp>
+#include<vector>
+#include<string>
 
 class Shader {
 public:
@@ -16,6 +18,8 @@ public:
     Shader(const char* vertexFile, const char* fragmentFile) { Load(vertexFile, fragmentFile); };
 
     void Load(const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0);
+
+    void Load(const std::vector<std::string> &options, const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0);
 
     void Activate() {
         glUseProgram(ID);

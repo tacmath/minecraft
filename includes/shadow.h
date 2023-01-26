@@ -10,8 +10,13 @@
 
 #define SHADOW_CASCADE_NB 3
 
+#define SHADOW_ON 1
+
+#define SHADOW_OFF 0
+
 class Shadow {
 private:
+    int status;
 	GLuint textureID;
     GLuint frameBufferID;
     Shader shadowShader;
@@ -26,6 +31,7 @@ public:
     Shadow() {
         textureID = 0;
         frameBufferID = 0;
+        status = SHADOW_OFF;
     }
 
     void Link(GLFWwindow* window, Camera* playerCam, WorldArea* worldArea) {
@@ -34,7 +40,8 @@ public:
         this->worldArea = worldArea;
     }
 
-    void Init() {
+    void Activate() {
+        status = SHADOW_ON;
         glGenTextures(1, &textureID);
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
@@ -66,7 +73,16 @@ public:
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl", "shaders/shadowGS.glsl");
     }
 
+    void Delete() {
+        status = SHADOW_OFF;
+        glDeleteFramebuffers(1, &frameBufferID);
+        glDeleteTextures(1, &textureID);
+        shadowShader.Delete();
+    }
+
     void GenerateShadowMap(glm::vec3 lightDir) {
+        if (status == SHADOW_OFF)
+            return ;
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_TEXTURE_2D_ARRAY, textureID, 0);
         glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
@@ -85,9 +101,7 @@ public:
     }
 
     ~Shadow() {
-        glDeleteFramebuffers(1, &frameBufferID);
-        glDeleteTextures(1, &textureID);
-        shadowShader.Delete();
+        Delete();
     }
 
 
@@ -178,7 +192,6 @@ private:
             lightSpaceMatrices[n] = biasMatrix * lightSpaceMatrices[n];
 
         chunkShader.Activate();
-        chunkShader.setVec3("lightDir", lightDir);
         chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
     }
 

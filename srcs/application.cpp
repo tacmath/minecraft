@@ -13,7 +13,7 @@ void Application::Start() {
     player.Init(window.size);
     debug.Link(&window.size, &player, window.context);
     UI.Link(&window.size);
-    event.Link(&window, &debug, &player, &worldArea, &cooldowns);
+    event.Link(&window, &debug, &player, &worldArea, &cooldowns, &shadow);
     shadow.Link(window.context, &player.camera, &worldArea);
 
 
@@ -22,7 +22,7 @@ void Application::Start() {
     worldArea.initUniforms(player.camera);
     background.initUniforms(player.camera);
 
-    shadow.Init();
+    shadow.Activate();
     SetCallbacks();
     glfwSwapInterval(0);
     status = APPLICATION_RUNNING;
@@ -100,7 +100,10 @@ void Application::SetCallbacks() {
      });
 
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
-        if (glm::dot(sunPosition, glm::vec3(0.0f, 1.0f, 0.0f)) < 1)
+        Shader& chunkShader = worldArea.GetShader();
+        chunkShader.Activate();
+        chunkShader.setVec3("lightDir", sunPosition);
+        if (glm::dot(sunPosition, glm::vec3(0.0f, 1.0f, 0.0f)) < 1 && sunPosition.y > 0)
             shadow.GenerateShadowMap(sunPosition);
     });
 }
