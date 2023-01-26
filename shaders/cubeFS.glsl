@@ -47,7 +47,7 @@ float ShadowCalculation()
 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-    if (dot(normal, -lightDir) > 0.0f) // if the angle of the light and normal = ~ 90° set the shadow to 1
+    if (dot(normal, -lightDir) > 0.0f) // if the angle of the light and normal = ~ 90ï¿½ set the shadow to 1
         return 1.0f;
 
     float shadow = 0.0f;
@@ -67,6 +67,9 @@ float ShadowCalculation()
 
 void main()
 {
-    float shadow = 1.0f - ShadowCalculation() * 0.5f;
+    float day = clamp((lightDir.y - 0.1f) * 3.0f, 0.0f, 1.0f);
+    float shadow = 1.0f - (1.0f - day) * 0.7f;
+    if (day > 0.1f)
+        shadow -= ShadowCalculation() * 0.5f * day;
     FragColor = vec4(vec3(texture(atlas, texCoord)) * luminosity * shadow, 1.0f);
 }

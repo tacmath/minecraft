@@ -98,4 +98,9 @@ void Application::SetCallbacks() {
         background.initUniforms(player.camera);
         UI.InitUniforms(player.camera.projection);
      });
+
+    background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
+        if (glm::dot(sunPosition, glm::vec3(0.0f, 1.0f, 0.0f)) < 1)
+            shadow.GenerateShadowMap(sunPosition);
+    });
 }
