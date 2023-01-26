@@ -103,7 +103,7 @@ void Application::SetCallbacks() {
         Shader& chunkShader = worldArea.GetShader();
         chunkShader.Activate();
         chunkShader.setVec3("lightDir", sunPosition);
-        if (glm::dot(sunPosition, glm::vec3(0.0f, 1.0f, 0.0f)) < 1 && sunPosition.y > 0)
+        if (sunPosition.y > 0 && sunPosition.y < 1)
             shadow.GenerateShadowMap(sunPosition);
     });
 }
