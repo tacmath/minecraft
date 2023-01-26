@@ -26,6 +26,7 @@ void WorldArea::initChunks(int radius) {
 void WorldArea::initUniforms(Camera &camera) {
     chunkShader.Activate();
     chunkShader.setInt("atlas", 0);
+    chunkShader.setInt("shadowMap", 3);
     chunkShader.setMat4("projection", camera.projection);
     chunkShader.setMat4("view", camera.view);
 }

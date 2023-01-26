@@ -7,6 +7,8 @@
 #include "quad.h"
 
 class Sun {
+	using functionUpdate = std::function<void(glm::vec3& sunPosition)>;
+
 	glm::mat4	sunModel; //maybe have a shader for each
 	glm::mat4	moonModel;
 	glm::vec3	position;
@@ -15,10 +17,12 @@ class Sun {
 	Quad        quad;
 	int			ticks;
 
+	functionUpdate updateCallback;
+
 public:
 	
 	Sun() {
-		ticks = 0;
+		ticks = 500;
 		position = glm::vec3(0.0f);
 		sunModel = glm::mat4(1.0f);
 		moonModel = glm::mat4(1.0f);
@@ -27,6 +31,7 @@ public:
 		shader.Load("shaders/sunVS.glsl", "shaders/sunFS.glsl");
 		shader.Activate();
 		shader.setInt("sunTexture", 2);
+		updateCallback = [](glm::vec3& sunPosition) {};
 		Update();
 	};
 
@@ -49,11 +54,12 @@ public:
 		float angle;
 
 
-		angle = glm::radians(ticks / 10.0f);
+		angle = glm::radians(ticks / 20.0f);
 		position.z = -cos(angle);
 		position.y = sin(angle);
 		sunModel = glm::rotate(glm::translate(glm::mat4(1.0f), position), angle, glm::vec3(1.0f, 0.0f, 0.0f));
 		moonModel = glm::rotate(glm::translate(glm::mat4(1.0f), -position), angle, glm::vec3(1.0f, 0.0f, 0.0f));
+		updateCallback(position);
 	}
 
 	void SetView(glm::mat4 &view) {
@@ -74,6 +80,10 @@ public:
 	void tick() {
 		ticks++;
 		Update();
+	}
+
+	void SetUpdateCallback(functionUpdate updateCallback) {
+		this->updateCallback = updateCallback;
 	}
 };
 

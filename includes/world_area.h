@@ -35,7 +35,7 @@ private:
     Chunk** loadedChunks;
 
     //chunk shader
-    Shader  chunkShader;
+    Shader  chunkShader;  //maybe set as static
     // texture atlas
     Texture texAtlas;
 
@@ -66,9 +66,13 @@ public:
     void setChunksVisibility(Camera& camera);
 
     // use options to reload the chunk shader
-    void ReloadShader(bool wireframeMode);
+    void ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption);
 
     void initUniforms(Camera& camera);
+
+    std::vector<Chunk*>& GetChunks();
+
+    Shader& GetShader();
 
 private:
     void initChunks(int radius);

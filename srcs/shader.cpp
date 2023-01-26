@@ -30,9 +30,29 @@ char* Shader::getShaderSource(const char* fileName) {
 }
 
 void Shader::Load(const char *vertexShaderFile, const char *fragmentShaderFile, const char *geometryShaderFile) {
-    char* vertexShaderSource = getShaderSource(vertexShaderFile);
-    char* fragmentShaderSource = getShaderSource(fragmentShaderFile);
-    char* geometryShaderSource = getShaderSource(geometryShaderFile);
+    std::vector<std::string> options;
+    Load(options, vertexShaderFile, fragmentShaderFile, geometryShaderFile);
+}
+
+ 
+static char* addOptionToShaderSource(const std::vector<std::string> &options, char *source) {
+    std::string fileSource;
+    std::string shaderOptions = "";
+    
+    if (options.empty() || !source)
+        return source;
+    fileSource = source;
+    for (std::string option : options)
+        shaderOptions += "#define " + option + '\n';
+    fileSource.insert(fileSource.find_first_of('\n') + 1, shaderOptions);
+    free(source);
+    return strdup(fileSource.c_str());
+}
+
+void Shader::Load(const std::vector<std::string> &options, const char *vertexShaderFile, const char *fragmentShaderFile, const char *geometryShaderFile) {
+    char* vertexShaderSource = addOptionToShaderSource(options, getShaderSource(vertexShaderFile));
+    char* fragmentShaderSource = addOptionToShaderSource(options, getShaderSource(fragmentShaderFile));
+    char* geometryShaderSource = addOptionToShaderSource(options, getShaderSource(geometryShaderFile));
 
     ID = 0;
     if (!vertexShaderSource || !fragmentShaderSource)

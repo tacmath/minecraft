@@ -5,7 +5,10 @@
 void parseBlockData(std::vector<std::string>& textures);
 
 WorldArea::WorldArea(void) {
-    chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+    std::vector<std::string> shaderOption;
+    shaderOption.push_back("SHADOW");
+
+    chunkShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
 
     std::vector<std::string> textureNames;
     parseBlockData(textureNames);
@@ -24,7 +27,7 @@ void WorldArea::Draw(void) {
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
     for (int n = 0; n < chunks.size(); n++)
-        chunks[n]->Draw(chunkShader);
+        chunks[n]->DrawVisible(chunkShader);
     glDisable(GL_CULL_FACE);
 }
 
@@ -136,13 +139,21 @@ void WorldArea::setChunksVisibility(Camera &camera) {
     }
 }
 
-void WorldArea::ReloadShader(bool wireframeMode) {
+void WorldArea::ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption) {
     Shader newShader;
     
     if (wireframeMode)
-        newShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
+        newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
     else
-        newShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+        newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
     chunkShader.Delete();
     chunkShader = newShader;
+}
+
+std::vector<Chunk*>& WorldArea::GetChunks() {
+    return chunks;
+}
+
+Shader& WorldArea::GetShader() {
+    return chunkShader;
 }

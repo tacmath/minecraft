@@ -64,6 +64,10 @@ public:
 
 	// treat inputs to change the camera view
 	void UpdateView();
+
+	float GetFOV();
+
+	float GetScreenRatio();
 };
 
 #endif
