@@ -2,13 +2,14 @@
 # define APPLICATION_H
 
 #include "window.h"
-#include "minecraft.h"
+#include "world_area.h"
 #include "background.h"
 #include "player.h"
 #include "debug.h"
 #include "UI.h"
 #include "event.h"
 #include "cooldown.h"
+#include "shadow.h"
 
 #include "generation.h"
 #include "blocks.h"
@@ -19,7 +20,7 @@
 
 #define MIN_TICK_DELAY  1.0f / GAME_TPS
 
-#define APPLICATION_RUNNIG 1
+#define APPLICATION_RUNNING 1
 
 class Application {
 private:
@@ -27,13 +28,14 @@ private:
 
 	// modules
 	Window			window;
-	Minecraft		minecraft;
+	WorldArea		worldArea;
 	Background		background;
 	Player          player;
 	Debug           debug;
 	UserInterface   UI;
 	Event           event;
 	Cooldowns		cooldowns;
+	Shadow			shadow;
 
 public:
 	//default constructor

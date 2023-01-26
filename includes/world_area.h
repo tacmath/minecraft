@@ -1,5 +1,5 @@
-#ifndef MINECRAFT_H
-# define MINECRAFT_H
+#ifndef WORLD_AREA_H
+# define WORLD_AREA_H
 
 #include "stb_image.h"
 #include "shader.h"
@@ -23,7 +23,7 @@
 # define DATA_RENDER_DISTANCE (RENDER_DISTANCE + 1)
 # define UNLOAD_OFFSET 2
 
-class Minecraft {
+class WorldArea {
 private:
     // list of all the chunks loaded
 	std::vector<Chunk*> chunks;
@@ -35,7 +35,7 @@ private:
     Chunk** loadedChunks;
 
     //chunk shader
-    Shader  chunkShader;
+    Shader  chunkShader;  //maybe set as static
     // texture atlas
     Texture texAtlas;
 
@@ -49,9 +49,9 @@ public:
 
 
     // constuctor
-	Minecraft(void);
+	WorldArea(void);
     // destructor
-    ~Minecraft(void);
+    ~WorldArea(void);
 
     // draw the chunks and the skybox
     void Draw(void);
@@ -66,9 +66,13 @@ public:
     void setChunksVisibility(Camera& camera);
 
     // use options to reload the chunk shader
-    void ReloadShader(bool wireframeMode);
+    void ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption);
 
     void initUniforms(Camera& camera);
+
+    std::vector<Chunk*>& GetChunks();
+
+    Shader& GetShader();
 
 private:
     void initChunks(int radius);

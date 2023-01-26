@@ -5,6 +5,8 @@
 #include<fstream>
 #include<iostream>
 #include<glm/gtc/type_ptr.hpp>
+#include<vector>
+#include<string>
 
 class Shader {
 public:
@@ -17,6 +19,8 @@ public:
 
     void Load(const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0);
 
+    void Load(const std::vector<std::string> &options, const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0);
+
     void Activate() {
         glUseProgram(ID);
     }
@@ -28,6 +32,9 @@ public:
     
     void setMat4(const char* name, const glm::mat4& matrix) {
         glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, &matrix[0][0]);
+    }
+    void setMat4(const char* name, int numbers, const glm::mat4* matrix) {
+        glUniformMatrix4fv(glGetUniformLocation(ID, name), numbers, GL_FALSE, &matrix[0][0][0]);
     }
     void setVec3(const char* name, const glm::vec3& vector) {
         glUniform3fv(glGetUniformLocation(ID, name), 1, &vector[0]);

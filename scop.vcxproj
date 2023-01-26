@@ -155,12 +155,12 @@
     <ClCompile Include="srcs\debug.cpp" />
     <ClCompile Include="srcs\textDisplay.cpp" />
     <ClCompile Include="srcs\cubeMesh.cpp" />
-    <ClCompile Include="srcs\minecraft.cpp" />
     <ClCompile Include="srcs\shader.cpp" />
     <ClCompile Include="srcs\texture.cpp" />
     <ClCompile Include="srcs\thread.cpp" />
     <ClCompile Include="srcs\VAO.cpp" />
     <ClCompile Include="srcs\VBO.cpp" />
+    <ClCompile Include="srcs\world_area.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\aabb.h" />
@@ -177,12 +177,12 @@
     <ClInclude Include="includes\debug.h" />
     <ClInclude Include="includes\quad.h" />
     <ClInclude Include="includes\raycast.h" />
+    <ClInclude Include="includes\shadow.h" />
     <ClInclude Include="includes\sun.h" />
     <ClInclude Include="includes\textDisplay.h" />
     <ClInclude Include="includes\simplex_noise.h" />
     <ClInclude Include="includes\event.h" />
     <ClInclude Include="includes\frustum.h" />
-    <ClInclude Include="includes\minecraft.h" />
     <ClInclude Include="includes\player.h" />
     <ClInclude Include="includes\shader.h" />
     <ClInclude Include="includes\texture.h" />
@@ -192,11 +192,15 @@
     <ClInclude Include="includes\VBO.h" />
     <ClInclude Include="includes\perlinNoise.h" />
     <ClInclude Include="includes\window.h" />
+    <ClInclude Include="includes\world_area.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
     <None Include="shaders\highlightFS.glsl" />
     <None Include="shaders\highlightVS.glsl" />
+    <None Include="shaders\shadowFS.glsl" />
+    <None Include="shaders\shadowGS.glsl" />
+    <None Include="shaders\shadowVS.glsl" />
     <None Include="shaders\skyBoxFS.glsl" />
     <None Include="shaders\skyBoxVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />

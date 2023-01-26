@@ -1,11 +1,14 @@
-#include "minecraft.h"
+#include "world_area.h"
 #include "perlinNoise.h"
 #include <algorithm>
 
 void parseBlockData(std::vector<std::string>& textures);
 
-Minecraft::Minecraft(void) {
-    chunkShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+WorldArea::WorldArea(void) {
+    std::vector<std::string> shaderOption;
+    shaderOption.push_back("SHADOW");
+
+    chunkShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
 
     std::vector<std::string> textureNames;
     parseBlockData(textureNames);
@@ -20,24 +23,24 @@ Minecraft::Minecraft(void) {
         exit(1);
 }
 
-void Minecraft::Draw(void) {
+void WorldArea::Draw(void) {
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
     for (int n = 0; n < chunks.size(); n++)
-        chunks[n]->Draw(chunkShader);
+        chunks[n]->DrawVisible(chunkShader);
     glDisable(GL_CULL_FACE);
 }
 
 
 //load the view matrix in all the shaders
-void Minecraft::LoadViewMatrix(Camera& camera) {
+void WorldArea::LoadViewMatrix(Camera& camera) {
     chunkShader.Activate();
     chunkShader.setMat4("view", camera.view);
 }
 
 //destructor
-Minecraft::~Minecraft(void) {
-    //std::cout << "Minecraft destructor has been called" << std::endl;
+WorldArea::~WorldArea(void) {
+    //std::cout << "WorldArea destructor has been called" << std::endl;
     for (int n = 0; n < chunks.size(); n++)
         delete chunks[n];
     for (int n = 0; n < chunksLoading.size(); n++)
@@ -46,7 +49,7 @@ Minecraft::~Minecraft(void) {
     chunkShader.Delete();
 }
 
-void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& position) {
+void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& position) {
     int x, z, playerPosx, playerPosz, maxChunk;
     int n, chunkNumber;
     Chunk* chunk;
@@ -74,7 +77,7 @@ void Minecraft::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& positio
     }
 }
 
-void Minecraft::sortChunksLoading(glm::vec3& position, Camera& camera) {
+void WorldArea::sortChunksLoading(glm::vec3& position, Camera& camera) {
     for (int n = 0; n < chunksLoading.size(); n++) {
         Chunk* chunk;
 
@@ -91,7 +94,7 @@ void Minecraft::sortChunksLoading(glm::vec3& position, Camera& camera) {
 
 
 
-void Minecraft::loadNewChunks(glm::vec3 &position) {
+void WorldArea::loadNewChunks(glm::vec3 &position) {
     int playerPosx, playerPosz, maxChunk;
 
     maxChunk = DATA_RENDER_DISTANCE << 1;
@@ -111,7 +114,7 @@ void Minecraft::loadNewChunks(glm::vec3 &position) {
         }
 }
 
-void Minecraft::LoadChunks(glm::vec3 &position, Camera& camera) {
+void WorldArea::LoadChunks(glm::vec3 &position, Camera& camera) {
 
     memset(loadedChunks, 0, (DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1) * sizeof(Chunk*));
 
@@ -126,7 +129,7 @@ void Minecraft::LoadChunks(glm::vec3 &position, Camera& camera) {
     thread.CreateMesh(chunks, chunksLoading);
 }
 
-void Minecraft::setChunksVisibility(Camera &camera) {
+void WorldArea::setChunksVisibility(Camera &camera) {
     Chunk* chunk;
 
     for (unsigned n = 0; n < chunks.size(); n++) {
@@ -136,13 +139,21 @@ void Minecraft::setChunksVisibility(Camera &camera) {
     }
 }
 
-void Minecraft::ReloadShader(bool wireframeMode) {
+void WorldArea::ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption) {
     Shader newShader;
     
     if (wireframeMode)
-        newShader.Load("shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
+        newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
     else
-        newShader.Load("shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+        newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
     chunkShader.Delete();
     chunkShader = newShader;
+}
+
+std::vector<Chunk*>& WorldArea::GetChunks() {
+    return chunks;
+}
+
+Shader& WorldArea::GetShader() {
+    return chunkShader;
 }

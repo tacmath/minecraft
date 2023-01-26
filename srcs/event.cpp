@@ -13,27 +13,50 @@ void Event::removePointedCube() {
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
+    player->UpdateRayCast();
 }
 
 void Event::placeCube() { // maybe place the function inside the player class
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player->selectedCube.id == AIR || player->selectedCube.range < 1.5 || !cooldowns->Use(ACTION_COOLDOWN))
+    if (player->selectedCube.id == AIR || player->aabb().collide(AABB::unit().translate(player->selectedCube.side)) || !cooldowns->Use(ACTION_COOLDOWN))
         return;
     pos = player->selectedCube.side;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(player->selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->selectedCube = rayCastGetCube(player->position, player->look, PLAYER_RANGE);
+    player->UpdateRayCast();
 }
 
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
     static bool wireFrameMode = false;
+    static bool fullScreen = false;
+    static bool shadow = true;
+    
+    if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
+        if (fullScreen)
+            toggleData->window->Windowed();
+        else
+            toggleData->window->FullScreen();
+        fullScreen = !fullScreen;
+    }
+    if (key == GLFW_KEY_F2 && action == GLFW_PRESS) {
+        std::vector<std::string> shaderOption;
+        shadow = !shadow;
 
+        if (shadow) {
+            shaderOption.push_back("SHADOW");
+            toggleData->shadow->Activate();
+        }
+        else {
+            toggleData->shadow->Delete();
+        }
+        toggleData->worldArea->ReloadShader(wireFrameMode, shaderOption);
+        toggleData->worldArea->initUniforms(toggleData->player->camera);
+    }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
         toggleData->debug->toggle();
 
@@ -46,9 +69,13 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     }
 
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+        std::vector<std::string> shaderOption;
+        if (shadow)
+            shaderOption.push_back("SHADOW");
+
         wireFrameMode = !wireFrameMode;
-        toggleData->minecraft->ReloadShader(wireFrameMode);
-        toggleData->minecraft->initUniforms(toggleData->player->camera);
+        toggleData->worldArea->ReloadShader(wireFrameMode, shaderOption);
+        toggleData->worldArea->initUniforms(toggleData->player->camera);
     }
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         toggleData->player->selectedItem = 1;
@@ -78,8 +105,8 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *minecraft, Cooldowns* cooldowns) {
-    this->window = window;
+void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns, Shadow *shadow) {
+    this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
 
@@ -88,11 +115,26 @@ void Event::Link(GLFWwindow* window, Debug *debug, Player *player, Minecraft *mi
         exit(1);
     toggleData->debug = debug;
     toggleData->player = player;
-    toggleData->minecraft = minecraft;
+    toggleData->worldArea = worldArea;
+    toggleData->window = window;
+    toggleData->shadow = shadow;
     toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;
-    glfwSetWindowUserPointer(window, toggleData);
-    glfwSetKeyCallback(window, keyToogleCallback);
+    toggleData->windowSizeCallback = [](int width, int height) {};
+    glfwSetWindowUserPointer(this->window, toggleData);
+    glfwSetKeyCallback(this->window, keyToogleCallback);
+    glfwSetWindowSizeCallback(this->window, [](GLFWwindow* window, int width, int height) {
+        static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+        
+        toggleData->windowSizeCallback(width, height);
+        glfwGetFramebufferSize(window, &width, &height);
+        glViewport(0, 0, width, height);
+    });
+}
+
+void Event::SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback) {
+    ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+    toggleData->windowSizeCallback = windowSizeCallback;
 }
 
 glm::vec3  Event::spectatorMovement() {

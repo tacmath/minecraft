@@ -232,7 +232,7 @@ void ChunkGeneration::oldGenerate(int ChunkSize, int posx, int posz, unsigned ch
                 else if (y > height - 4) cubes[GET_CUBE(x, y, z)] = 2;
                 else cubes[GET_CUBE(x, y, z)] = 3;
             }
-            generateOre(ChunkSize, cubes, height, x, z, posx, posz);
+          //  generateOre(ChunkSize, cubes, height, x, z, posx, posz);
             generateDirtPochet(ChunkSize, cubes, height, x, z, posx, posz);
             generateCave(ChunkSize, cubes, height, x, z, posx, posz);
             generateTree(ChunkSize, cubes, height, x, z, posx, posz);

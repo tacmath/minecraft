@@ -21,6 +21,8 @@
 # define DEFAULT_WINDOW_HEIGHT  1080
 
 class Window {
+private:
+    GLFWmonitor *monitor;
 public:
 	// the window context
 	GLFWwindow*     context;
@@ -53,7 +55,21 @@ public:
         glfwSetInputMode(context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         size = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
         enableGlParam();
+
+        monitor = glfwGetPrimaryMonitor();
 	}
+
+    void FullScreen(void) {
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        glfwSetWindowMonitor(context, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
+
+    void Windowed(void) {
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        glfwSetWindowMonitor(context, nullptr, 0, 0, (int)size.x, (int)size.y, 60);
+    }
 
     void enableGlParam(void) {
     //    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas

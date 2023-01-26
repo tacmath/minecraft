@@ -35,11 +35,16 @@
 /*
 	store multiple data in an int32 with the format :
 
-	0000		|	00000000	|	0	|	0	|	00000	|	00000	|	00000000
-	luminosity	|	 textID		| textY	| textX	|	posZ	|	posX	|	  posY
+	vertex pos :
+	0000		|	0000000000	|	00000	|	00000	|	00000000
+	luminosity	|	 		 	|	posZ	|	posX	|	  posY
+
+	vertex data :
+	0000000000000	|	0000	|	0000	|	0000	|	00000000
+			 		|  normal	|	textY	|	textX	|	 textID
 */
-#define PACK_VERTEX_DATA(x, y, z, textx, texty) (y | (x << 8) | (z << 13) | textx << 18 | texty << 19)
-#define PACK_TEXTURE_ID(textID) (textID << 20)
+#define PACK_VERTEX_POS(x, y, z) (y | (x << 8) | (z << 13))
+#define PACK_VERTEX_DATA(textID, textx, texty, normal) ((int64_t)(textID | textx <<  8 | texty << 12 | normal << 16) << 32)
 
 // get the offset of a cube based on the position in the chunk
 #define GET_CUBE(x, y, z) ((y << 8) | (x << 4) | z)
@@ -57,7 +62,7 @@ class Chunk
 private:
 
 	//the mesh is an array containing vertex position and other information in an unsigned int
-	std::vector<unsigned int> mesh;
+	std::vector<int64_t> mesh;
 	// the number of all the vertices
 	unsigned int verticesNumber;
 
@@ -125,6 +130,13 @@ public:
 
 	// Draw the chunk 
 	void Draw(Shader& shader) {
+		VAO.Bind();
+		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
+		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+	}
+
+	// Draw the chunk if visible
+	void DrawVisible(Shader& shader) {
 		if (!isVisible)
 			return;
 		VAO.Bind();
