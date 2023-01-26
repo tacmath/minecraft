@@ -24,7 +24,7 @@ void WorldArea::Draw(void) {
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
     for (int n = 0; n < chunks.size(); n++)
-        chunks[n]->Draw(chunkShader);
+        chunks[n]->DrawVisible(chunkShader);
     glDisable(GL_CULL_FACE);
 }
 
