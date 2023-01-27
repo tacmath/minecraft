@@ -12,6 +12,7 @@
 #include "cooldown.h"
 #include "window.h"
 #include "shadow.h"
+#include <functional>
 
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1

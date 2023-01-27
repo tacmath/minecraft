@@ -141,6 +141,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="srcs\application.cpp" />
     <ClCompile Include="srcs\background.cpp" />
+    <ClCompile Include="srcs\generation.cpp" />
     <ClCompile Include="srcs\parseConfig.cpp" />
     <ClCompile Include="srcs\perlin_noise.cpp" />
     <ClCompile Include="srcs\camera.cpp" />

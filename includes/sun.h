@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "texture.h"
 #include "quad.h"
+#include <functional>
 
 class Sun {
 	using functionUpdate = std::function<void(glm::vec3& sunPosition)>;
