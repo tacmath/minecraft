@@ -21,6 +21,7 @@ struct ToggleData {
     Player*		player;
     WorldArea*	worldArea;
 	Window*		window;
+	Cooldowns	*cooldowns;
 	Shadow		*shadow;
 
 	std::function<void(int width, int height)> windowSizeCallback;
@@ -59,8 +60,6 @@ public:
 private:
 	void MovementEvent(float latency);
 	void MouseEvent();
-	void removePointedCube();
-	void placeCube();
 	glm::vec3 spectatorMovement();
 }; 
 

@@ -30,7 +30,7 @@ private:
 public:
 
 	Cooldowns() {
-		cooldown[ACTION_COOLDOWN].Init(true, 0, 0.08f);
+		cooldown[ACTION_COOLDOWN].Init(true, 0, 0.15f);
 	}
 
 	bool Ready(int id) {
@@ -43,6 +43,11 @@ public:
 		cooldown[id].ready = false;
 		cooldown[id].lastUpdate = (float)glfwGetTime();
 		return true;
+	}
+
+	void Reset(int id) {
+		cooldown[id].ready = true;
+		cooldown[id].lastUpdate = 0;
 	}
 
 	void Update() {

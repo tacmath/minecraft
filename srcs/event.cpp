@@ -3,32 +3,43 @@
 #include "event.h"
 #include "raycast.h"
 
-void Event::removePointedCube() {
+void removePointedCube(Player &player, Cooldowns &cooldowns) {
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player->selectedCube.id == AIR || !cooldowns->Use(ACTION_COOLDOWN))
+    if (player.selectedCube.id == AIR || !cooldowns.Use(ACTION_COOLDOWN))
         return;
-    pos = player->selectedCube.position;
+    pos = player.selectedCube.position;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->UpdateRayCast();
+    player.UpdateRayCast();
 }
 
-void Event::placeCube() { // maybe place the function inside the player class
+void placeCube(Player &player, Cooldowns &cooldowns) { // maybe place the function inside the player class
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player->selectedCube.id == AIR || player->selectedCube.range == 0 ||
-        player->aabb().collide(AABB::unit().translate(player->selectedCube.side)) || !cooldowns->Use(ACTION_COOLDOWN))
+    if (player.selectedCube.id == AIR || player.selectedCube.range == 0 ||
+        player.aabb().collide(AABB::unit().translate(player.selectedCube.side)) || !cooldowns.Use(ACTION_COOLDOWN))
         return;
-    pos = player->selectedCube.side;
+    pos = player.selectedCube.side;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
-    chunk->SetCube(player->selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
+    chunk->SetCube(player.selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
-    player->UpdateRayCast();
+    player.UpdateRayCast();
 }
+
+void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+    static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+        toggleData->player->selectedItem = toggleData->player->selectedCube.id;
+
+    if ((button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT) && action == GLFW_PRESS)
+        toggleData->cooldowns->Reset(ACTION_COOLDOWN);
+}
+
 
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -119,11 +130,13 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
     toggleData->worldArea = worldArea;
     toggleData->window = window;
     toggleData->shadow = shadow;
+    toggleData->cooldowns = cooldowns;
     toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;
     toggleData->windowSizeCallback = [](int width, int height) {};
     glfwSetWindowUserPointer(this->window, toggleData);
     glfwSetKeyCallback(this->window, keyToogleCallback);
+    glfwSetMouseButtonCallback(this->window, mouseButtonCallback);
     glfwSetWindowSizeCallback(this->window, [](GLFWwindow* window, int width, int height) {
         static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
         
@@ -233,8 +246,9 @@ void Event::GetEvents(float latency) {
             player->UpdateCallback();
         }
     }
+
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-        removePointedCube();
+        removePointedCube(*player, *cooldowns);
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-        placeCube();
+        placeCube(*player, *cooldowns);
 }
