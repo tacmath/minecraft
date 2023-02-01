@@ -33,7 +33,7 @@ void Debug::toggleView() {
     }
 
     status |= DEBUG_VIEW;
-    quad.Init(glm::vec3(0.0f), glm::vec3(0.08f));
+    quad.Init(glm::vec3(0.0f), glm::vec3(0.8f));
     quadShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
 }
 

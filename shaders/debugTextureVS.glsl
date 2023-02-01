@@ -8,6 +8,6 @@ uniform mat4 matrix;
 
 void main()
 {   
-    gl_Position = matrix * vec4(aPos, 0.1f);
+    gl_Position = matrix * vec4(aPos, 1.0f);
     TexCoords = aTex;
 }
