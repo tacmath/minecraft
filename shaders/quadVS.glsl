@@ -4,10 +4,8 @@ layout (location = 1) in vec2 aTex;
 
 out vec2 TexCoords;
 
-uniform mat4 matrix;
-
 void main()
 {   
-    gl_Position = matrix * vec4(aPos, 1.0f);
+    gl_Position = vec4(aPos, 1.0f);
     TexCoords = aTex;
 }

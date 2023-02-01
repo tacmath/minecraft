@@ -30,6 +30,7 @@ class Debug {
     char target[100];
 
     Shader		quadShader;
+    Shader		quadShader2;
     Quad        quad;
 
     TextDisplay text;

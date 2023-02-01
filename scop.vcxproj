@@ -173,6 +173,7 @@
     <ClInclude Include="includes\cooldown.h" />
     <ClInclude Include="includes\cubeMap.h" />
     <ClInclude Include="includes\blocks.h" />
+    <ClInclude Include="includes\deferredRendering.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
     <ClInclude Include="includes\debug.h" />
@@ -197,10 +198,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
+    <None Include="shaders\debugTexture2FS.glsl" />
     <None Include="shaders\debugTextureFS.glsl" />
     <None Include="shaders\debugTextureVS.glsl" />
+    <None Include="shaders\deferredFS.glsl" />
     <None Include="shaders\highlightFS.glsl" />
     <None Include="shaders\highlightVS.glsl" />
+    <None Include="shaders\quadVS.glsl" />
     <None Include="shaders\shadowFS.glsl" />
     <None Include="shaders\shadowGS.glsl" />
     <None Include="shaders\shadowVS.glsl" />

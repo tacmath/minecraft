@@ -29,12 +29,14 @@ void Debug::toggleView() {
         status ^= DEBUG_VIEW;
         quad.Delete();
         quadShader.Delete();
+        quadShader2.Delete();
         return;
     }
 
     status |= DEBUG_VIEW;
-    quad.Init(glm::vec3(0.0f), glm::vec3(0.08f));
+    quad.Init(glm::vec3(0.0f), glm::vec3(0.5f));
     quadShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
+    quadShader2.Load("shaders/debugTextureVS.glsl", "shaders/debugTexture2FS.glsl");
 }
 
 void Debug::enable() {
@@ -59,13 +61,13 @@ void Debug::fpsTitle(float time, float latence) {
     if (diff >= 0.2f) {
         sprintf(title, "Minecraft :  FPS: %d (%.3f ms)", frame_title * 5, latence * 1000);
         glfwSetWindowTitle(window, title);
-        previousUpdateTime_title = time - (diff - 0.2f);
+        previousUpdateTime_title = time - (diff - 0.12f);
         frame_title = 0;
     }
 }
 
 void Debug::DrawViews() {
-    glm::mat4 matrix = glm::translate(glm::mat4(1), glm::vec3(-0.9f, 0.1f, 0));
+    glm::mat4 matrix = glm::translate(glm::mat4(1), glm::vec3(-0.9f, 0.35f, 0));
 
     glDisable(GL_DEPTH_TEST);
     quadShader.Activate();
@@ -74,10 +76,21 @@ void Debug::DrawViews() {
     quadShader.setMat4("matrix", matrix);
     quad.Render();
     quadShader.setInt("index", 1);
-    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(1.0f, 0, 0)));
+    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(0.6f, 0, 0)));
     quad.Render();
     quadShader.setInt("index", 2);
-    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(0, -1.0f, 0)));
+    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(1.2f, 0, 0)));
+    quad.Render();
+
+    quadShader2.Activate();
+    quadShader2.setInt("Texture", 4);
+    quadShader2.setMat4("matrix", glm::translate(matrix, glm::vec3(0, -0.6f, 0)));
+    quad.Render();
+    quadShader2.setInt("Texture", 5);
+    quadShader2.setMat4("matrix", glm::translate(matrix, glm::vec3(0.6f, -0.6f, 0)));
+    quad.Render();
+    quadShader2.setInt("Texture", 6);
+    quadShader2.setMat4("matrix", glm::translate(matrix, glm::vec3(1.2f, -0.6f, 0)));
     quad.Render();
     glEnable(GL_DEPTH_TEST);
 }

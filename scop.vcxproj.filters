@@ -179,6 +179,9 @@
     <ClInclude Include="includes\shadow.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\deferredRendering.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -233,6 +236,15 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\debugTextureVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\debugTexture2FS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\deferredFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\quadVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

@@ -10,6 +10,7 @@
 #include "event.h"
 #include "cooldown.h"
 #include "shadow.h"
+#include "deferredRendering.h"
 
 #include "generation.h"
 #include "blocks.h"
@@ -36,6 +37,8 @@ private:
 	Event           event;
 	Cooldowns		cooldowns;
 	Shadow			shadow;
+	Deferred		defRenderer;
+
 
 public:
 	//default constructor
