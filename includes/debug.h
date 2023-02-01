@@ -4,8 +4,14 @@
 #include "player.h"
 #include "camera.h"
 #include "textDisplay.h"
+#include "quad.h"
+#include "shader.h"
 
-# define MAX_FPS        4000
+# define MAX_FPS        6000
+
+#define DEBUG_ON 1
+#define DEBUG_OFF 0
+#define DEBUG_VIEW 2
 
 class Debug {
     GLFWwindow  *window;
@@ -23,11 +29,14 @@ class Debug {
     char xz[100];
     char target[100];
 
-    TextDisplay text;
-    bool visible;
+    Shader		quadShader;
+    Quad        quad;
 
+    TextDisplay text;
 
 public:
+
+    int status;
 
     Debug();
 
@@ -41,7 +50,11 @@ public:
 
     void toggle();
 
+    void toggleView();
+
     void Draw(float time, float latence);
+    
+    void DrawViews();
 
     void fpsTitle(float time, float latence);
 };

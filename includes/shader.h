@@ -21,6 +21,8 @@ public:
 
     void Load(const std::vector<std::string> &options, const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0);
 
+    void LoadSources(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource = 0);
+
     void Activate() {
         glUseProgram(ID);
     }

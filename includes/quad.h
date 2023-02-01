@@ -16,8 +16,7 @@ public:
 	};
 
 	~Quad() {
-		glDeleteBuffers(1, &VBO);
-		glDeleteVertexArrays(1, &VAO);
+		Delete();
 	};
 
 	void Init() {
@@ -67,6 +66,13 @@ public:
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
+
+	void Delete() {
+		glDeleteBuffers(1, &VBO);
+		glDeleteVertexArrays(1, &VAO);
+		VAO = 0;
+		VBO = 0;
+	};
 };
 
 #endif

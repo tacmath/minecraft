@@ -84,6 +84,9 @@
     <ClCompile Include="srcs\world_area.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="srcs\generation.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\shader.h">
@@ -224,6 +227,12 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\shadowVS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\debugTextureFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\debugTextureVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

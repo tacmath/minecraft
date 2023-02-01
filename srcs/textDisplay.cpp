@@ -91,6 +91,7 @@ void TextDisplay::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sca
     glActiveTexture(GL_TEXTURE1);
     glBindVertexArray(VAO);
     glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
     // Boucle sur tous les caract�res
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++)
@@ -122,6 +123,7 @@ void TextDisplay::RenderText(std::string text, GLfloat x, GLfloat y, GLfloat sca
     }
     glBindVertexArray(0);
     glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
     //  glBindTexture(GL_TEXTURE_2D, 0);
 }
 

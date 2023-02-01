@@ -197,6 +197,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
+    <None Include="shaders\debugTextureFS.glsl" />
+    <None Include="shaders\debugTextureVS.glsl" />
     <None Include="shaders\highlightFS.glsl" />
     <None Include="shaders\highlightVS.glsl" />
     <None Include="shaders\shadowFS.glsl" />

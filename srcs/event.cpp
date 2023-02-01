@@ -71,6 +71,8 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
         toggleData->debug->toggle();
+    if (key == GLFW_KEY_V && action == GLFW_PRESS && toggleData->debug->status & DEBUG_ON)
+        toggleData->debug->toggleView();
 
     if (key == GLFW_KEY_C && action == GLFW_PRESS)
         toggleData->player->hasCollision = !toggleData->player->hasCollision;

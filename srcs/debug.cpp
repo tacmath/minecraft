@@ -5,7 +5,7 @@ Debug::Debug() {
     fps[0] = 0;
     xyz[0] = 0;
     frame = 0;
-    visible = false;
+    status = DEBUG_OFF;
     previousUpdateTime = 0.0f;
 }
 
@@ -17,19 +17,32 @@ void Debug::Link(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
 }
 
 void Debug::toggle() {
-    if (visible == true) {
+    if (status & DEBUG_ON) {
         disable();
         return;
     }
     enable();
 }
 
+void Debug::toggleView() {
+    if (status & DEBUG_VIEW) {
+        status ^= DEBUG_VIEW;
+        quad.Delete();
+        quadShader.Delete();
+        return;
+    }
+
+    status |= DEBUG_VIEW;
+    quad.Init(glm::vec3(0.0f), glm::vec3(0.08f));
+    quadShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
+}
+
 void Debug::enable() {
-    visible = true;
+    status |= DEBUG_ON;
 }
 
 void Debug::disable() {
-    visible = false;
+    status ^= DEBUG_ON;
     previousUpdateTime = 0;
     frame = 0;
 }
@@ -51,10 +64,33 @@ void Debug::fpsTitle(float time, float latence) {
     }
 }
 
-void Debug::Draw(float time, float latence) {
-    if (visible == false) return;
-    frame += 1;
+void Debug::DrawViews() {
+    glm::mat4 matrix = glm::translate(glm::mat4(1), glm::vec3(-0.9f, 0.1f, 0));
 
+    glDisable(GL_DEPTH_TEST);
+    quadShader.Activate();
+    quadShader.setInt("depthMap", 3);
+    quadShader.setInt("index", 0);
+    quadShader.setMat4("matrix", matrix);
+    quad.Render();
+    quadShader.setInt("index", 1);
+    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(1.0f, 0, 0)));
+    quad.Render();
+    quadShader.setInt("index", 2);
+    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(0, -1.0f, 0)));
+    quad.Render();
+    glEnable(GL_DEPTH_TEST);
+}
+
+void Debug::Draw(float time, float latence) {
+    if (!(status & DEBUG_ON)) return;
+
+    if (status & DEBUG_VIEW) {
+        DrawViews();
+        return;
+    }
+
+    frame += 1;
     diff = time - previousUpdateTime;
     if (diff >= 0.2f) {
         if (previousUpdateTime > 10.0) {
