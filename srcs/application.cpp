@@ -11,13 +11,16 @@ void Application::Start() {
     UI.Link(&window.size);
     event.Link(&window, &debug, &player, &worldArea, &cooldowns, &shadow);
     shadow.Link(window.context, &player.camera, &worldArea);
-    defRenderer.Init(window.size);
 
 
     UI.InitUniforms(player.camera.projection);
     UI.SetViewMatrix(player.camera.view);
     worldArea.initUniforms(player.camera);
     background.initUniforms(player.camera);
+
+    glm::ivec2 bufferSize;
+    glfwGetFramebufferSize(window.context, &bufferSize.x, &bufferSize.y);
+    defRenderer.Init(bufferSize);
 
     shadow.Activate();
     SetCallbacks();

@@ -28,8 +28,8 @@ public:
 		Delete();
 	}
 
-	void Init(const glm::ivec2& windowSize) {
-		bufferSize = windowSize;
+	void Init(const glm::ivec2& bufferSize) {
+		this->bufferSize = bufferSize;
 		glGenFramebuffers(1, &gBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 

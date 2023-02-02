@@ -13,7 +13,7 @@ void main()
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
     vec3 Normal = texture(gNormal, TexCoords).rgb;
     vec3 Albedo = texture(gAlbedoAo, TexCoords).rgb;
-    float Specular = texture(gAlbedoAo, TexCoords).a;
+    float Ao = texture(gAlbedoAo, TexCoords).a;
     
-    FragColor = vec4(Albedo * Specular, 1);
+    FragColor = vec4(Albedo * Ao, 1);
 }  
