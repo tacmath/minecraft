@@ -65,10 +65,8 @@ void Application::EveryFrames(float time, float latency) {
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     
-    defRenderer.Draw([&]() {
-        worldArea.Draw();
-        });
- //   background.Draw();
+    defRenderer.Draw([&]() {worldArea.Draw(); });
+    background.Draw();
     UI.Draw(player);
     debug.fpsTitle(time, latency);
     debug.Draw(time, latency);
