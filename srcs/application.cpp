@@ -97,6 +97,10 @@ void Application::SetCallbacks() {
         worldArea.initUniforms(player.camera);
         background.initUniforms(player.camera);
         UI.InitUniforms(player.camera.projection);
+        
+        glm::ivec2 bufferSize;
+        glfwGetFramebufferSize(window.context, &bufferSize.x, &bufferSize.y);
+        defRenderer.Init(bufferSize);
      });
 
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {

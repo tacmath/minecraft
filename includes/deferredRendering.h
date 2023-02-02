@@ -88,8 +88,14 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	void Reload(const glm::ivec2& bufferSize) {
+		Delete();
+		Init(bufferSize);
+	}
+
 	void Delete() {
 		glDeleteFramebuffers(1,&gBuffer);
+		glDeleteBuffers(1, &rboDepth);
 		glDeleteBuffers(1, &gPosition);
 		glDeleteBuffers(1, &gNormal);
 		glDeleteBuffers(1, &gAlbedoAo);
