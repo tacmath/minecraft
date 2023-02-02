@@ -74,7 +74,7 @@ float ShadowCalculation()
 
 void main()
 {
-    float day = clamp((lightDir.y - 0.1f) * 3.0f, 0.0f, 1.0f);
+    float day = smoothstep(lightDir.y * 5.0f, 0.0f, 1.0f);
     float shadow = 1.0f - (1.0f - day) * 0.7f;
 
     #ifdef SHADOW

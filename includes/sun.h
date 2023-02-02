@@ -23,7 +23,7 @@ class Sun {
 public:
 	
 	Sun() {
-		ticks = 500;
+		ticks = 400;
 		position = glm::vec3(0.0f);
 		sunModel = glm::mat4(1.0f);
 		moonModel = glm::mat4(1.0f);
