@@ -7,9 +7,6 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedoAo;
 
-vec3 fragPos = texture(gPosition, TexCoords).rgb;
-vec3 normal = texture(gNormal, TexCoords).rgb;
-
 uniform vec3 lightDir;
 
 #ifdef SHADOW
@@ -38,7 +35,7 @@ int getShadowLayer(float depthValue) {
 	return layer;
 }
 
-float ShadowCalculation()
+float ShadowCalculation(vec3 fragPos, vec3 normal)
 {
     vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
     int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z)); 
@@ -76,6 +73,8 @@ float ShadowCalculation()
 
 void main()
 {
+    vec3 fragPos = texture(gPosition, TexCoords).rgb;
+    vec3 normal = texture(gNormal, TexCoords).rgb;
     vec3 albedo = texture(gAlbedoAo, TexCoords).rgb;
     float ao = texture(gAlbedoAo, TexCoords).a;
 
@@ -84,7 +83,7 @@ void main()
     
     #ifdef SHADOW
     if (day > 0.1f)
-        shadow -= ShadowCalculation() * 0.5f * day;
+        shadow -= ShadowCalculation(fragPos, normal) * 0.5f * day;
     #endif
 
     FragColor = vec4(albedo * ao * shadow, 1);
