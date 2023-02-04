@@ -15,8 +15,12 @@ public:
 
 	Deferred() {
 		quad.Init();
-		shader.Load("shaders/quadVS.glsl", "shaders/deferredFS.glsl");
+
+		std::vector<std::string> shaderOption = { "SHADOW" };
+
+		shader.Load(shaderOption, "shaders/quadVS.glsl", "shaders/deferredFS.glsl");
 		shader.Activate();
+		shader.setInt("shadowMap", 3);
 		shader.setInt("gPosition", 4);
 		shader.setInt("gNormal", 5);
 		shader.setInt("gAlbedoAo", 6);
@@ -101,4 +105,27 @@ public:
 		glDeleteBuffers(1, &gAlbedoAo);
 	}
 
+	Shader GetShader() {
+		return shader;
+	}
+
+	void InitUniforms(Camera& camera) {
+		shader.Activate();
+		shader.setInt("shadowMap", 3);
+		shader.setInt("gPosition", 4);
+		shader.setInt("gNormal", 5);
+		shader.setInt("gAlbedoAo", 6);
+		shader.setMat4("view", camera.view);
+	}
+
+	void LoadViewMatrix(Camera& camera) {
+		shader.Activate();
+		shader.setMat4("view", camera.view);
+	}
+
+	void ReloadShader(std::vector<std::string> shaderOption, Camera& camera) {
+		shader.Delete();
+		shader.Load(shaderOption, "shaders/quadVS.glsl", "shaders/deferredFS.glsl");
+		InitUniforms(camera);
+	}
 };

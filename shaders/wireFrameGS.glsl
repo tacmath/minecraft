@@ -5,25 +5,23 @@ layout (line_strip, max_vertices = 3) out;
 
 in vec3 texCoord[];
 in float luminosity[];
+in vec3	normal[];
+in vec3 fragPos[];
 
+out vec3 Gnormal;
+out vec3 GfragPos;
 out vec3 GtexCoord;
 out float Gluminosity;
   
 void main() {
-    gl_Position = gl_in[0].gl_Position;
-    GtexCoord = texCoord[0];
-    Gluminosity = luminosity[0];
-    EmitVertex();
-
-    gl_Position = gl_in[1].gl_Position;
-     GtexCoord = texCoord[1];
-    Gluminosity = luminosity[1];
-    EmitVertex();
-    
-    gl_Position = gl_in[2].gl_Position;
-     GtexCoord = texCoord[2];
-    Gluminosity = luminosity[2];
-    EmitVertex();
+    for (int n = 0; n < 3; n++) {
+        gl_Position = gl_in[n].gl_Position;
+        Gnormal = normal[n];
+        GfragPos = fragPos[n];
+        GtexCoord = texCoord[n];
+        Gluminosity = luminosity[n];
+        EmitVertex();
+    }
     
     EndPrimitive();
 }  

@@ -9,7 +9,7 @@ void Application::Start() {
     player.Init(window.size);
     debug.Link(&window.size, &player, window.context);
     UI.Link(&window.size);
-    event.Link(&window, &debug, &player, &worldArea, &cooldowns, &shadow);
+    event.Link(&window, &debug, &player, &worldArea, &cooldowns, &shadow, &defRenderer);
     shadow.Link(window.context, &player.camera, &worldArea);
 
 
@@ -17,6 +17,7 @@ void Application::Start() {
     UI.SetViewMatrix(player.camera.view);
     worldArea.initUniforms(player.camera);
     background.initUniforms(player.camera);
+    defRenderer.InitUniforms(player.camera);
 
     glm::ivec2 bufferSize;
     glfwGetFramebufferSize(window.context, &bufferSize.x, &bufferSize.y);
@@ -90,6 +91,7 @@ void Application::SetCallbacks() {
         worldArea.LoadViewMatrix(player.camera);
         background.LoadViewMatrix(player.camera);
         UI.SetViewMatrix(player.camera.view);
+        defRenderer.LoadViewMatrix(player.camera);
      });
 
     event.SetWindowSizeCallback([&](int width, int height) {
@@ -104,10 +106,10 @@ void Application::SetCallbacks() {
      });
 
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
-        Shader& chunkShader = worldArea.GetShader();
-        chunkShader.Activate();
-        chunkShader.setVec3("lightDir", sunPosition);
+        Shader deferredShader = defRenderer.GetShader();
+        deferredShader.Activate();
+        deferredShader.setVec3("lightDir", sunPosition);
         if (sunPosition.y > 0 && sunPosition.y < 1)
-            shadow.GenerateShadowMap(sunPosition);
+            shadow.GenerateShadowMap(sunPosition, deferredShader);
     });
 }

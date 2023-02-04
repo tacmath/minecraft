@@ -80,7 +80,7 @@ public:
         shadowShader.Delete();
     }
 
-    void GenerateShadowMap(glm::vec3 lightDir) {
+    void GenerateShadowMap(glm::vec3 &lightDir, Shader renderShader) {
         if (status == SHADOW_OFF)
             return ;
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
@@ -88,7 +88,7 @@ public:
         glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
         glClear(GL_DEPTH_BUFFER_BIT);
         
-        setLightViewProjectionMatrix(lightDir);
+        setLightViewProjectionMatrix(lightDir, renderShader);
 
         shadowShader.Activate();
         renderChunks();
@@ -176,7 +176,7 @@ private:
         }
     }
 
-    void setLightViewProjectionMatrix(glm::vec3 &lightDir) {
+    void setLightViewProjectionMatrix(glm::vec3 &lightDir, Shader renderShader) {
         Shader& chunkShader = worldArea->GetShader();
         glm::mat4 lightSpaceMatrices[SHADOW_CASCADE_NB];
 
@@ -191,8 +191,8 @@ private:
         for (int n = 0; n < SHADOW_CASCADE_NB; n++)
             lightSpaceMatrices[n] = biasMatrix * lightSpaceMatrices[n];
 
-        chunkShader.Activate();
-        chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
+        renderShader.Activate();
+        renderShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
     }
 
     void renderChunks() {

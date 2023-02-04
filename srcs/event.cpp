@@ -66,8 +66,7 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
         else {
             toggleData->shadow->Delete();
         }
-        toggleData->worldArea->ReloadShader(wireFrameMode, shaderOption);
-        toggleData->worldArea->initUniforms(toggleData->player->camera);
+        toggleData->deferred->ReloadShader(shaderOption, toggleData->player->camera);
     }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
         toggleData->debug->toggle();
@@ -119,7 +118,7 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns, Shadow *shadow) {
+void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns, Shadow *shadow, Deferred* deferred) {
     this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
@@ -132,6 +131,7 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
     toggleData->worldArea = worldArea;
     toggleData->window = window;
     toggleData->shadow = shadow;
+    toggleData->deferred = deferred;
     toggleData->cooldowns = cooldowns;
     toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;

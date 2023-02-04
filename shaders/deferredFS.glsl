@@ -7,13 +7,85 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedoAo;
 
-void main()
-{             
-    // retrieve data from G-buffer
-    vec3 FragPos = texture(gPosition, TexCoords).rgb;
-    vec3 Normal = texture(gNormal, TexCoords).rgb;
-    vec3 Albedo = texture(gAlbedoAo, TexCoords).rgb;
-    float Ao = texture(gAlbedoAo, TexCoords).a;
+vec3 fragPos = texture(gPosition, TexCoords).rgb;
+vec3 normal = texture(gNormal, TexCoords).rgb;
+
+uniform vec3 lightDir;
+
+#ifdef SHADOW
+uniform mat4 view;
+uniform mat4 lightSpaceMatrices[4];
+uniform sampler2DArray shadowMap;
+
+const int cascadeNB = 3;
+
+const float cascadePlaneDistances[3] = float[3] (
+	16.0f,
+	48.0f,
+	160.0f
+);
+
+
+int getShadowLayer(float depthValue) {
     
-    FragColor = vec4(Albedo * Ao, 1);
+	int layer = cascadeNB - 1;
+	for (int i = 0; i < cascadeNB; ++i) {
+		if (depthValue < cascadePlaneDistances[i]) {
+			layer = i;
+			break;
+		}
+	}
+	return layer;
+}
+
+float ShadowCalculation()
+{
+    vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
+    int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z)); 
+    vec4 fragPosLightSpace = lightSpaceMatrices[shadowMapLayer] * vec4(fragPos + normal * 0.05f * (1 + shadowMapLayer), 1.0f);
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+
+    if(projCoords.z > 1.0f)
+        return 0.0f;
+
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    float dotNL = dot(normal, -lightDir);
+    if (dotNL > 0.0f) 
+        return 1.0f;
+
+    float shadow = 0.0f;
+    vec2 texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, shadowMapLayer)).r; 
+            shadow += currentDepth > pcfDepth ? 1.0f : 0.0f;        
+        }    
+    }
+    shadow /= 9.0f;
+
+    if (shadow < 0.9f && dotNL > - 0.1f)
+        return 0.5;
+
+    return shadow;
+}
+#endif
+
+void main()
+{
+    vec3 albedo = texture(gAlbedoAo, TexCoords).rgb;
+    float ao = texture(gAlbedoAo, TexCoords).a;
+
+    float day = smoothstep(lightDir.y * 5.0f, 0.0f, 0.5f);
+    float shadow = 1.0f - (1.0f - day) * 0.7f;
+    
+    #ifdef SHADOW
+    if (day > 0.1f)
+        shadow -= ShadowCalculation() * 0.5f * day;
+    #endif
+
+    FragColor = vec4(albedo * ao * shadow, 1);
 }  

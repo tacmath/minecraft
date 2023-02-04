@@ -6,7 +6,6 @@ void parseBlockData(std::vector<std::string>& textures);
 
 WorldArea::WorldArea(void) {
     std::vector<std::string> shaderOption;
-    shaderOption.push_back("SHADOW");
 
     chunkShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
 

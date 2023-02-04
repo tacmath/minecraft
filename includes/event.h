@@ -12,18 +12,20 @@
 #include "cooldown.h"
 #include "window.h"
 #include "shadow.h"
+#include "deferredRendering.h"
 #include <functional>
 
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
 
-struct ToggleData {
+struct ToggleData { //maybe fill toggleData in application and rename it
     Debug		*debug;
     Player*		player;
     WorldArea*	worldArea;
 	Window*		window;
 	Cooldowns	*cooldowns;
 	Shadow		*shadow;
+	Deferred	*deferred;
 
 	std::function<void(int width, int height)> windowSizeCallback;
 
@@ -53,7 +55,7 @@ public:
 
 	~Event();
 
-	void Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns *cooldowns, Shadow *shadow);
+	void Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns *cooldowns, Shadow *shadow, Deferred* deferred);
 	void GetEvents(float latency);
 
 	void SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback);
