@@ -78,7 +78,7 @@ void main()
     vec3 albedo = texture(gAlbedoAo, TexCoords).rgb;
     float ao = texture(gAlbedoAo, TexCoords).a;
 
-    float day = smoothstep(lightDir.y * 5.0f, 0.0f, 0.5f);
+    float day = smoothstep(0.0f, 1.0f, lightDir.y * 2.0f);
     float shadow = 1.0f - (1.0f - day) * 0.7f;
     
     #ifdef SHADOW
