@@ -1,5 +1,10 @@
 #include "shader.h"
 
+#ifdef _WIN32
+#define STRDUP _strdup
+#else
+#define STRDUP strdup
+#endif
 
 char* Shader::getShaderSource(const char* fileName) {
     char* source;
@@ -46,7 +51,7 @@ static char* addOptionToShaderSource(const std::vector<std::string> &options, ch
         shaderOptions += "#define " + option + '\n';
     fileSource.insert(fileSource.find_first_of('\n') + 1, shaderOptions);
     free(source);
-    return _strdup(fileSource.c_str());
+    return STRDUP(fileSource.c_str());
 }
 
 void Shader::Load(const std::vector<std::string> &options, const char *vertexShaderFile, const char *fragmentShaderFile, const char *geometryShaderFile) {
