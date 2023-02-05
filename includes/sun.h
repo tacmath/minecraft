@@ -56,10 +56,14 @@ public:
 
 
 		angle = glm::radians(ticks / 20.0f);
-		position.z = -cos(angle);
+		position.x = -cos(angle) * 0.5f;
+		position.z = -cos(angle) * 0.5f;
 		position.y = sin(angle);
-		sunModel = glm::rotate(glm::translate(glm::mat4(1.0f), position), angle, glm::vec3(1.0f, 0.0f, 0.0f));
-		moonModel = glm::rotate(glm::translate(glm::mat4(1.0f), -position), angle, glm::vec3(1.0f, 0.0f, 0.0f));
+		position = glm::normalize(position);
+		sunModel = glm::rotate(glm::translate(glm::mat4(1.0f), position), angle * 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+		sunModel = glm::rotate(sunModel, angle, glm::vec3(1.0f, 0.0f, 0.0f));
+		moonModel = glm::rotate(glm::translate(glm::mat4(1.0f), -position), angle * 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+		moonModel = glm::rotate(moonModel, angle, glm::vec3(1.0f, 0.0f, 0.0f));
 		updateCallback(position);
 	}
 
