@@ -98,9 +98,15 @@ void Application::SetCallbacks() {
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
         Shader& chunkShader = worldArea.GetShader();
         chunkShader.Activate();
-        chunkShader.setVec3("lightDir", sunPosition);
         chunkShader.setFloat("day", glm::smoothstep(0.0f, 0.5f, sunPosition.y));
-        if (sunPosition.y > 0 && sunPosition.y < 1)
-            shadow.GenerateShadowMap(sunPosition);
+
+        glm::vec3 position = sunPosition;
+        if (sunPosition.y < 0)
+            position = -position;
+        chunkShader.setVec3("lightDir", position);
+        chunkShader.setFloat("timeCycle", glm::smoothstep(0.05f, 0.4f, position.y));
+
+        if (position.y < 1)
+            shadow.GenerateShadowMap(position);
     });
 }

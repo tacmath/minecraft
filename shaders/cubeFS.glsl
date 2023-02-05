@@ -10,6 +10,7 @@ in vec3 fragPos;
 in float luminosity;
 
 uniform float day;
+uniform float timeCycle;
 uniform mat4 view;
 uniform vec3 lightDir;
 uniform sampler2DArray atlas;
@@ -88,7 +89,7 @@ float ShadowCalculation()
 
     float shadow = 0.0f;
     vec2 texelSize = (1.0f / vec2(textureSize(shadowMap, 0))) * 2.0f;
-    for(int n = 0; n < 4; ++n)
+    for(int n = 0; n < 4; n++)
     {
             #ifdef SAMPLER_SHADOW
                 shadow += texture(shadowMap, vec4(projCoords.xy + poissonDisk[n] * texelSize, shadowMapLayer, projCoords.z));
@@ -102,7 +103,7 @@ float ShadowCalculation()
     if (shadow == 0.0f || shadow == 4.0f)
        return shadow * 0.25f;
 
-    for(int n = 3; n < 12; ++n)
+    for(int n = 4; n < 12; n++)
     {
             #ifdef SAMPLER_SHADOW
                 shadow += texture(shadowMap, vec4(projCoords.xy + poissonDisk[n] * texelSize, shadowMapLayer, projCoords.z));
@@ -112,9 +113,8 @@ float ShadowCalculation()
             #endif
 
     }
-    shadow /= 12.0f;
 
-    return shadow;
+    return shadow / 12.0f;
 }
 #endif
 
@@ -123,8 +123,7 @@ void main()
     float shadow = 1.0f - (1.0f - day) * 0.7f;
 
     #ifdef SHADOW
-    if (day > 0.1f)
-        shadow -= ShadowCalculation() * 0.5f * day;
+    shadow *= (1.0f - ShadowCalculation() * 0.5f * timeCycle);
     #endif
     FragColor = vec4(vec3(texture(atlas, texCoord)) * luminosity * shadow, 1.0f);
 }
