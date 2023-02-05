@@ -17,7 +17,7 @@
 #define NORMAL_PERSPECTIVE 0
 #define UP_PERSPECTIVE 1
 
-struct ToggleData {
+struct GlfwCallbackData {
     Debug		*debug;
     Player*		player;
     WorldArea*	worldArea;

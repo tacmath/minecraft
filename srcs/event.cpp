@@ -31,28 +31,28 @@ void placeCube(Player &player, Cooldowns &cooldowns) { // maybe place the functi
 }
 
 void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
-    static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+    static GlfwCallbackData* data = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
 
     if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
-        toggleData->player->selectedItem = toggleData->player->selectedCube.id;
+        data->player->selectedItem = data->player->selectedCube.id;
 
     if ((button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT) && action == GLFW_PRESS)
-        toggleData->cooldowns->Reset(ACTION_COOLDOWN);
+        data->cooldowns->Reset(ACTION_COOLDOWN);
 }
 
 
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+    static GlfwCallbackData* data = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
     static bool wireFrameMode = false;
     static bool fullScreen = false;
     static bool shadow = true;
     
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         if (fullScreen)
-            toggleData->window->Windowed();
+            data->window->Windowed();
         else
-            toggleData->window->FullScreen();
+            data->window->FullScreen();
         fullScreen = !fullScreen;
     }
     if (key == GLFW_KEY_F2 && action == GLFW_PRESS) {
@@ -61,25 +61,25 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
 
         if (shadow) {
             shaderOption.push_back("SHADOW");
-            toggleData->shadow->Activate();
+            data->shadow->Activate();
         }
         else {
-            toggleData->shadow->Delete();
+            data->shadow->Delete();
         }
-        toggleData->worldArea->ReloadShader(wireFrameMode, shaderOption);
-        toggleData->worldArea->initUniforms(toggleData->player->camera);
+        data->worldArea->ReloadShader(wireFrameMode, shaderOption);
+        data->worldArea->initUniforms(data->player->camera);
     }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
-        toggleData->debug->toggle();
-    if (key == GLFW_KEY_V && action == GLFW_PRESS && toggleData->debug->status & DEBUG_ON)
-        toggleData->debug->toggleView();
+        data->debug->toggle();
+    if (key == GLFW_KEY_V && action == GLFW_PRESS && data->debug->status & DEBUG_ON)
+        data->debug->toggleView();
 
     if (key == GLFW_KEY_C && action == GLFW_PRESS)
-        toggleData->player->hasCollision = !toggleData->player->hasCollision;
+        data->player->hasCollision = !data->player->hasCollision;
 
     if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-        *toggleData->perspective = !(*toggleData->perspective);
-        *toggleData->lookChanged = true;
+        *data->perspective = !(*data->perspective);
+        *data->lookChanged = true;
     }
 
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
@@ -88,19 +88,19 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
             shaderOption.push_back("SHADOW");
 
         wireFrameMode = !wireFrameMode;
-        toggleData->worldArea->ReloadShader(wireFrameMode, shaderOption);
-        toggleData->worldArea->initUniforms(toggleData->player->camera);
+        data->worldArea->ReloadShader(wireFrameMode, shaderOption);
+        data->worldArea->initUniforms(data->player->camera);
     }
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-        toggleData->player->selectedItem = 1;
+        data->player->selectedItem = 1;
     if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-        toggleData->player->selectedItem = 2;
+        data->player->selectedItem = 2;
     if (key == GLFW_KEY_3 && action == GLFW_PRESS)
-        toggleData->player->selectedItem = 3;
+        data->player->selectedItem = 3;
     if (key == GLFW_KEY_4 && action == GLFW_PRESS)
-        toggleData->player->selectedItem = 4;
+        data->player->selectedItem = 4;
     if (key == GLFW_KEY_5 && action == GLFW_PRESS)
-        toggleData->player->selectedItem = 5;
+        data->player->selectedItem = 5;
 }
 
 Event::Event() {
@@ -124,7 +124,7 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
     this->player = player;
     this->cooldowns = cooldowns;
 
-    ToggleData* toggleData = (ToggleData*)calloc(1, sizeof(ToggleData));
+    GlfwCallbackData* toggleData = (GlfwCallbackData*)calloc(1, sizeof(GlfwCallbackData));
     if (!toggleData)
         exit(1);
     toggleData->debug = debug;
@@ -140,7 +140,7 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
     glfwSetKeyCallback(this->window, keyToogleCallback);
     glfwSetMouseButtonCallback(this->window, mouseButtonCallback);
     glfwSetWindowSizeCallback(this->window, [](GLFWwindow* window, int width, int height) {
-        static ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+        static GlfwCallbackData* toggleData = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
         
         toggleData->windowSizeCallback(width, height);
         glfwGetFramebufferSize(window, &width, &height);
@@ -149,7 +149,7 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
 }
 
 void Event::SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback) {
-    ToggleData* toggleData = (ToggleData*)glfwGetWindowUserPointer(window);
+    GlfwCallbackData* toggleData = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
     toggleData->windowSizeCallback = windowSizeCallback;
 }
 

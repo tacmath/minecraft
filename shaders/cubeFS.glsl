@@ -7,6 +7,7 @@ in vec3 texCoord;
 in vec3 fragPos;
 in float luminosity;
 
+uniform float day;
 uniform mat4 view;
 uniform vec3 lightDir;
 uniform sampler2DArray atlas;
@@ -74,7 +75,6 @@ float ShadowCalculation()
 
 void main()
 {
-    float day = smoothstep(lightDir.y * 5.0f, 0.0f, 1.0f);
     float shadow = 1.0f - (1.0f - day) * 0.7f;
 
     #ifdef SHADOW
