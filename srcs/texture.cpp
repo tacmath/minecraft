@@ -89,10 +89,8 @@ void Texture::LoadArray(const std::vector<std::string>& fileNames, GLuint slot) 
     
     stbi_set_flip_vertically_on_load(true);
     for (unsigned n = 0; n < fileNames.size(); n++) {
-        if (!(data = stbi_load(fileNames[n].c_str(), &x, &y, &comp, 0))) {
+        if (!(data = stbi_load(fileNames[n].c_str(), &x, &y, &comp, 0)))
             std::cerr << "Failed to load" << fileNames[n] << std::endl;
-            return;
-        }
         if (n == 0)
             glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, x, y, (GLuint)fileNames.size(), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, n, x, y, 1,  (comp == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
