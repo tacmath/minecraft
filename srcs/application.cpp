@@ -98,7 +98,7 @@ void Application::SetCallbacks() {
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
         Shader& chunkShader = worldArea.GetShader();
         chunkShader.Activate();
-        chunkShader.setFloat("day", glm::smoothstep(0.0f, 0.5f, sunPosition.y));
+        chunkShader.setFloat("dayLightLevel", (1.0f - (1.0f - glm::smoothstep(0.0f, 0.5f, sunPosition.y)) * 0.7f));
 
         glm::vec3 position = sunPosition;
         if (sunPosition.y < 0)

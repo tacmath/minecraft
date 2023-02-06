@@ -60,9 +60,9 @@ public:
 		position.z = -cos(angle) * 0.5f;
 		position.y = sin(angle);
 		position = glm::normalize(position);
-		sunModel = glm::rotate(glm::translate(glm::mat4(1.0f), position), angle * 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+		sunModel = glm::rotate(glm::translate(glm::mat4(1.0f), position), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		sunModel = glm::rotate(sunModel, angle, glm::vec3(1.0f, 0.0f, 0.0f));
-		moonModel = glm::rotate(glm::translate(glm::mat4(1.0f), -position), angle * 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+		moonModel = glm::rotate(glm::translate(glm::mat4(1.0f), -position), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		moonModel = glm::rotate(moonModel, angle, glm::vec3(1.0f, 0.0f, 0.0f));
 		updateCallback(position);
 	}

@@ -9,7 +9,7 @@ in vec3 texCoord;
 in vec3 fragPos;
 in float luminosity;
 
-uniform float day;
+uniform float dayLightLevel;
 uniform float timeCycle;
 uniform mat4 view;
 uniform vec3 lightDir;
@@ -120,10 +120,10 @@ float ShadowCalculation()
 
 void main()
 {
-    float shadow = 1.0f - (1.0f - day) * 0.7f;
+    float light = dayLightLevel * luminosity;
 
     #ifdef SHADOW
-    shadow *= (1.0f - ShadowCalculation() * 0.5f * timeCycle);
+    light *= (1.0f - ShadowCalculation() * 0.5f * timeCycle);
     #endif
-    FragColor = vec4(vec3(texture(atlas, texCoord)) * luminosity * shadow, 1.0f);
+    FragColor = vec4(vec3(texture(atlas, texCoord)) * light, 1.0f);
 }
