@@ -7,7 +7,7 @@ void removePointedCube(Player &player, Cooldowns &cooldowns) {
     Chunk* chunk;
     glm::ivec3 pos;
 
-    if (player.selectedCube.id == AIR || !cooldowns.Use(ACTION_COOLDOWN))
+    if (player.selectedCube.id == AIR || !cooldowns.Use(ACTION))
         return;
     pos = player.selectedCube.position;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
@@ -21,7 +21,7 @@ void placeCube(Player &player, Cooldowns &cooldowns) { // maybe place the functi
     glm::ivec3 pos;
 
     if (player.selectedCube.id == AIR || player.selectedCube.range == 0 ||
-        player.aabb().collide(AABB::unit().translate(player.selectedCube.side)) || !cooldowns.Use(ACTION_COOLDOWN))
+        player.aabb().collide(AABB::unit().translate(player.selectedCube.side)) || !cooldowns.Use(ACTION))
         return;
     pos = player.selectedCube.side;
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
@@ -37,7 +37,7 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
         data->player->selectedItem = data->player->selectedCube.id;
 
     if ((button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT) && action == GLFW_PRESS)
-        data->cooldowns->Reset(ACTION_COOLDOWN);
+        data->cooldowns->Reset(ACTION);
 }
 
 

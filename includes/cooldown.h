@@ -2,10 +2,7 @@
 #define COOLDOWN_CLASS_H
 
 #include <GLFW/glfw3.h>
-
-#define MAX_COOLDOWNS_NB 1
-
-#define ACTION_COOLDOWN 0
+#include <array>
 
 struct Cooldown {
 public:
@@ -23,21 +20,22 @@ public:
 	}
 };
 
+enum COOLDOWN { ACTION, ENUM_END };
 
 class Cooldowns {
 private:
-	Cooldown cooldown[MAX_COOLDOWNS_NB];
-public:
+	std::array<Cooldown, ENUM_END> cooldown;
 
+public:
 	Cooldowns() {
-		cooldown[ACTION_COOLDOWN].Init(true, 0, 0.15f);
+		cooldown[ACTION].Init(true, 0, 0.15f);
 	}
 
-	bool Ready(int id) {
+	bool Ready(unsigned int id) {
 		return cooldown[id].ready;
 	}
 
-	bool Use(int id) {
+	bool Use(unsigned int id) {
 		if (!cooldown[id].ready)
 			return false;
 		cooldown[id].ready = false;
@@ -45,7 +43,7 @@ public:
 		return true;
 	}
 
-	void Reset(int id) {
+	void Reset(unsigned int id) {
 		cooldown[id].ready = true;
 		cooldown[id].lastUpdate = 0;
 	}
@@ -53,7 +51,7 @@ public:
 	void Update() {
 		float time = (float)glfwGetTime();
 
-		for (int n = 0; n < MAX_COOLDOWNS_NB; n++) {
+		for (int n = 0; n < cooldown.size(); n++) {
 			if (time - cooldown[n].lastUpdate > cooldown[n].downTime)
 				cooldown[n].ready = true;
 		}
