@@ -67,7 +67,7 @@ private:
 	unsigned int verticesNumber;
 
 	// vertex array object
-	VAO VAO;
+	VAO vao;
 	// vertex buffer object ID
 	GLuint VBO;
 
@@ -130,7 +130,7 @@ public:
 
 	// Draw the chunk 
 	void Draw(Shader& shader) {
-		VAO.Bind();
+		vao.Bind();
 		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
 		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 	}
@@ -139,7 +139,7 @@ public:
 	void DrawVisible(Shader& shader) {
 		if (!isVisible)
 			return;
-		VAO.Bind();
+		vao.Bind();
 		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
 		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 	}

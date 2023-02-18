@@ -91,8 +91,8 @@ void Chunk::Bind() {
 		threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 		return;
 	}
-	VAO.Gen();
-	VAO.Bind();
+	vao.Gen();
+	vao.Bind();
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(int64_t) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);

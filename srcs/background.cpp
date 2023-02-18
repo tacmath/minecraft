@@ -16,7 +16,7 @@ void Background::Draw(void) {
     glDepthMask(false);
     glDepthFunc(GL_LEQUAL);
     shader.Activate();
-    VAO.Bind();
+    vao.Bind();
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     sun.Draw();
     glDepthFunc(GL_LESS);
@@ -111,9 +111,9 @@ void Background::initSkybox(void) {
     cubemap.Load(texturesName);
     delete[] texturesName;
 
-    VAO.Gen();
-    VAO.LinkAttrib((void*)skyboxVertices, 8, 0, 3, GL_FLOAT, sizeof(float), (void*)0);
-    VAO.LinkAttrib((void*)texturesUv, 8, 1, 2, GL_FLOAT, sizeof(float), (void*)0);
-    VAO.Bind();
+    vao.Gen();
+    vao.LinkAttrib((void*)skyboxVertices, 8, 0, 3, GL_FLOAT, sizeof(float), (void*)0);
+    vao.LinkAttrib((void*)texturesUv, 8, 1, 2, GL_FLOAT, sizeof(float), (void*)0);
+    vao.Bind();
     skyboxEBO.Bind();
 }

@@ -15,7 +15,7 @@
 class Background {
 private:
     // skybox vexter array object
-	VAO     VAO;
+	VAO     vao;
     // skybox element buffer object
 	EBO     skyboxEBO;
     // skybox shader
