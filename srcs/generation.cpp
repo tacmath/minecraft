@@ -1,7 +1,7 @@
 #include "generation.h"
 
 ChunkGeneration::ChunkGeneration(){
-    std::srand((unsigned int)std::time(0));
+    std::srand((unsigned int)time(0));
     unsigned int seed = 7;
     for (int n = 0; n != 20; ++n) {
         seed = seed * 10 + (1 + std::rand() / ((RAND_MAX + 1u) / 6));
@@ -44,13 +44,13 @@ void ChunkGeneration::generateBiome(long posX, long posZ, unsigned char *cubes) 
     float space = 0.5;
    
     float value =
-    perlinNoise.noise(posX * (1.0f / 200.0f * space), posZ * (1.0f / 200.0f * space)) * 0.8 +
-    perlinNoise.noise(posX * (1.0f / 100.0f * space), posZ * (1.0f / 100.0f * space)) * 0.3 +
-    perlinNoise.noise(posX * (1.0f / 300.0f * space), posZ * (1.0f / 300.0f * space)) * 0.3 + 
-    perlinNoise.noise(posX * (1.0f / 50.0f * space), posZ * (1.0f / 50.0f * space)) * 0.1;
+    (float)perlinNoise.noise(posX * (1.0f / 200.0f * space), posZ * (1.0f / 200.0f * space)) * 0.8f +
+    (float)perlinNoise.noise(posX * (1.0f / 100.0f * space), posZ * (1.0f / 100.0f * space)) * 0.3f +
+    (float)perlinNoise.noise(posX * (1.0f / 300.0f * space), posZ * (1.0f / 300.0f * space)) * 0.3f +
+    (float)perlinNoise.noise(posX * (1.0f / 50.0f * space), posZ * (1.0f / 50.0f * space)) * 0.1f;
     if (value > 1) value = value - 1;
 
-    float select = perlinNoise.noise(posX * (1.0f / 50.0f * space), posZ * (1.0f / 50.0f * space));
+    float select = (float)perlinNoise.noise(posX * (1.0f / 50.0f * space), posZ * (1.0f / 50.0f * space));
 
     char x = posX & 0xF;
     char z = posZ & 0xF;
@@ -189,8 +189,8 @@ void ChunkGeneration::dirtPockateExcavator(unsigned char* cubes, int x, int y, i
 }
 
 void ChunkGeneration::generateCave(int ChunkSize, unsigned char *cubes, int maxHeight, int x, int z, int posx, int posz) {
-    float cave = perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 47.0f), (posz * ChunkSize + z) * (1.0f / 47.0f))
-        + perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 33.0f), (posz * ChunkSize + z) * (1.0f / 33.0f));
+    float cave = (float)(perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 47.0f), (posz * ChunkSize + z) * (1.0f / 47.0f))
+        + perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 33.0f), (posz * ChunkSize + z) * (1.0f / 33.0f)));
 
     if (cave > 1.15) {
         int y = (int)(perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 130.0f), (posz * ChunkSize + z) * (1.0f / 130.0f))
@@ -205,8 +205,8 @@ void ChunkGeneration::generateCave(int ChunkSize, unsigned char *cubes, int maxH
 
 
 void ChunkGeneration::generateDirtPochet(int ChunkSize, unsigned char* cubes, int maxHeight, int x, int z, int posx, int posz) {
-    float isDirtPocket = perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 53.0f), (posz * ChunkSize + z) * (1.0f / 53.0f))
-        + perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 17.0f), (posz * ChunkSize + z) * (1.0f / 17.0f));
+    float isDirtPocket = (float)(perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 53.0f), (posz * ChunkSize + z) * (1.0f / 53.0f))
+        + perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 17.0f), (posz * ChunkSize + z) * (1.0f / 17.0f)));
 
     if ((isDirtPocket > 1.2 && isDirtPocket < 1.25) || (isDirtPocket > 0.7 && isDirtPocket < 0.75) || (isDirtPocket > 0.9 && isDirtPocket < 0.92)) {
         int y = (int)(perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 130.0f), (posz * ChunkSize + z) * (1.0f / 130.0f)) * (maxHeight * 1.8)
@@ -242,11 +242,11 @@ void ChunkGeneration::oldGenerate(int ChunkSize, int posx, int posz, unsigned ch
 }
 
 void ChunkGeneration::generateOre(int ChunkSize, unsigned char *cubes, int y, int x, int z, int posx, int posz) {
-    float ores = perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 15.0f), (posz * ChunkSize + z) * (1.0f / 15.0f)) * 0.5
-        + perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 17.0f), (posz * ChunkSize + z) * (1.0f / 17.0f)) * 0.5;
+    float ores = (float)(perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 15.0f), (posz * ChunkSize + z) * (1.0f / 15.0f)) * 0.5f
+        + perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 17.0f), (posz * ChunkSize + z) * (1.0f / 17.0f)) * 0.5f);
 
     if (ores > 0.5) {
-        float isOres = perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 2.0f), (posz * ChunkSize + z) * (1.0f / 2.0f));
+        float isOres = (float)perlinNoise.noise((posx * ChunkSize + x) * (1.0f / 2.0f), (posz * ChunkSize + z) * (1.0f / 2.0f));
             if (isOres < 0.25 || isOres > 85) {
                 cubes[GET_CUBE(x, y, z)] = 15;
             }
@@ -256,8 +256,8 @@ void ChunkGeneration::generateOre(int ChunkSize, unsigned char *cubes, int y, in
 
 
 void ChunkGeneration::generateRiver(int ChunkSize, unsigned char *cubes, int ground, int x, int z, int posx, int posz) {
-    float river = simplexNoise.noise((posx * ChunkSize + x) * (1.0f / 78.0f), (posz * ChunkSize + z) * (1.0f / 78.0f)) * 0.7
-    + simplexNoise.noise((posx * ChunkSize + x) * (1.0f / 22.0f), (posz * ChunkSize + z) * (1.0f / 22.0f)) * 0.3;
+    float river = (float)(simplexNoise.noise((posx * ChunkSize + x) * (1.0f / 78.0f), (posz * ChunkSize + z) * (1.0f / 78.0f)) * 0.7f
+    + simplexNoise.noise((posx * ChunkSize + x) * (1.0f / 22.0f), (posz * ChunkSize + z) * (1.0f / 22.0f)) * 0.3f);
     if (river > 0.8 && ground < 50 && ground > 45) {
                 for (int i = 40; i < 45; i++) {
                     cubes[GET_CUBE(x, i, z)] = 23;
@@ -295,10 +295,10 @@ void ChunkGeneration::generateTree(int ChunkSize, unsigned char *cubes, int grou
 
     for (int overflowX = -2; overflowX <= 2; overflowX++) {
         for (int overflowZ = -2; overflowZ <= 2; overflowZ++) {
-            float tree = perlinNoise.noise((posx * ChunkSize + x + overflowX) * (1.0f / 78.0f), (posz * ChunkSize + z + overflowZ) * (1.0f / 78.0f)) * 0.7
-            + perlinNoise.noise((posx * ChunkSize + x + overflowX) * (1.0f / 22.0f), (posz * ChunkSize + z + overflowZ) * (1.0f / 22.0f)) * 0.3;
+            float tree = (float)(perlinNoise.noise((posx * ChunkSize + x + overflowX) * (1.0f / 78.0f), (posz * ChunkSize + z + overflowZ) * (1.0f / 78.0f)) * 0.7f
+            + perlinNoise.noise((posx * ChunkSize + x + overflowX) * (1.0f / 22.0f), (posz * ChunkSize + z + overflowZ) * (1.0f / 22.0f)) * 0.3f);
             if (tree > 0.5) {
-                float isTree = perlinNoise.noise((posx * ChunkSize + x + overflowX) * (1.0f / 2.0f), (posz * ChunkSize + z + overflowZ) * (1.0f / 2.0f));
+                float isTree = (float)perlinNoise.noise((posx * ChunkSize + x + overflowX) * (1.0f / 2.0f), (posz * ChunkSize + z + overflowZ) * (1.0f / 2.0f));
                 if (isTree < 0.25 || isTree > 85) {
                     treeModel(ChunkSize, x + overflowX, ground, z + overflowZ, cubes);
                 }
@@ -309,11 +309,11 @@ void ChunkGeneration::generateTree(int ChunkSize, unsigned char *cubes, int grou
 
 
 int ChunkGeneration::groundHeight(int x, int z) {
-    float selector = perlinNoise.noise(x * (1.0f / 40.0f), z * (1.0f / 40.0f));
+    float selector = (float)perlinNoise.noise(x * (1.0f / 40.0f), z * (1.0f / 40.0f));
     int height = 0;
 
     if (selector  > 0.5) {
-        height += 4 * selector;
+        height += (int)(4 * selector);
     }
 
     return 30 + height + (int)(perlinNoise.noise(x * (1.0f / 500.0f), z * (1.0f / 500.0f)) * 40

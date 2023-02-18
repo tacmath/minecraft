@@ -8,6 +8,7 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include <cstdint>  // int32_t/uint8_t
+#include <algorithm>
 
 class SimplexNoise {
 

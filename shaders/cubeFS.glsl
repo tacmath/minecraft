@@ -17,7 +17,7 @@ uniform sampler2DArray atlas;
 
 #ifdef SHADOW
 
-vec2 poissonDisk[16] = vec2[]( 
+const vec2 poissonDisk[16] = vec2[]( 
    vec2( -0.81544232, -0.87912464 ), 
    vec2( 0.94558609, -0.76890725 ),
    vec2( 0.97484398, 0.75648379 ),
@@ -72,6 +72,10 @@ int getShadowLayer(float depthValue) {
 
 float ShadowCalculation()
 {
+    float dotNL = dot(normal, -lightDir);
+    if (dotNL > 0.0f) // if the angle of the light and normal = ~ 90� set the shadow to 1
+        return 1.0f;
+
     vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
     int shadowMapLayer = getShadowLayer(abs(fragPosViewSpace.z)); 
     vec4 fragPosLightSpace = lightSpaceMatrices[shadowMapLayer] * vec4(fragPos + normal * cascadeNormalBias[shadowMapLayer], 1.0f);
@@ -81,11 +85,8 @@ float ShadowCalculation()
     if(projCoords.z > 1.0f)
         return 0.0f;
 
-    // get depth of current fragment from light's perspective
+     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-    float dotNL = dot(normal, -lightDir);
-    if (dotNL > 0.0f) // if the angle of the light and normal = ~ 90� set the shadow to 1
-        return 1.0f;
 
     float shadow = 0.0f;
     vec2 texelSize = (1.0f / vec2(textureSize(shadowMap, 0))) * 2.0f;
