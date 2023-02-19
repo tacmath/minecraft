@@ -26,7 +26,7 @@ public:
 		cameraOffset = glm::vec3(0.2f, 1.5f, 0.2f);
 		hasCollision = false;
 		selectedItem = 4;
-		updateCallback = [](Player) {};
+		updateCallback = [](Player&) {};
 	}
 
 	void Init(glm::vec2 windowSize) {

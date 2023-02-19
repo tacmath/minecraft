@@ -113,7 +113,7 @@ Event::Event() {
     inMenu = true;
     perspective = NORMAL_PERSPECTIVE;
     speed = 10.0f;
-    mouseSensitivity = 0.1f;
+    mouseSensitivity = 0.5f;
     Yaw = -90.0f;
     Pitch = 0.0f;
 }
@@ -221,8 +221,8 @@ void Event::MouseEvent() {
     if (posx != mousePos.x || posy != mousePos.y)
         playerUpdated = true;
 
-    Pitch += (float)(posy - mousePos.y);
-    Yaw += (float)(posx - mousePos.x);
+    Pitch += (float)(posy - mousePos.y) * mouseSensitivity;
+    Yaw += (float)(posx - mousePos.x) * mouseSensitivity;
     if (Pitch > 89.0f)
         Pitch = 89.0f;
     if (Pitch < -89.0f)
