@@ -50,7 +50,7 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) {
         return (result);
     }
     initDDA(step, max, delta, origin, direction);
-    while (abs(distance) < range) {
+    while (fabs(distance) < range) {
         result.side = pos;
         if (max.x < max.y) {
             if (max.x < max.z) {
@@ -81,7 +81,7 @@ RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) {
             result.position = glm::ivec3(pos.x + (chunk->posx << 4), pos.y, pos.z + (chunk->posz << 4));
             result.side.x += (chunk->posx << 4);
             result.side.z += (chunk->posz << 4);
-            result.range = abs(distance);
+            result.range = fabs(distance);
             return (result);
         }
     }

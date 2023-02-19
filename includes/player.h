@@ -36,11 +36,11 @@ public:
 	}
 
 	void UpdateRayCast() {
-	//	selectedCube = rayCastGetCube(position + cameraOffset, look, PLAYER_RANGE);
+		selectedCube = rayCastGetCube(position + cameraOffset, look, PLAYER_RANGE);
 	}
 
 	void Update() {
-	//	selectedCube = rayCastGetCube(position + cameraOffset, look, PLAYER_RANGE);
+		selectedCube = rayCastGetCube(position + cameraOffset, look, PLAYER_RANGE);
 		camera.SetPosition(position + cameraOffset);
 		camera.SetDirection(look);
 		camera.Update();
