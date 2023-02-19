@@ -28,7 +28,7 @@ static inline void initDDA(glm::ivec3 &step, glm::vec3 &max, glm::vec3 &delta, g
     max *= delta;
 }
 
-RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) { //need to modify it has some problem in certain coord
+RayCastInfo rayCastGetCube(glm::vec3 origin, glm::vec3 direction, float range) { //need to modify it has some problem in certain coord and inf or nan might be a problem
     Chunk* chunk;
     glm::ivec3 step;
     glm::ivec3 pos;

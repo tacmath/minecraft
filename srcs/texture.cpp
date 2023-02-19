@@ -1,5 +1,6 @@
 #include "texture.h"
 #include "stb_image.h"
+#include <cstring>
 
 Texture::~Texture() {
     glDeleteTextures(1, &ID);

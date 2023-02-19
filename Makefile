@@ -36,7 +36,7 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -lglfw -framework opengl -L libraries/lib/glfw3lib -lfreetype -L libraries/lib/freetypelib
+FRAMEWORK= -lglfw -lpthread -L libraries/lib/glfw3lib -lfreetype -L libraries/lib/freetypelib
 FRAMEWORK_INC = libraries/include
 
 NAME_SRC=	camera.cpp\
@@ -82,7 +82,7 @@ GPP			= g++ -std=c++11 $(OPTIMISATION_FLAG)
 
 
 
-all: install $(NAME)
+all: $(NAME)
 
 $(NAME) : $(OBJS)
 	@$(GPP) $^ -o $@ $(FRAMEWORK)

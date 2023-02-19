@@ -52,7 +52,7 @@ public:
         gladLoadGL();
         glViewport(0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
         glfwSetInputMode(context, GLFW_STICKY_KEYS, GL_TRUE);
-        glfwSetInputMode(context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //    glfwSetInputMode(context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         size = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
         enableGlParam();
 
