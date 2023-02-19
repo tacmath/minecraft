@@ -19,7 +19,7 @@ public:
     // Links Attribute such as a position or color to the VAO
     void LinkAttrib(const void *data, GLuint vertexNumbers, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset);
     // Links VBO Attribute such as a position or color to the VAO
-    void LinkAttrib(VBO &VBO, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset);
+    void LinkAttrib(VBO &vbo, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset);
     // Binds the VAO
     void Bind();
     // Unbinds the VAO

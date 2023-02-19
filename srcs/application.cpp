@@ -25,7 +25,6 @@ void Application::Start() {
 }
 
 void Application::Run() {
-    float previousLoopTime  = 0;
     float previousFrameTime = 0;
     float previousTickTime  = 0;
     float diff = 0;
@@ -43,11 +42,8 @@ void Application::Run() {
         diff = time - previousFrameTime;
         if (diff >= MIN_FRAME_DELAY) {
             EveryFrames(time, time - previousFrameTime);
-            previousFrameTime = time;
-            previousLoopTime = time - (diff - MIN_FRAME_DELAY);
-        } /*else {
-            sleep for the remaining time
-        }*/
+            previousFrameTime = time/* - (diff - MIN_FRAME_DELAY)*/;
+        }
     }
 }
 

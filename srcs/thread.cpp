@@ -35,7 +35,7 @@ void ThreadControleur::CreateMesh(std::vector<Chunk*> &chunks, std::vector<Chunk
 	Chunk	*chunk;
 	
 	chunkNb = chunksLoading.size();
-	for (int c = 0; c < chunkNb; c++) {
+	for (size_t c = 0; c < chunkNb; c++) {
 		chunk = chunksLoading[c];
 		if (chunk->threadStatus & CHUNK_PROCESSING || chunk->status != CHUNK_DATA_LOADED)
 			continue;
@@ -103,7 +103,7 @@ void ThreadControleur::LoadChunk(std::vector<Chunk*> &chunks) {
 	int thread = 0;
 	Chunk *chunk;
 
-	for (int c = 0; c < chunks.size(); c++) {
+	for (size_t c = 0; c < chunks.size(); c++) {
 		chunk = chunks[c];
 		if (chunk->threadStatus & CHUNK_PROCESSING || chunk->status != CHUNK_UNLOADED)
 			continue;

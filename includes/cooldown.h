@@ -51,7 +51,7 @@ public:
 	void Update() {
 		float time = (float)glfwGetTime();
 
-		for (int n = 0; n < cooldown.size(); n++) {
+		for (size_t n = 0; n < cooldown.size(); n++) {
 			if (time - cooldown[n].lastUpdate > cooldown[n].downTime)
 				cooldown[n].ready = true;
 		}

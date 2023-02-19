@@ -13,9 +13,10 @@ void VAO::LinkAttrib(const void* data, GLuint vertexNumbers, GLuint layout, GLui
     glBindVertexArray(0);
 }
 
-void VAO::LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset) {
+void VAO::LinkAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset) {
 
     glBindVertexArray(ID);
+    vbo.Bind();
     glEnableVertexAttribArray(layout);
     glVertexAttribPointer(layout, numComponents, type, GL_FALSE, numComponents * typeSize, offset);
     glBindVertexArray(0);

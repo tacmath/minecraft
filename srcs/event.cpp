@@ -33,6 +33,7 @@ void placeCube(Player &player, Cooldowns &cooldowns) { // maybe place the functi
 void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
     static GlfwCallbackData* data = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
 
+    (void)mods;
     if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
         data->player->selectedItem = data->player->selectedCube.id;
 
@@ -47,7 +48,9 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     static bool wireFrameMode = false;
     static bool fullScreen = false;
     static bool shadow = true;
-    
+
+    (void)scancode;
+    (void)mods;
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         if (fullScreen)
             data->window->Windowed();
@@ -135,7 +138,7 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
     toggleData->cooldowns = cooldowns;
     toggleData->lookChanged = &this->playerUpdated;
     toggleData->perspective = &this->perspective;
-    toggleData->windowSizeCallback = [](int width, int height) {};
+    toggleData->windowSizeCallback = [](int width, int height) {(void)width;(void)height;};
     glfwSetWindowUserPointer(this->window, toggleData);
     glfwSetKeyCallback(this->window, keyToogleCallback);
     glfwSetMouseButtonCallback(this->window, mouseButtonCallback);

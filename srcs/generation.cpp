@@ -116,7 +116,7 @@ void    ChunkGeneration::generateMontagne(long posX, long posZ, unsigned char *c
         else cubes[GET_CUBE(x, y, z)] = 3;
     }
 }
-void    ChunkGeneration::generateMer(long posX, long posZ, unsigned char *cubes){}
+//void    ChunkGeneration::generateMer(long posX, long posZ, unsigned char *cubes){}
 void    ChunkGeneration::generateMarais(long posX, long posZ, unsigned char *cubes){
     int height = groundHeight(posX, posZ);
     for (int y = 0; y < height; y++) {

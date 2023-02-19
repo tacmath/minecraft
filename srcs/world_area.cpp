@@ -26,7 +26,7 @@ WorldArea::WorldArea(void) {
 void WorldArea::Draw(void) {
     glEnable(GL_CULL_FACE);
     chunkShader.Activate();
-    for (int n = 0; n < chunks.size(); n++)
+    for (size_t n = 0; n < chunks.size(); n++)
         chunks[n]->DrawVisible(chunkShader);
     glDisable(GL_CULL_FACE);
 }
@@ -41,9 +41,9 @@ void WorldArea::LoadViewMatrix(Camera& camera) {
 //destructor
 WorldArea::~WorldArea(void) {
     //std::cout << "WorldArea destructor has been called" << std::endl;
-    for (int n = 0; n < chunks.size(); n++)
+    for (size_t n = 0; n < chunks.size(); n++)
         delete chunks[n];
-    for (int n = 0; n < chunksLoading.size(); n++)
+    for (size_t n = 0; n < chunksLoading.size(); n++)
         delete chunksLoading[n];
     free(loadedChunks);
     chunkShader.Delete();
@@ -78,7 +78,7 @@ void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& positio
 }
 
 void WorldArea::sortChunksLoading(glm::vec3& position, Camera& camera) {
-    for (int n = 0; n < chunksLoading.size(); n++) {
+    for (size_t n = 0; n < chunksLoading.size(); n++) {
         Chunk* chunk;
 
         chunk = chunksLoading[n];

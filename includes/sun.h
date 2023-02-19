@@ -32,7 +32,7 @@ public:
 		shader.Load("shaders/sunVS.glsl", "shaders/sunFS.glsl");
 		shader.Activate();
 		shader.setInt("sunTexture", 2);
-		updateCallback = [](glm::vec3& sunPosition) {};
+		updateCallback = [](glm::vec3& sunPosition) {(void)sunPosition;};
 		Update();
 	};
 

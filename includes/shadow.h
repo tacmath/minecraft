@@ -205,13 +205,11 @@ private:
 
     void renderChunks() {
         std::vector<Chunk*>& chunks = worldArea->GetChunks();
-        int maxChunk;
         Chunk* chunk;
 
         glEnable(GL_POLYGON_OFFSET_FILL);
         glPolygonOffset(3.0f, 1.0f);
-        maxChunk = DATA_RENDER_DISTANCE << 1;
-        for (int n = 0; n < chunks.size(); n++) {
+        for (size_t n = 0; n < chunks.size(); n++) {
             chunk = chunks[n];
             if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 48))
                 chunk->Draw(shadowShader);
