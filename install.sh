@@ -87,3 +87,38 @@ else
 
 fi
 
+path=~/.dep
+if [ -e $path ]
+then
+    echo '' > /dev/null
+else
+    echo 'instaling lib'
+    mkdir -p ~/.dep
+    cd ~/.dep
+    apt download libglfw3
+    apt download libfreetype6
+    dpkg -x libglfw* .
+    dpkg -x libfreetype* .
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.dep/glfw3/usr/lib/x86_64-linux-gnu/' >> .bashrc
+    cd -
+fi
+
+path=./libraries/lib/glfw3lib
+if [ -e $path ]
+then
+    echo '' > /dev/null
+else
+    echo 'copy libglfw'
+    mkdir -p ./libraries/lib/glfw3lib
+    cp ~/.dep/usr/lib/*/libglfw* ./libraries/lib/glfw3lib
+fi
+
+path=./libraries/lib/freetypelib
+if [ -e $path ]
+then
+    echo '' > /dev/null
+else
+    echo 'copy libfreetype'
+    mkdir -p ./libraries/lib/freetypelib
+    cp ~/.dep/usr/lib/*/libfreetype* ./libraries/lib/freetypelib
+fi
