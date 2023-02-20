@@ -1,4 +1,4 @@
-#version 400
+#version 460
 
 #define SAMPLER_SHADOW
 
@@ -115,7 +115,7 @@ float ShadowCalculation()
 
     }
 
-    return shadow / 12.0f;
+    return shadow / 12;
 }
 #endif
 

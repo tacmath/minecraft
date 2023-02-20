@@ -1,4 +1,4 @@
-#version 400
+#version 460
 layout (location = 0) in uint vertex;
 layout (location = 1) in uint data;
 
