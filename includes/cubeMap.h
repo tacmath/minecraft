@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 #include <iostream>
+#include <array>
+#include <string>
 /*
 struct texture_data {
     void* data;
@@ -30,15 +32,15 @@ public:
     // Constructor that generate a cubemap texture ID and bind it to a texture unit 
     CubeMap(GLuint slot);
     // Constructor that generate , bind to a texture unit and load a cubemap texture 
-    CubeMap(const char **fileNames, GLuint slot);
+    CubeMap(const std::array<std::string, 6> fileNames, GLuint slot);
 
     // Default destructor
     ~CubeMap() { glDeleteTextures(1, &ID); };
 
     // Generate a cubemap texture ID and bind it to a texture unit
-    void Gen(GLuint slot);
+    CubeMap& Gen(GLuint slot);
     // Load the cubemap and bind it to a texture unit
-    void Load(const char **fileNames);
+    CubeMap& Load(const std::array<std::string, 6> fileNames);
     // Bind the cubemap
     void Bind();
     // Unbind the cubemap

@@ -5,12 +5,12 @@ CubeMap::CubeMap(GLuint slot) {
     Gen(slot);
 }
 
-CubeMap::CubeMap(const char **fileNames, GLuint slot) {
+CubeMap::CubeMap(const std::array<std::string, 6> fileNames, GLuint slot) {
     Gen(slot);
     Load(fileNames);
 }
 
-void CubeMap::Gen(GLuint slot) {
+CubeMap& CubeMap::Gen(GLuint slot) {
     unit = slot;
     glActiveTexture(GL_TEXTURE0 + unit);
     glGenTextures(1, &ID);
@@ -20,9 +20,10 @@ void CubeMap::Gen(GLuint slot) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    return (*this);
 }
 
-void CubeMap::Load(const char **fileNames) {
+CubeMap& CubeMap::Load(const std::array<std::string, 6> fileNames) {
     void* data;
     int x, y, comp;
 
@@ -30,7 +31,7 @@ void CubeMap::Load(const char **fileNames) {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
     for (int n = 0; n < 6; n++) {
-        data = stbi_load(fileNames[n], &x, &y, &comp, 0);
+        data = stbi_load(fileNames[n].c_str(), &x, &y, &comp, 0);
         if (data) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + n, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
@@ -38,6 +39,7 @@ void CubeMap::Load(const char **fileNames) {
         else
             std::cerr << "Failed to load" << fileNames[n] << std::endl;
     }
+    return (*this);
 }
 
 void CubeMap::Bind() {

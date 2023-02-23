@@ -8,7 +8,6 @@ Background::Background(void) {
 // destructor
 Background::~Background(void) {
     shader.Delete();
-    skyboxEBO.Delete();
 }
 
 // draw the skybox
@@ -17,7 +16,7 @@ void Background::Draw(void) {
     glDepthFunc(GL_LEQUAL);
     shader.Activate();
     vao.Bind();
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
     sun.Draw();
     glDepthFunc(GL_LESS);
     glDepthMask(true);
@@ -45,59 +44,27 @@ void Background::initUniforms(Camera& camera) {
 
 
 void Background::initSkybox(void) {
-    const char** texturesName;
+    std::array<std::string, 6> texturesName;
 
     float skyboxVertices[] =
     {
         //   Coordinates
-        -1.0f, -1.0f,  1.0f,//        7--------6
-        1.0f, -1.0f,  1.0f,//       /|       /|
-        1.0f, -1.0f, -1.0f,//      4--------5 |
-        -1.0f, -1.0f, -1.0f,//      | |      | |
-        -1.0f,  1.0f,  1.0f,//      | 3------|-2
-        1.0f,  1.0f,  1.0f,//      |/       |/
-        1.0f,  1.0f, -1.0f,//      0--------1
-        -1.0f,  1.0f, -1.0f
+        -1.f, 1.f, 1.f,     // Front-top-left
+        1.f, 1.f, 1.f,      // Front-top-right
+        -1.f, -1.f, 1.f,    // Front-bottom-left
+        1.f, -1.f, 1.f,     // Front-bottom-right
+        1.f, -1.f, -1.f,    // Back-bottom-right
+        1.f, 1.f, 1.f,      // Front-top-right
+        1.f, 1.f, -1.f,     // Back-top-right
+        -1.f, 1.f, 1.f,     // Front-top-left
+        -1.f, 1.f, -1.f,    // Back-top-left
+        -1.f, -1.f, 1.f,    // Front-bottom-left
+        -1.f, -1.f, -1.f,   // Back-bottom-left
+        1.f, -1.f, -1.f,    // Back-bottom-right
+        -1.f, 1.f, -1.f,    // Back-top-left
+        1.f, 1.f, -1.f      // Back-top-right
     };
 
-    float texturesUv[] =
-    {
-        //   Coordinates
-        0.0f,0.0f,
-        0.0f,1.0f,
-        0.0f,0.0f,
-        0.0f,1.0f,
-        1.0f,0.0f,
-        1.0f,1.0f,
-        1.0f,0.0f,
-        1.0f,1.0f
-    };
-
-    unsigned int skyboxIndices[] =
-    {
-        // Right
-        1, 2, 6,
-        6, 5, 1,
-        // Left
-        0, 4, 7,
-        7, 3, 0,
-        // Top
-        4, 5, 6,
-        6, 7, 4,
-        // Bottom
-        0, 3, 2,
-        2, 1, 0,
-        // Back
-        0, 1, 5,
-        5, 4, 0,
-        // Front
-        3, 7, 6,
-        6, 2, 3
-    };
-
-    std::vector <GLuint> indices(skyboxIndices, skyboxIndices + sizeof(skyboxIndices) / sizeof(GLuint));
-
-    texturesName = new const char* [6];
     texturesName[0] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_2_Left+X.png";
     texturesName[1] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_3_Right-X.png";
     texturesName[2] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_4_Up+Y.png";
@@ -106,14 +73,8 @@ void Background::initSkybox(void) {
     texturesName[5] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_1_Back-Z.png";
     
 
-    skyboxEBO.Init(indices);
-    cubemap.Gen(0);
-    cubemap.Load(texturesName);
-    delete[] texturesName;
+    cubemap.Gen(0).Load(texturesName);
 
     vao.Gen();
-    vao.LinkAttrib((void*)skyboxVertices, 8, 0, 3, GL_FLOAT, sizeof(float), (void*)0);
-    vao.LinkAttrib((void*)texturesUv, 8, 1, 2, GL_FLOAT, sizeof(float), (void*)0);
-    vao.Bind();
-    skyboxEBO.Bind();
+    vao.LinkAttrib((void*)skyboxVertices, 14, 0, 3, GL_FLOAT, sizeof(float), (void*)0);
 }
