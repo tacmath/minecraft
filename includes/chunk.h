@@ -55,8 +55,6 @@
 
 #define VEC2_LEN(x, y) (sqrt(x * x + y * y))
 
-class Chunk;
-
 class Chunk
 {
 private:
@@ -130,18 +128,20 @@ public:
 
 	// Draw the chunk 
 	void Draw(Shader& shader) {
-		vao.Bind();
-		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
-		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+		if (vao.ID != 0) {
+			vao.Bind();
+			shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
+			glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+		}
 	}
 
 	// Draw the chunk if visible
 	void DrawVisible(Shader& shader) {
-		if (!isVisible)
-			return;
-		vao.Bind();
-		shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
-		glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+		if (isVisible && vao.ID != 0) {
+			vao.Bind();
+			shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
+			glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+		}
 	}
 
 	//reload the chunk by recreating the mesh and changing the VBO

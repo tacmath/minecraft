@@ -101,6 +101,7 @@ void Chunk::Bind() {
 	glEnableVertexAttribArray(1);
 	glVertexAttribIPointer(1, 1, GL_UNSIGNED_INT, sizeof(int64_t), (void*)(sizeof(int32_t)));
 	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 	mesh.clear();
 }

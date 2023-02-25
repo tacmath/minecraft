@@ -59,10 +59,6 @@ public:
         enableGlParam();
 
         monitor = glfwGetPrimaryMonitor();
-
-        #ifdef DEBUG_MODE
-        Debug();
-        #endif // DEBUG_MODE
 	}
 
     void FullScreen(void) {
@@ -80,15 +76,6 @@ public:
         glEnable(GL_DEPTH_TEST);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
-    }
-
-    void Debug(void) {
-        std::cout << glGetString(GL_VERSION) << std::endl;
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
-            if (id != GL_INVALID_OPERATION)
-                std::cout << message << " severity " << severity << " length " << length << " type " << source << " source " << type << std::endl;
-            }, 0);
     }
 
     ~Window() {
