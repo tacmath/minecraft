@@ -11,8 +11,7 @@ public:
     GLuint ID;
 
     VBO(const void* data, size_t size);
-    void Bind();
-    void Unbind();
+    void Gen(const void* data, size_t size);
     void Delete();
 };
 

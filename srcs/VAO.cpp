@@ -1,30 +1,30 @@
 #include "VAO.h"
 
-void VAO::LinkAttrib(const void* data, GLuint vertexNumbers, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset) {
+void VAO::LinkAttrib(const void* data, GLuint vertexNumbers, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, GLuint offset) {
     GLuint VBO;
 
-    glBindVertexArray(ID);
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, numComponents * typeSize * vertexNumbers, data, GL_STATIC_DRAW);
+    glCreateBuffers(1, &VBO);
+    glNamedBufferData(VBO, numComponents * typeSize * vertexNumbers, data, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(layout);
-    glVertexAttribPointer(layout, numComponents, type, GL_FALSE, numComponents * typeSize, offset);
-    glBindVertexArray(0);
+    glEnableVertexArrayAttrib(ID, layout);
+    glVertexArrayAttribBinding(ID, layout, 0);
+    glVertexArrayAttribFormat(ID, layout, numComponents, type, GL_FALSE, offset);
+    
+    glVertexArrayVertexBuffer(ID, 0, VBO, 0, numComponents * typeSize);
 }
 
-void VAO::LinkAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, void* offset) {
+void VAO::LinkAttrib(VBO& vbo, GLuint layout, GLuint numComponents, GLuint type, GLuint typeSize, GLuint offset) {
 
-    glBindVertexArray(ID);
-    vbo.Bind();
-    glEnableVertexAttribArray(layout);
-    glVertexAttribPointer(layout, numComponents, type, GL_FALSE, numComponents * typeSize, offset);
-    glBindVertexArray(0);
+    glEnableVertexArrayAttrib(ID, layout);
+    glVertexArrayAttribBinding(ID, layout, 0);
+    glVertexArrayAttribFormat(ID, layout, numComponents, type, GL_FALSE, offset);
+
+    glVertexArrayVertexBuffer(ID, 0, vbo.ID, 0, numComponents * typeSize);
 }
 
 
 void VAO::Gen() {
-    glGenVertexArrays(1, &ID);
+    glCreateVertexArrays(1, &ID);
 }
 
 void VAO::Unbind() {

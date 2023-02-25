@@ -91,17 +91,22 @@ void Chunk::Bind() {
 		threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 		return;
 	}
+
 	vao.Gen();
-	vao.Bind();
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(int64_t) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, sizeof(int64_t), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribIPointer(1, 1, GL_UNSIGNED_INT, sizeof(int64_t), (void*)(sizeof(int32_t)));
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glCreateBuffers(1, &VBO);
+	glNamedBufferData(VBO, sizeof(int64_t) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
+
+	glEnableVertexArrayAttrib(vao.ID, 0);
+	glVertexArrayAttribBinding(vao.ID, 0, 0);
+	glVertexArrayAttribIFormat(vao.ID, 0, 1, GL_UNSIGNED_INT, 0);
+
+	glEnableVertexArrayAttrib(vao.ID, 1);
+	glVertexArrayAttribBinding(vao.ID, 1, 0);
+	glVertexArrayAttribIFormat(vao.ID, 1, 1, GL_UNSIGNED_INT, sizeof(int32_t));
+
+	glVertexArrayVertexBuffer(vao.ID, 0, VBO, 0, sizeof(int64_t));
+
 	threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 	mesh.clear();
 }
@@ -112,10 +117,8 @@ void Chunk::Update() {
 	mesh.clear();
 	createMeshData();
 	addVisibleBorderVertices();
-	if (verticesNumber) {
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(int64_t) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
-	}
+	if (verticesNumber)
+		glNamedBufferData(VBO, sizeof(int64_t) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
 }
 
 void Chunk::UpdateCube(int x, int z) { // maybe use a switch case

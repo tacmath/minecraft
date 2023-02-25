@@ -115,7 +115,7 @@ private:
         highlightShader.Load("shaders/highlightVS.glsl", "shaders/highlightFS.glsl");
 
         highlight.Gen();
-        highlight.LinkAttrib((void*)CubeVertices, 24, 0, 3, GL_FLOAT, sizeof(float), (void*)0);
+        highlight.LinkAttrib((void*)CubeVertices, 24, 0, 3, GL_FLOAT, sizeof(float), 0);
     }
 
 

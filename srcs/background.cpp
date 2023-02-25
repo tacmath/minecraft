@@ -76,5 +76,5 @@ void Background::initSkybox(void) {
     cubemap.Gen(0).Load(texturesName);
 
     vao.Gen();
-    vao.LinkAttrib((void*)skyboxVertices, 14, 0, 3, GL_FLOAT, sizeof(float), (void*)0);
+    vao.LinkAttrib((void*)skyboxVertices, 14, 0, 3, GL_FLOAT, sizeof(float), 0);
 }
