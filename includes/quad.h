@@ -40,14 +40,14 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void Init(glm::vec2 start, glm::vec2 end)
+	void Init(glm::vec2 start, glm::vec2 len)
 	{
 		float quadVertices[] = {
 			// positions        // texture Coords
-			start.x,           start.y + end.y,   0.0f, 0.0f, 1.0f,
+			start.x,           start.y + len.y,   0.0f, 0.0f, 1.0f,
 			start.x,           start.y,           0.0f, 0.0f, 0.0f,
-			start.x + end.x,   start.y + end.y,   0.0f, 1.0f, 1.0f,
-			start.x + end.x,   start.y,           0.0f, 1.0f, 0.0f
+			start.x + len.x,   start.y + len.y,   0.0f, 1.0f, 1.0f,
+			start.x + len.x,   start.y,           0.0f, 1.0f, 0.0f
 		};
 		// setup plane VAO
 		glGenVertexArrays(1, &VAO);

@@ -28,7 +28,7 @@ public:
 		sunModel = glm::mat4(1.0f);
 		moonModel = glm::mat4(1.0f);
 		texture.LoadArray({"texture/sun.png", "texture/moon.png"}, 2);
-		quad.Init(glm::vec2(-0.5f), glm::vec2(1.0f));
+		quad.Init(glm::vec2(-0.15f), glm::vec2(0.3f));
 		shader.Load("shaders/sunVS.glsl", "shaders/sunFS.glsl");
 		shader.Activate();
 		shader.setInt("sunTexture", 2);
