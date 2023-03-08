@@ -189,13 +189,11 @@ private:
         for (int n = 0; n < SHADOW_CASCADE_NB; n++)
             lightSpaceMatrices[n] = projection[n] * view[n];
 
-        shadowShader.Activate();
         shadowShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
 
         for (int n = 0; n < SHADOW_CASCADE_NB; n++)
             lightSpaceMatrices[n] = biasMatrix * lightSpaceMatrices[n];
 
-        chunkShader.Activate();
         chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
     }
 

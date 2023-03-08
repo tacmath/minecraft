@@ -26,7 +26,6 @@ public:
     }
 
     void InitUniforms(glm::mat4& projection) {
-        highlightShader.Activate();
         highlightShader.setMat4("projection", projection);
     }
 
@@ -35,7 +34,6 @@ public:
     }
 
     void SetViewMatrix(glm::mat4& view) {
-        highlightShader.Activate();
         highlightShader.setMat4("view", view);
     }
 
@@ -52,7 +50,6 @@ private:
         hasHighlight = false;
         if (selectedCube.id == AIR || selectedCube.range == 0)
             return;
-        highlightShader.Activate();
         highlightShader.setVec3("cubePos", selectedCube.position);
         hasHighlight = true;
     }

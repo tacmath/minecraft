@@ -68,7 +68,6 @@ void Debug::DrawViews() {
     glm::mat4 matrix = glm::translate(glm::mat4(1), glm::vec3(-0.9f, 0.1f, 0));
 
     glDisable(GL_DEPTH_TEST);
-    quadShader.Activate();
     quadShader.setInt("depthMap", 3);
     quadShader.setInt("index", 0);
     quadShader.setMat4("matrix", matrix);

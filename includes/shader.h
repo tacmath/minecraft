@@ -33,28 +33,28 @@ public:
     }
     
     void setMat4(const char* name, const glm::mat4& matrix) {
-        glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, &matrix[0][0]);
+        glProgramUniformMatrix4fv(ID, glGetUniformLocation(ID, name), 1, GL_FALSE, &matrix[0][0]);
     }
     void setMat4(const char* name, int numbers, const glm::mat4* matrix) {
-        glUniformMatrix4fv(glGetUniformLocation(ID, name), numbers, GL_FALSE, &matrix[0][0][0]);
+        glProgramUniformMatrix4fv(ID, glGetUniformLocation(ID, name), numbers, GL_FALSE, &matrix[0][0][0]);
     }
     void setVec3(const char* name, const glm::vec3& vector) {
-        glUniform3fv(glGetUniformLocation(ID, name), 1, &vector[0]);
+        glProgramUniform3fv(ID, glGetUniformLocation(ID, name), 1, &vector[0]);
     }
     void setVec3(const char* name, float x, float y, float z) {
-        glUniform3f(glGetUniformLocation(ID, name), x, y, z);
+        glProgramUniform3f(ID, glGetUniformLocation(ID, name), x, y, z);
     }
     inline void setVec2(const char* name, float x, float y) {
-        glUniform2f(glGetUniformLocation(ID, name), x, y);
+        glProgramUniform2f(ID, glGetUniformLocation(ID, name), x, y);
     }
     inline void setVec2(const char* name, int x, int y) {
-        glUniform2i(glGetUniformLocation(ID, name), x, y); //maybe change it to calculate glGetUniformLocation only once
+        glProgramUniform2i(ID, glGetUniformLocation(ID, name), x, y); //maybe change it to calculate glGetUniformLocation only once
     }
     void setInt(const char* name, int value) {
-        glUniform1i(glGetUniformLocation(ID, name), value);
+        glProgramUniform1i(ID, glGetUniformLocation(ID, name), value);
     }
     void setFloat(const char* name, float value) {
-        glUniform1f(glGetUniformLocation(ID, name), value);
+        glProgramUniform1f(ID, glGetUniformLocation(ID, name), value);
     }
 
 private:

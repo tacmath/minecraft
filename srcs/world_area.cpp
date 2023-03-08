@@ -34,7 +34,6 @@ void WorldArea::Draw(void) {
 
 //load the view matrix in all the shaders
 void WorldArea::LoadViewMatrix(Camera& camera) {
-    chunkShader.Activate();
     chunkShader.setMat4("view", camera.view);
 }
 

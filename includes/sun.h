@@ -30,7 +30,6 @@ public:
 		texture.LoadArray({"texture/sun.png", "texture/moon.png"}, 2);
 		quad.Init(glm::vec2(-0.15f), glm::vec2(0.3f));
 		shader.Load("shaders/sunVS.glsl", "shaders/sunFS.glsl");
-		shader.Activate();
 		shader.setInt("sunTexture", 2);
 		updateCallback = [](glm::vec3& sunPosition) {(void)sunPosition;};
 		Update();
@@ -68,12 +67,10 @@ public:
 	}
 
 	void SetView(glm::mat4 &view) {
-		shader.Activate();
 		shader.setMat4("view", view);
 	}
 
 	void SetProjection(glm::mat4& projection) {
-		shader.Activate();
 		shader.setMat4("projection", projection);
 	}
 

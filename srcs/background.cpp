@@ -26,7 +26,6 @@ void Background::Draw(void) {
 void Background::LoadViewMatrix(Camera& camera) {
     glm::mat4 view = glm::mat4(glm::mat3(camera.view));
 
-    shader.Activate();
     shader.setMat4("view", view);
     sun.SetView(view);
 }
@@ -34,7 +33,6 @@ void Background::LoadViewMatrix(Camera& camera) {
 void Background::initUniforms(Camera& camera) {
     glm::mat4 view = glm::mat4(glm::mat3(camera.view));
 
-    shader.Activate();
     shader.setInt("skybox", 0);
     shader.setMat4("projection", camera.projection);
     shader.setMat4("view", view);

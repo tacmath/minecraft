@@ -1,14 +1,12 @@
 ﻿#include "textDisplay.h"
 
 void TextDisplay::setProjection(float width, float height) {
-    textShader.Activate();
     glm::mat4 projection = glm::ortho(0.0f, width, 0.0f, height);
     textShader.setMat4("projection", projection);
 }
 
 void TextDisplay::Init(float width, float height) {
     textShader.Load("shaders/textVS.glsl", "shaders/textFS.glsl");
-    textShader.Activate();
     glm::mat4 projection = glm::ortho(0.0f, width, 0.0f, height);
     textShader.setMat4("projection", projection);
 
