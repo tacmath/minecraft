@@ -43,17 +43,17 @@
 	0000000000000	|	0000	|	0000	|	0000	|	00000000
 			 		|  normal	|	textY	|	textX	|	 textID
 */
-#define PACK_VERTEX_POS(x, y, z) (y | (x << 8) | (z << 13))
-#define PACK_VERTEX_DATA(textID, textx, texty, normal) ((int64_t)(textID | textx <<  8 | texty << 12 | normal << 16) << 32)
+#define PACK_VERTEX_POS(x, y, z) ((y) | ((x) << 8) | ((z) << 13))
+#define PACK_VERTEX_DATA(textID, textx, texty, normal) ((int64_t)((textID) | (textx) <<  8 | (texty) << 12 | (normal) << 16) << 32)
 
 // get the offset of a cube based on the position in the chunk
-#define GET_CUBE(x, y, z) ((y << 8) | (x << 4) | z)
+#define GET_CUBE(x, y, z) (((y) << 8) | ((x) << 4) | (z))
 
 // typedef unsigned char t_cubes[256][CHUNK_SIZE][CHUNK_SIZE];
 
-#define GET_CHUNK_ID(x, z) ((int64_t)x << 32 | (z & UINT32_MAX))
+#define GET_CHUNK_ID(x, z) ((int64_t)(x) << 32 | ((z) & UINT32_MAX))
 
-#define VEC2_LEN(x, y) (sqrt(x * x + y * y))
+#define VEC2_LEN(x, y) (sqrt((x) * (x) + (y) * (y)))
 
 class Chunk
 {

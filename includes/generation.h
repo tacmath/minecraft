@@ -5,7 +5,7 @@
 #include "simplex_noise.h"
 
 // get the offset of a cube based on the position in the chunk
-#define GET_CUBE(x, y, z) ((y << 8) | (x << 4) | z)
+#define GET_CUBE(x, y, z) (((y) << 8) | ((x) << 4) | (z))
 
 enum Biome {plaine, desert, montagne, mer, marais, foret, neige };
 
