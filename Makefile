@@ -36,7 +36,7 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -lglfw -ldl -lpthread -L libraries/lib/glfw3lib -lfreetype -L libraries/lib/freetypelib
+FRAMEWORK= -ldl -lpthread  `pkg-config --static --libs glfw3 freetype2`
 FRAMEWORK_INC = libraries/include
 
 NAME_SRC=	camera.cpp\
