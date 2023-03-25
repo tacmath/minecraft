@@ -76,12 +76,12 @@
     <LibraryPath>$(ProjectDir)\libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\libraries\imgui\backends;$(ProjectDir)\libraries\imgui;$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(ProjectDir)\libraries\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <IncludePath>$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(ProjectDir)\libraries\imgui\backends;$(ProjectDir)\libraries\imgui;$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -144,6 +144,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="libraries\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="libraries\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="libraries\imgui\imgui.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_tables.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="srcs\application.cpp" />
     <ClCompile Include="srcs\background.cpp" />
     <ClCompile Include="srcs\generation.cpp" />
@@ -158,7 +165,7 @@
     <ClCompile Include="srcs\main.cpp" />
     <ClCompile Include="srcs\raycast.cpp" />
     <ClCompile Include="srcs\simplex_noise.cpp" />
-    <ClCompile Include="srcs\debug.cpp" />
+    <ClCompile Include="srcs\menu.cpp" />
     <ClCompile Include="srcs\textDisplay.cpp" />
     <ClCompile Include="srcs\cubeMesh.cpp" />
     <ClCompile Include="srcs\shader.cpp" />
@@ -179,7 +186,7 @@
     <ClInclude Include="includes\blocks.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
-    <ClInclude Include="includes\debug.h" />
+    <ClInclude Include="includes\menu.h" />
     <ClInclude Include="includes\generation.h" />
     <ClInclude Include="includes\quad.h" />
     <ClInclude Include="includes\raycast.h" />

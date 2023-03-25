@@ -53,7 +53,7 @@ std::string glStringEnum(GLenum glenum)
 
 
 
-void Debug(void) {
+void Menu(void) {
     std::cout << glGetString(GL_VERSION) << std::endl;
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
@@ -74,7 +74,7 @@ int main(void) {
     Application application;
 
     //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    ON_DEBUG(Debug();)
+    ON_DEBUG(Menu();)
 
     application.Start();
     application.Run();

@@ -5,7 +5,7 @@
 #include "world_area.h"
 #include "background.h"
 #include "player.h"
-#include "debug.h"
+#include "menu.h"
 #include "UI.h"
 #include "event.h"
 #include "cooldown.h"
@@ -31,7 +31,7 @@ private:
 	WorldArea		worldArea;
 	Background		background;
 	Player          player;
-	Debug           debug;
+	Menu			menu;
 	UserInterface   UI;
 	Event           event;
 	Cooldowns		cooldowns;

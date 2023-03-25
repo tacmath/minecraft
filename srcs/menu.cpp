@@ -1,6 +1,6 @@
-#include "debug.h"
+#include "menu.h"
 
-Debug::Debug() {
+Menu::Menu() {
     diff = 0;
     fps[0] = 0;
     xyz[0] = 0;
@@ -9,14 +9,14 @@ Debug::Debug() {
     previousUpdateTime = 0.0f;
 }
 
-void Debug::Link(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
+void Menu::Link(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
     this->windowSize = windowSize;
     this->player = player;
     this->window = window;
     text.Init(windowSize->x, windowSize->y);
 }
 
-void Debug::toggle() {
+void Menu::toggle() {
     if (status & DEBUG_ON) {
         disable();
         return;
@@ -24,7 +24,7 @@ void Debug::toggle() {
     enable();
 }
 
-void Debug::toggleView() {
+void Menu::toggleView() {
     if (status & DEBUG_VIEW) {
         status ^= DEBUG_VIEW;
         quad.Delete();
@@ -37,21 +37,21 @@ void Debug::toggleView() {
     quadShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
 }
 
-void Debug::enable() {
+void Menu::enable() {
     status |= DEBUG_ON;
 }
 
-void Debug::disable() {
+void Menu::disable() {
     status ^= DEBUG_ON;
     previousUpdateTime = 0;
     frame = 0;
 }
 
-void Debug::setProjection(float width, float height) {
+void Menu::setProjection(float width, float height) {
     text.setProjection(width, height);
 }
 
-void Debug::fpsTitle(float time, float latence) {
+void Menu::fpsTitle(float time, float latence) {
     static char title[100];
 
     frame_title += 1;
@@ -64,7 +64,7 @@ void Debug::fpsTitle(float time, float latence) {
     }
 }
 
-void Debug::DrawViews() {
+void Menu::DrawViews() {
     glm::mat4 matrix = glm::translate(glm::mat4(1), glm::vec3(-0.9f, 0.1f, 0));
 
     glDisable(GL_DEPTH_TEST);
@@ -82,7 +82,7 @@ void Debug::DrawViews() {
     glEnable(GL_DEPTH_TEST);
 }
 
-void Debug::Draw(float time, float latence) {
+void Menu::Draw(float time, float latence) {
     if (!(status & DEBUG_ON)) return;
 
     if (status & DEBUG_VIEW) {

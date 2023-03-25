@@ -13,30 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers sources\lib sources">
+      <UniqueIdentifier>{8a959813-a90a-4aa0-a94a-caf4fde9c40a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\opengl utils">
+      <UniqueIdentifier>{2fc2494c-2c51-4ae0-abfc-99429b675fcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\utils">
+      <UniqueIdentifier>{5a765333-6995-44e1-9bc1-ebe2455a69e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\opengl utils">
+      <UniqueIdentifier>{f1f5bc6f-92d7-406c-897f-fc4ccbcf5b79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\utils">
+      <UniqueIdentifier>{51df9030-987e-420e-aaf3-2def72d95a39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="srcs\shader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\texture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\thread.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\VAO.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\VBO.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\cubeMap.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="srcs\init.cpp">
@@ -57,22 +54,7 @@
     <ClCompile Include="srcs\entity.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="srcs\simplex_noise.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\debug.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\textDisplay.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\parseConfig.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\perlin_noise.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\raycast.cpp">
+    <ClCompile Include="srcs\menu.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="srcs\application.cpp">
@@ -87,33 +69,66 @@
     <ClCompile Include="srcs\generation.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="libraries\imgui\imgui_tables.cpp">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="libraries\imgui\imgui_widgets.cpp">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="libraries\imgui\imgui_demo.cpp">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="libraries\imgui\imgui_draw.cpp">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="libraries\imgui\imgui.cpp">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="libraries\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="libraries\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>Fichiers sources\lib sources</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\cubeMap.cpp">
+      <Filter>Fichiers sources\opengl utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\VAO.cpp">
+      <Filter>Fichiers sources\opengl utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\VBO.cpp">
+      <Filter>Fichiers sources\opengl utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\shader.cpp">
+      <Filter>Fichiers sources\opengl utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\texture.cpp">
+      <Filter>Fichiers sources\opengl utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\simplex_noise.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\raycast.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\textDisplay.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\perlin_noise.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\parseConfig.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="includes\shader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\VAO.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\VBO.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\EBO.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\cubeMap.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="includes\camera.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="includes\chunk.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\frustum.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="includes\thread.h">
@@ -134,19 +149,7 @@
     <ClInclude Include="includes\UI.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="includes\simplex_noise.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\debug.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\textDisplay.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\raycast.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\perlinNoise.h">
+    <ClInclude Include="includes\menu.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="includes\application.h">
@@ -161,15 +164,6 @@
     <ClInclude Include="includes\sun.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="includes\quad.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\cooldown.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\aabb.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="includes\world_area.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -178,6 +172,48 @@
     </ClInclude>
     <ClInclude Include="includes\generation.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\cubeMap.h">
+      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\EBO.h">
+      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\VAO.h">
+      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\VBO.h">
+      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\shader.h">
+      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\quad.h">
+      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\cooldown.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\frustum.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\aabb.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\perlinNoise.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\raycast.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\simplex_noise.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\texture.h">
+      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\textDisplay.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

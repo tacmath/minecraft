@@ -7,7 +7,7 @@
 #include<glm/gtx/rotate_vector.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
-#include "debug.h"
+#include "menu.h"
 #include "world_area.h"
 #include "cooldown.h"
 #include "window.h"
@@ -18,7 +18,7 @@
 #define UP_PERSPECTIVE 1
 
 struct GlfwCallbackData {
-    Debug		*debug;
+    Menu		*menu;
     Player*		player;
     WorldArea*	worldArea;
 	Window*		window;
@@ -53,7 +53,7 @@ public:
 
 	~Event();
 
-	void Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns *cooldowns, Shadow *shadow);
+	void Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns *cooldowns, Shadow *shadow);
 	void GetEvents(float latency);
 
 	void SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback);

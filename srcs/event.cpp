@@ -73,9 +73,9 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
         data->worldArea->initUniforms(data->player->camera);
     }
     if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
-        data->debug->toggle();
-    if (key == GLFW_KEY_V && action == GLFW_PRESS && data->debug->status & DEBUG_ON)
-        data->debug->toggleView();
+        data->menu->toggle();
+    if (key == GLFW_KEY_V && action == GLFW_PRESS && data->menu->status & DEBUG_ON)
+        data->menu->toggleView();
 
     if (key == GLFW_KEY_C && action == GLFW_PRESS)
         data->player->hasCollision = !data->player->hasCollision;
@@ -122,7 +122,7 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldArea, Cooldowns* cooldowns, Shadow *shadow) {
+void Event::Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns* cooldowns, Shadow *shadow) {
     this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
@@ -130,7 +130,7 @@ void Event::Link(Window* window, Debug *debug, Player *player, WorldArea* worldA
     GlfwCallbackData* toggleData = (GlfwCallbackData*)calloc(1, sizeof(GlfwCallbackData));
     if (!toggleData)
         exit(1);
-    toggleData->debug = debug;
+    toggleData->menu = menu;
     toggleData->player = player;
     toggleData->worldArea = worldArea;
     toggleData->window = window;

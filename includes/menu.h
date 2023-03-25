@@ -13,7 +13,7 @@
 #define DEBUG_OFF 0
 #define DEBUG_VIEW 2
 
-class Debug {
+class Menu {
     GLFWwindow  *window;
     Camera      *camera;
     Player      *player;
@@ -38,7 +38,7 @@ public:
 
     int status;
 
-    Debug();
+    Menu();
 
     void Link(glm::vec2 *windowSize, Player *player, GLFWwindow  *window);
 

@@ -7,9 +7,9 @@ Application::Application() {
 void Application::Start() {
     // link all the modules dependencies 
     player.Init(window.size);
-    debug.Link(&window.size, &player, window.context);
+    menu.Link(&window.size, &player, window.context);
     UI.Link(&window.size);
-    event.Link(&window, &debug, &player, &worldArea, &cooldowns, &shadow);
+    event.Link(&window, &menu, &player, &worldArea, &cooldowns, &shadow);
     shadow.Link(window.context, &player.camera, &worldArea);
 
 
@@ -63,8 +63,8 @@ void Application::EveryFrames(float time, float latency) {
     worldArea.Draw();
     background.Draw();
     UI.Draw(player);
-    debug.fpsTitle(time, latency);
-    debug.Draw(time, latency);
+    menu.fpsTitle(time, latency);
+    menu.Draw(time, latency);
 
     glfwSwapBuffers(window.context);
 }
