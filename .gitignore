@@ -366,6 +366,11 @@ FodyWeavers.xsd
 
 .objs
 
-libraries
+libraries/lib
+
+libraries/include/freetype
+libraries/include/GLFW
+libraries/include/glm
+libraries/include/*.h
 
 vox
