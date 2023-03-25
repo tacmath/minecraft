@@ -7,6 +7,10 @@
 #include "quad.h"
 #include "shader.h"
 
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
+#include <imgui.h>
+
 # define MAX_FPS        6000
 
 #define DEBUG_ON 1
@@ -24,6 +28,7 @@ class Menu {
     float previousUpdateTime;
     float previousUpdateTime_title;
     float diff;
+
     char fps[100];
     char xyz[100];
     char xz[100];
@@ -39,6 +44,8 @@ public:
     int status;
 
     Menu();
+    
+    ~Menu();
 
     void Link(glm::vec2 *windowSize, Player *player, GLFWwindow  *window);
 
@@ -57,6 +64,11 @@ public:
     void DrawViews();
 
     void fpsTitle(float time, float latence);
+
+    void Delete();
+
+private:
+    void SetupImgui();
 };
 
 #endif

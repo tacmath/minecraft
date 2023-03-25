@@ -53,8 +53,12 @@ std::string glStringEnum(GLenum glenum)
 
 
 
-void Menu(void) {
+static void debug(void) {
     std::cout << glGetString(GL_VERSION) << std::endl;
+    glfwSetErrorCallback([](int error, const char* description)
+    {
+        fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+    });
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback([](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
         (void)id;
@@ -74,7 +78,7 @@ int main(void) {
     Application application;
 
     //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    ON_DEBUG(Menu();)
+    ON_DEBUG(debug();)
 
     application.Start();
     application.Run();

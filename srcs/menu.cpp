@@ -2,11 +2,32 @@
 
 Menu::Menu() {
     diff = 0;
-    fps[0] = 0;
-    xyz[0] = 0;
     frame = 0;
     status = DEBUG_OFF;
     previousUpdateTime = 0.0f;
+}
+
+Menu::~Menu() {
+    Delete();
+}
+
+void Menu::SetupImgui() {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    ImGui_ImplGlfw_InitForOpenGL(window, false);
+    ImGui_ImplOpenGL3_Init("#version 460");
+}
+
+void Menu::Delete() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void Menu::Link(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
@@ -14,6 +35,7 @@ void Menu::Link(glm::vec2 *windowSize, Player *player, GLFWwindow *window) {
     this->player = player;
     this->window = window;
     text.Init(windowSize->x, windowSize->y);
+    SetupImgui();
 }
 
 void Menu::toggle() {
@@ -52,7 +74,7 @@ void Menu::setProjection(float width, float height) {
 }
 
 void Menu::fpsTitle(float time, float latence) {
-    static char title[100];
+    char title[100];
 
     frame_title += 1;
     diff = time - previousUpdateTime_title;
@@ -83,13 +105,42 @@ void Menu::DrawViews() {
 }
 
 void Menu::Draw(float time, float latence) {
+
+    
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    static float f = 0.0f;
+    static int counter = 0;
+    bool test;
+
+    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+    ImGui::Checkbox("Demo Window", &test);      // Edit bools storing our window open/close state
+    ImGui::Checkbox("Another Window", &test);
+
+    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+    if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+        counter++;
+    ImGui::SameLine();
+    ImGui::Text("counter = %d", counter);
+
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
     if (!(status & DEBUG_ON)) return;
 
     if (status & DEBUG_VIEW) {
         DrawViews();
         return;
     }
-
+    /*
     frame += 1;
     diff = time - previousUpdateTime;
     if (diff >= 0.2f) {
@@ -123,5 +174,5 @@ void Menu::Draw(float time, float latence) {
     text.display(fps, 5.0f, y - space * 1, scale, glm::vec3(1.0, 1.0f, 1.0f));
     text.display(xyz, 5.0f, y - space * 2, scale, glm::vec3(1.0, 1.0f, 1.0f));
     text.display(xz, 5.0f, y - space * 3, scale, glm::vec3(1.0, 1.0f, 1.0f));
-    text.display(target, 5.0f, y - space * 4, scale, glm::vec3(1.0, 1.0f, 1.0f));
+    text.display(target, 5.0f, y - space * 4, scale, glm::vec3(1.0, 1.0f, 1.0f));*/
 }

@@ -19,7 +19,7 @@ public:
 
     void Load(const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0);
 
-    void Load(const std::vector<std::string> &options, const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0);
+    void Load(const std::vector<std::string> &options, const char* vertexFile, const char* fragmentFile, const char* geometryShaderFile = 0); //maybe give the possibiliti to add define with value and change the version
 
     void LoadSources(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource = 0);
 
