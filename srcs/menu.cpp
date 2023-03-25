@@ -106,7 +106,7 @@ void Menu::DrawViews() {
 
 void Menu::Draw(float time, float latence) {
 
-    
+    if (!(status & DEBUG_ON)) return;
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -133,8 +133,6 @@ void Menu::Draw(float time, float latence) {
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    if (!(status & DEBUG_ON)) return;
 
     if (status & DEBUG_VIEW) {
         DrawViews();

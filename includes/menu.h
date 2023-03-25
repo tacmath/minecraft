@@ -13,9 +13,7 @@
 
 # define MAX_FPS        6000
 
-#define DEBUG_ON 1
-#define DEBUG_OFF 0
-#define DEBUG_VIEW 2
+enum DEBUG { DEBUG_OFF, DEBUG_ON, DEBUG_VIEW};
 
 class Menu {
     GLFWwindow  *window;
@@ -28,11 +26,6 @@ class Menu {
     float previousUpdateTime;
     float previousUpdateTime_title;
     float diff;
-
-    char fps[100];
-    char xyz[100];
-    char xz[100];
-    char target[100];
 
     Shader		quadShader;
     Quad        quad;

@@ -271,5 +271,8 @@
     <None Include="shaders\debugTextureVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="imgui.ini">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

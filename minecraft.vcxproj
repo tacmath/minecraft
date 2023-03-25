@@ -209,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
+    <None Include="imgui.ini" />
     <None Include="shaders\debugTextureFS.glsl" />
     <None Include="shaders\debugTextureVS.glsl" />
     <None Include="shaders\highlightFS.glsl" />
