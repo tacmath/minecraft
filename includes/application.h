@@ -14,6 +14,8 @@
 #include "generation.h"
 #include "blocks.h"
 
+# define MAX_FPS        6000
+
 #define MIN_FRAME_DELAY 1.0f / MAX_FPS
 
 #define GAME_TPS        20.0f

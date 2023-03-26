@@ -8,6 +8,8 @@
 
 #define PLAYER_RANGE 5
 
+//maybe add a playerInfo struct and add a GetInfo() method
+
 class Player : public Entity {
 private:
 	// the updateCallback

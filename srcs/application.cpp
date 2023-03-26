@@ -7,7 +7,7 @@ Application::Application() {
 void Application::Start() {
     // link all the modules dependencies 
     player.Init(window.size);
-    menu.Link(&window.size, &player, window.context);
+    menu.Link(&player, window.context);
     UI.Link(&window.size);
     event.Link(&window, &menu, &player, &worldArea, &cooldowns, &shadow);
     shadow.Link(window.context, &player.camera, &worldArea);
@@ -64,7 +64,7 @@ void Application::EveryFrames(float time, float latency) {
     background.Draw();
     UI.Draw(player);
     menu.fpsTitle(time, latency);
-    menu.Draw(time, latency);
+    menu.Draw();
 
     glfwSwapBuffers(window.context);
 }

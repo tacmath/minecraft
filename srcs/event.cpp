@@ -72,11 +72,6 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
         data->worldArea->ReloadShader(wireFrameMode, shaderOption);
         data->worldArea->initUniforms(data->player->camera);
     }
-    if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
-        data->menu->toggle();
-    if (key == GLFW_KEY_V && action == GLFW_PRESS && data->menu->status & DEBUG_ON)
-        data->menu->toggleView();
-
     if (key == GLFW_KEY_C && action == GLFW_PRESS)
         data->player->hasCollision = !data->player->hasCollision;
 
