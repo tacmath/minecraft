@@ -8,7 +8,6 @@ void Application::Start() {
     // link all the modules dependencies 
     player.Init(window.size);
     menu.Link(&player, window.context);
-    UI.Link(&window.size);
     event.Link(&window, &menu, &player, &worldArea, &cooldowns, &shadow);
     shadow.Link(window.context, &player.camera, &worldArea);
 

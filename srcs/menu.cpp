@@ -25,6 +25,9 @@ void Menu::SetupImgui() {
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 6;
+    style.SeparatorTextAlign.x = 0.5f;
+    style.WindowTitleAlign.x = 0.5f;
+    style.WindowMenuButtonPosition = ImGuiDir_Right;
     
     ImGui_ImplGlfw_InitForOpenGL(window, false);
     ImGui_ImplOpenGL3_Init("#version 460");
@@ -136,17 +139,22 @@ void Menu::DrawInfo() {
 }
 
 void Menu::DrawMenu() {
+    ImVec2 buttonSize;
+
     ImGui::Begin("Menu");
     ImGui::SetWindowFocus();
+    buttonSize.x = ImGui::GetWindowWidth() - 2 * ImGui::GetStyle().WindowPadding.x;
+    buttonSize.y = 0;
+
     ImGui::SeparatorText("Options");
 
-    if (ImGui::Button("Info"))
+    if (ImGui::Button("Info", buttonSize))
         showInfo = !showInfo;
 
-    if (ImGui::Button("Resume"))
+    if (ImGui::Button("Resume", buttonSize))
         Close();
 
-    if (ImGui::Button("Exit"))
+    if (ImGui::Button("Exit", buttonSize))
         onExitCallback();
 
     ImGui::End();

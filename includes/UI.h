@@ -4,33 +4,29 @@
 #include "shader.h"
 #include "VAO.h"
 #include "player.h"
-#include "textDisplay.h"
+//#include "textDisplay.h"
+
+#include "quad.h"
 
 class UserInterface {
-    glm::vec2* windowSize;
     Shader highlightShader;
-    TextDisplay text;
+    Quad    quad;
+    Shader quadShader;
     VAO highlight;
+
 public:
     bool hasHighlight;
 
-
     UserInterface() {
         initHighlight();
+        quad.Init(glm::vec2(-0.001f), glm::vec2(0.002f));
+        quadShader.Load("shaders/quadVS.glsl", "shaders/quadFs.glsl");
         hasHighlight = false;
-    }
-
-    void Link(glm::vec2 *windowSize) {
-        this->windowSize = windowSize;
-        text.Init(windowSize->x, windowSize->y);
     }
 
     void InitUniforms(glm::mat4& projection) {
         highlightShader.setMat4("projection", projection);
-    }
-
-    void  setTextProjection(float width, float height) {
-        text.setProjection(width, height);
+        quadShader.setMat4("MVP", projection * glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, -0.1f)));
     }
 
     void SetViewMatrix(glm::mat4& view) {
@@ -40,7 +36,7 @@ public:
     void Draw(Player &player) {
         SetHighlight(player.selectedCube);
         DrawHighlight();
-        DrawCross(windowSize->x / 2, windowSize->y / 2);
+        DrawCross();
     }
 
 private:
@@ -63,8 +59,9 @@ private:
         glDrawArrays(GL_LINES, 0, 24);
     }
 
-    void DrawCross(float x, float z) {
-        text.display("+", x, z, 0.4f, glm::vec3(1.0, 1.0f, 1.0f));
+    void DrawCross() {
+        quadShader.Activate();
+        quad.Render();
     }
 
     void initHighlight() {

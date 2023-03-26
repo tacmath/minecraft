@@ -114,9 +114,6 @@
     <ClCompile Include="srcs\raycast.cpp">
       <Filter>Fichiers sources\utils</Filter>
     </ClCompile>
-    <ClCompile Include="srcs\textDisplay.cpp">
-      <Filter>Fichiers sources\utils</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\perlin_noise.cpp">
       <Filter>Fichiers sources\utils</Filter>
     </ClCompile>
@@ -212,9 +209,6 @@
     <ClInclude Include="includes\texture.h">
       <Filter>Fichiers d%27en-tête\opengl utils</Filter>
     </ClInclude>
-    <ClInclude Include="includes\textDisplay.h">
-      <Filter>Fichiers d%27en-tête\utils</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">
@@ -244,12 +238,6 @@
     <None Include="shaders\wireFrameFS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="shaders\textFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\textVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
     <None Include="shaders\sunFS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
@@ -272,6 +260,12 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="imgui.ini">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\quadFS.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\quadVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>
