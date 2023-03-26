@@ -79,7 +79,8 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
         *data->perspective = !(*data->perspective);
         *data->lookChanged = true;
     }
-
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
+        data->menu->Toogle();
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
         std::vector<std::string> shaderOption;
         if (shadow)
@@ -121,6 +122,7 @@ void Event::Link(Window* window, Menu *menu, Player *player, WorldArea* worldAre
     this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
+    this->menu = menu;
 
     GlfwCallbackData* toggleData = (GlfwCallbackData*)calloc(1, sizeof(GlfwCallbackData));
     if (!toggleData)
@@ -236,6 +238,10 @@ void Event::MouseEvent() {
 void Event::GetEvents(float latency) {
     playerUpdated = false;
     glfwPollEvents();
+    if (menu->IsOpen()) { //maybe just switch the callbacks instead when in menu
+        glfwGetCursorPos(window, &mousePos.x, &mousePos.y);
+        return;
+    }
     MovementEvent(latency);
     MouseEvent();
     if (playerUpdated) {

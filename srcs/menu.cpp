@@ -3,10 +3,15 @@
 Menu::Menu() {
     showInfo = true;
     menuIsOpen = false;
+    onExitCallback = [](void){};
 }
 
 Menu::~Menu() {
     Delete();
+}
+
+void Menu::SetOnExitCallback(std::function<void(void)> onExitCallback) {
+    this->onExitCallback = onExitCallback;
 }
 
 void Menu::SetupImgui() {
@@ -50,12 +55,29 @@ void Menu::toggleView() {
     quadShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
 }*/
 
+bool Menu::IsOpen() {
+    return menuIsOpen;
+}
+
 void Menu::Open() {
+    int x, y;
+
     menuIsOpen = true;
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwGetWindowSize(window, &x, &y);
+    glfwSetCursorPos(window, x / 2.0, y / 2.0);
+}
+
+void Menu::Close() {
+    menuIsOpen = false;
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Menu::Toogle() {
-    menuIsOpen = !menuIsOpen;
+    if (menuIsOpen)
+        Close();
+    else
+        Open();
 }
 
 void Menu::fpsTitle(float time, float latence) {
@@ -115,6 +137,17 @@ void Menu::DrawInfo() {
 
 void Menu::DrawMenu() {
     ImGui::Begin("Menu");
+    ImGui::SetWindowFocus();
+    ImGui::SeparatorText("Options");
+
+    if (ImGui::Button("Info"))
+        showInfo = !showInfo;
+
+    if (ImGui::Button("Resume"))
+        Close();
+
+    if (ImGui::Button("Exit"))
+        onExitCallback();
 
     ImGui::End();
 }

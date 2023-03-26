@@ -20,6 +20,7 @@ void Application::Start() {
 
     shadow.Activate();
     SetCallbacks();
+    ImGui_ImplGlfw_InstallCallbacks(window.context); //maybe add imgui callbacks directly in my callbacks
     glfwSwapInterval(0);
     status = APPLICATION_RUNNING;
 }
@@ -54,8 +55,7 @@ void Application::Stop() {
 void Application::EveryFrames(float time, float latency) {
     cooldowns.Update();
     event.GetEvents(latency);
-    if (glfwGetKey(window.context, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
-        glfwWindowShouldClose(window.context) == 1)
+    if (glfwWindowShouldClose(window.context) == 1)
         status = 0;
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -85,6 +85,8 @@ void Application::SetCallbacks() {
      });
 
     event.SetWindowSizeCallback([&](int width, int height) {
+        if (!width || !height)
+            return;
         player.camera.ChangePerspective(80, (float)width, (float)height, 0.1f, 24.0f * RENDER_DISTANCE);
         worldArea.initUniforms(player.camera);
         background.initUniforms(player.camera);
@@ -103,5 +105,9 @@ void Application::SetCallbacks() {
 
         if (position.y < 1)
             shadow.GenerateShadowMap(position);
+    });
+
+    menu.SetOnExitCallback([&](void) {
+        status = 0;
     });
 }

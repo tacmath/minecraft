@@ -35,6 +35,7 @@ class Event {
 	GLFWwindow* window;
 	Player*		player;
 	Cooldowns*	cooldowns;
+	Menu*		menu;
 	glm::dvec2	mousePos;
 	bool		inMenu;
 	float		speed;

@@ -6,6 +6,8 @@
 #include "quad.h"
 #include "shader.h"
 
+#include <functional>
+
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
 #include <imgui.h>
@@ -21,8 +23,9 @@ class Menu {
     bool        showInfo;
     bool        menuIsOpen;
 
+    std::function<void(void)> onExitCallback;
+
 public:
-    
 
     Menu();
     
@@ -32,11 +35,15 @@ public:
 
     void Open();
 
+    bool IsOpen();
+
     void Toogle();
 
     void Draw();
 
     void fpsTitle(float time, float latence);
+
+    void SetOnExitCallback(std::function<void(void)> onExitCallback);
     
 private:
     void SetupImgui();
@@ -46,6 +53,8 @@ private:
     void DrawInfo();
 
     void DrawMenu();
+
+    void Close();
 
     void Delete();
 };
