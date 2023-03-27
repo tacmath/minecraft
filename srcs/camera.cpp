@@ -59,7 +59,7 @@ void Camera::ChangePerspective(float FOV, float windowWidth, float windowHeight,
 	if (windowHeight)
 		height = windowHeight;
 	projection = glm::perspective(glm::radians(fov), (float)(width / height), near, far);
-	frustum.calculate(projection);
+	frustum.calculate(projection * view);
 }
 
 float Camera::GetFOV() {

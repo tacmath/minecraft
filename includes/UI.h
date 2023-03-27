@@ -17,14 +17,16 @@ public:
 
     UserInterface() {
         initHighlight();
-        quad.Init(glm::vec2(-0.001f), glm::vec2(0.002f));
+        quad.Init(glm::vec2(-0.01f), glm::vec2(0.02f));
         quadShader.Load("shaders/quadVS.glsl", "shaders/quadFs.glsl");
         hasHighlight = false;
     }
 
     void InitUniforms(glm::mat4& projection) {
         highlightShader.setMat4("projection", projection);
-        quadShader.setMat4("MVP", projection * glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, -0.1f)));
+        float scale = projection[1][1] / projection[0][0];
+        glm::mat4 ortho = glm::ortho(-1.0f * scale, 1.0f * scale, -1.0f, 1.0f);
+        quadShader.setMat4("MVP", ortho);
     }
 
     void SetViewMatrix(glm::mat4& view) {

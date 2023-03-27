@@ -22,11 +22,15 @@ class Menu {
 
     Shader		quadShader;
     Quad        quad;
+    
+    float       *mouseSensitivity;
+    float       FOV;
 
     bool        showInfo;
     bool        menuIsOpen;
 
     std::function<void(void)> onExitCallback;
+    std::function<void(float)> updateFOVCallback;
 
 public:
 
@@ -34,7 +38,7 @@ public:
     
     ~Menu();
 
-    void Link(Player *player, Window *window, WorldArea* worldArea, Shadow* shadow);
+    void Link(Player *player, Window *window, WorldArea* worldArea, Shadow* shadow, float* mouseSensitivity);
 
     void Open();
 
@@ -47,6 +51,8 @@ public:
     void fpsTitle(float time, float latence);
 
     void SetOnExitCallback(std::function<void(void)> onExitCallback);
+
+    void SetUpdateFOVCallback(std::function<void(float)> updateFOVCallback);
     
 private:
     void SetupImgui();

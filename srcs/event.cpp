@@ -77,7 +77,7 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns* cooldowns) {
+void Event::Link(Window* window, Menu *menu, Player *player, Cooldowns* cooldowns) {
     this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
@@ -88,10 +88,7 @@ void Event::Link(Window* window, Menu *menu, Player *player, WorldArea* worldAre
         exit(1);
     toggleData->menu = menu;
     toggleData->player = player;
-    toggleData->worldArea = worldArea;
-    toggleData->window = window;
     toggleData->cooldowns = cooldowns;
-    toggleData->lookChanged = &this->playerUpdated;
     toggleData->windowSizeCallback = [](int width, int height) {(void)width;(void)height;};
     glfwSetWindowUserPointer(this->window, toggleData);
     glfwSetKeyCallback(this->window, keyToogleCallback);

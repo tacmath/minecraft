@@ -7,8 +7,8 @@ Application::Application() {
 void Application::Start() {
     // link all the modules dependencies 
     player.Init(window.size);
-    menu.Link(&player, &window, &worldArea, &shadow);
-    event.Link(&window, &menu, &player, &worldArea, &cooldowns);
+    menu.Link(&player, &window, &worldArea, &shadow, &event.mouseSensitivity);
+    event.Link(&window, &menu, &player, &cooldowns);
     shadow.Link(window.context, &player.camera, &worldArea);
 
 
@@ -89,6 +89,15 @@ void Application::SetCallbacks() {
         background.initUniforms(player.camera);
         UI.InitUniforms(player.camera.projection);
      });
+
+    menu.SetUpdateFOVCallback([&](float fov) {
+            player.camera.ChangePerspective(fov, 0, 0, 0.1f, 24.0f * RENDER_DISTANCE);
+            worldArea.setChunksVisibility(player.camera);
+            worldArea.initUniforms(player.camera);
+            background.initUniforms(player.camera);
+            UI.InitUniforms(player.camera.projection);
+            background.sun.UpdateCallback();
+    });
 
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
         Shader& chunkShader = worldArea.GetShader();

@@ -17,13 +17,9 @@
 struct GlfwCallbackData {
     Menu		*menu;
     Player*		player;
-    WorldArea*	worldArea;
-	Window*		window;
 	Cooldowns	*cooldowns;
 
 	std::function<void(int width, int height)> windowSizeCallback;
-
-    bool* lookChanged;
 };
 
 class Event {
@@ -34,7 +30,6 @@ class Event {
 	glm::dvec2	mousePos;
 	bool		inMenu;
 	float		speed;
-	float		mouseSensitivity;
 
 	// Eular Angles
 	float Yaw;
@@ -43,12 +38,13 @@ class Event {
 	bool playerUpdated;
 
 public:
+	float		mouseSensitivity;
 
 	Event();
 
 	~Event();
 
-	void Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns *cooldowns);
+	void Link(Window* window, Menu *menu, Player *player, Cooldowns *cooldowns);
 	void GetEvents(float latency);
 
 	void SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback);

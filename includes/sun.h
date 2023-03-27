@@ -87,6 +87,10 @@ public:
 	void SetUpdateCallback(functionUpdate updateCallback) {
 		this->updateCallback = updateCallback;
 	}
+
+	void UpdateCallback() {
+		updateCallback(position);
+	}
 };
 
 #endif

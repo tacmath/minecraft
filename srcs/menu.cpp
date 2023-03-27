@@ -3,7 +3,10 @@
 Menu::Menu() {
     showInfo = true;
     menuIsOpen = false;
+    mouseSensitivity = 0;
+    FOV = 80;
     onExitCallback = [](void){};
+    updateFOVCallback = [](float){};
 }
 
 Menu::~Menu() {
@@ -12,6 +15,10 @@ Menu::~Menu() {
 
 void Menu::SetOnExitCallback(std::function<void(void)> onExitCallback) {
     this->onExitCallback = onExitCallback;
+}
+
+void Menu::SetUpdateFOVCallback(std::function<void(float)> updateFOVCallback) {
+    this->updateFOVCallback = updateFOVCallback;
 }
 
 void Menu::SetupImgui() {
@@ -39,11 +46,13 @@ void Menu::Delete() {
     ImGui::DestroyContext();
 }
 
-void Menu::Link(Player *player, Window *window, WorldArea* worldArea, Shadow* shadow) {
+void Menu::Link(Player *player, Window *window, WorldArea* worldArea, Shadow* shadow, float *mouseSensitivity) {
     this->player = player;
     this->window = window;
     this->worldArea = worldArea;
     this->shadow = shadow;
+    this->mouseSensitivity = mouseSensitivity;
+    FOV = player->camera.GetFOV();
     SetupImgui();
 }
 /*
@@ -143,7 +152,7 @@ void Menu::DrawInfo() {
 
 void Menu::DrawMenu() {
     ImVec2 buttonSize;
-    float  FOV, volume, mouseSensitivity;
+    float  volume;
     static bool shadowActive = true;
     static bool fullScreen = false;
     static bool wireFrameMode = false;
@@ -157,16 +166,15 @@ void Menu::DrawMenu() {
   //  ImGui::SeparatorText("Options");
    // if (ImGui::CollapsingHeader("Options")) {
         ImGui::PushItemWidth(buttonSize.x);
-        FOV = 80.0f;
-        if (ImGui::SliderFloat("  ", &FOV, 20.0f, 160.0f, "FOV %.2f")) {
-        }
+        if (ImGui::SliderFloat(" ", &FOV, 20.0f, 160.0f, "FOV %.2f"))
+            updateFOVCallback(FOV);
 
         volume = 0.0f;
-        ImGui::SliderFloat(" ", &volume, 0.0f, 100.0f, "Volume %.2f");
+        ImGui::SliderFloat("  ", &volume, 0.0f, 100.0f, "Volume %.2f");
 
-        ImGui::SliderFloat("    ", &mouseSensitivity, 0.0f, 100.0f, "Sensitivity %.2f");
+        ImGui::SliderFloat("   ", mouseSensitivity, 0.0f, 1.0f, "Mouse sensitivity %.2f");
 
-        ImGui::SliderInt("   ", &renderDistance, 8, 64, "Render distance %d");
+        ImGui::SliderInt("    ", &renderDistance, 8, 64, "Render distance %d");
 
         ImGui::PopItemWidth();
 
@@ -183,7 +191,10 @@ void Menu::DrawMenu() {
         }
         
         ImGui::SameLine(); if (ImGui::Checkbox("Wireframe", &wireFrameMode)) {
-            worldArea->ReloadShader(wireFrameMode, {});
+            std::vector<std::string> shaderOption;
+            if (shadowActive)
+                shaderOption.push_back("SHADOW");
+            worldArea->ReloadShader(wireFrameMode, shaderOption);
             worldArea->initUniforms(player->camera);
         }
         

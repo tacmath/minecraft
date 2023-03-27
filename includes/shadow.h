@@ -139,9 +139,9 @@ private:
         glm::mat4 perspectives[SHADOW_CASCADE_NB];
         glm::vec4 frustumCorners[8];
 
-        perspectives[0] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 0.1f, 16.0f);
-        perspectives[1] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 16.0f, 48.0f);
-        perspectives[2] = glm::perspective(playerCam->GetFOV(), playerCam->GetScreenRatio(), 48.0f, 160.0f);
+        perspectives[0] = glm::perspective(glm::radians(playerCam->GetFOV()), playerCam->GetScreenRatio(), -1.0f, 16.0f);
+        perspectives[1] = glm::perspective(glm::radians(playerCam->GetFOV()), playerCam->GetScreenRatio(), 16.0f, 48.0f);
+        perspectives[2] = glm::perspective(glm::radians(playerCam->GetFOV()), playerCam->GetScreenRatio(), 48.0f, 160.0f);
 
 
         for (int cascade = 0; cascade < SHADOW_CASCADE_NB; cascade++) {
