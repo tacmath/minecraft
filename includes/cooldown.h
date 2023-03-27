@@ -20,22 +20,22 @@ public:
 	}
 };
 
-enum COOLDOWN { ACTION, ENUM_END };
+enum cooldown_type { ACTION, ENUM_END };
 
 class Cooldowns {
 private:
-	std::array<Cooldown, ENUM_END> cooldown;
+	std::array<Cooldown, cooldown_type::ENUM_END> cooldown;
 
 public:
 	Cooldowns() {
 		cooldown[ACTION].Init(true, 0, 0.15f);
 	}
 
-	bool Ready(unsigned int id) {
+	bool Ready(cooldown_type id) {
 		return cooldown[id].ready;
 	}
 
-	bool Use(unsigned int id) {
+	bool Use(cooldown_type id) {
 		if (!cooldown[id].ready)
 			return false;
 		cooldown[id].ready = false;
@@ -43,7 +43,7 @@ public:
 		return true;
 	}
 
-	void Reset(unsigned int id) {
+	void Reset(cooldown_type id) {
 		cooldown[id].ready = true;
 		cooldown[id].lastUpdate = 0;
 	}
