@@ -4,8 +4,6 @@
 #include "shader.h"
 #include "VAO.h"
 #include "player.h"
-//#include "textDisplay.h"
-
 #include "quad.h"
 
 class UserInterface {

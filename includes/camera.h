@@ -10,9 +10,6 @@
 #include<glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define NORMAL_PERSPECTIVE 0
-#define UP_PERSPECTIVE 1
-
 class Camera
 {
 private:
@@ -56,7 +53,7 @@ public:
 	//set the divection of the camera
 	void SetDirection(glm::vec3 direction);
 
-	// change the prespective matrix
+	// change the prespective matrix, paremeters set to 0 will not be used
 	void ChangePerspective(float FOV, float windowWidth, float windowHeight, float near, float far);
 
 	// update the camera matrice using its data

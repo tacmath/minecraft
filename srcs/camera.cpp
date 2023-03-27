@@ -3,8 +3,8 @@
 
 // Default constructor
 Camera::Camera() {
-	width = 0;
-	height = 0;
+	width = 1;
+	height = 1;
 	fov = 80;
 	position = glm::vec3(0.0f);
 	direction = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -15,11 +15,9 @@ Camera::Camera() {
 
 // init the camera
 void Camera::Init(float windowWidth, float windowHeight, glm::vec3 pos) {
-	width = windowWidth;
-	height = windowHeight;
 	position = pos;
 	view = glm::lookAt(position, position + direction, up);
-	projection = glm::perspective(glm::radians(fov), (float)(windowWidth / windowHeight), 0.1f, 24.0f * RENDER_DISTANCE);
+	ChangePerspective(fov, windowWidth, windowHeight, 0.1f, 24.0f * RENDER_DISTANCE);
 	frustum.calculate(projection * view);
 }
 
@@ -54,10 +52,13 @@ void Camera::SetDirection(glm::vec3 direction) {
 
 // change the prespective matrix
 void Camera::ChangePerspective(float FOV, float windowWidth, float windowHeight, float near, float far) {
-	fov = FOV;
-	width = windowWidth;
-	height = windowHeight;
-	projection = glm::perspective(glm::radians(FOV), (float)(windowWidth / windowHeight), near, far);
+	if (FOV)
+		fov = FOV;
+	if (windowWidth)
+		width = windowWidth;
+	if (windowHeight)
+		height = windowHeight;
+	projection = glm::perspective(glm::radians(fov), (float)(width / height), near, far);
 	frustum.calculate(projection);
 }
 

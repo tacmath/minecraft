@@ -14,20 +14,15 @@
 #include "shadow.h"
 #include <functional>
 
-#define NORMAL_PERSPECTIVE 0
-#define UP_PERSPECTIVE 1
-
 struct GlfwCallbackData {
     Menu		*menu;
     Player*		player;
     WorldArea*	worldArea;
 	Window*		window;
 	Cooldowns	*cooldowns;
-	Shadow		*shadow;
 
 	std::function<void(int width, int height)> windowSizeCallback;
 
-    bool* perspective;
     bool* lookChanged;
 };
 
@@ -40,7 +35,6 @@ class Event {
 	bool		inMenu;
 	float		speed;
 	float		mouseSensitivity;
-	bool		perspective;
 
 	// Eular Angles
 	float Yaw;
@@ -54,7 +48,7 @@ public:
 
 	~Event();
 
-	void Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns *cooldowns, Shadow *shadow);
+	void Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns *cooldowns);
 	void GetEvents(float latency);
 
 	void SetWindowSizeCallback(std::function<void(int width, int height)> windowSizeCallback);

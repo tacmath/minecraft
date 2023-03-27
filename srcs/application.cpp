@@ -7,8 +7,8 @@ Application::Application() {
 void Application::Start() {
     // link all the modules dependencies 
     player.Init(window.size);
-    menu.Link(&player, window.context);
-    event.Link(&window, &menu, &player, &worldArea, &cooldowns, &shadow);
+    menu.Link(&player, &window, &worldArea, &shadow);
+    event.Link(&window, &menu, &player, &worldArea, &cooldowns);
     shadow.Link(window.context, &player.camera, &worldArea);
 
 
@@ -84,9 +84,7 @@ void Application::SetCallbacks() {
      });
 
     event.SetWindowSizeCallback([&](int width, int height) {
-        if (!width || !height)
-            return;
-        player.camera.ChangePerspective(80, (float)width, (float)height, 0.1f, 24.0f * RENDER_DISTANCE);
+        player.camera.ChangePerspective(0, (float)width, (float)height, 0.1f, 24.0f * RENDER_DISTANCE);
         worldArea.initUniforms(player.camera);
         background.initUniforms(player.camera);
         UI.InitUniforms(player.camera.projection);

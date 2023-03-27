@@ -2,9 +2,11 @@
 #define DEBUG_CLASS_H
 
 #include "player.h"
-#include "camera.h"
 #include "quad.h"
 #include "shader.h"
+#include "window.h"
+#include "shadow.h"
+#include "world_area.h"
 
 #include <functional>
 
@@ -13,9 +15,10 @@
 #include <imgui.h>
 
 class Menu {
-    GLFWwindow  *window;
-    Camera      *camera;
+    Window      *window;
     Player      *player;
+    WorldArea   *worldArea;
+    Shadow      *shadow;
 
     Shader		quadShader;
     Quad        quad;
@@ -31,7 +34,7 @@ public:
     
     ~Menu();
 
-    void Link(Player *player, GLFWwindow  *window);
+    void Link(Player *player, Window *window, WorldArea* worldArea, Shadow* shadow);
 
     void Open();
 

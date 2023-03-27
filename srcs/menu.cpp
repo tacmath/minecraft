@@ -29,7 +29,7 @@ void Menu::SetupImgui() {
     style.WindowTitleAlign.x = 0.5f;
     style.WindowMenuButtonPosition = ImGuiDir_Right;
     
-    ImGui_ImplGlfw_InitForOpenGL(window, false);
+    ImGui_ImplGlfw_InitForOpenGL(window->context, false);
     ImGui_ImplOpenGL3_Init("#version 460");
 }
 
@@ -39,9 +39,11 @@ void Menu::Delete() {
     ImGui::DestroyContext();
 }
 
-void Menu::Link(Player *player, GLFWwindow *window) {
+void Menu::Link(Player *player, Window *window, WorldArea* worldArea, Shadow* shadow) {
     this->player = player;
     this->window = window;
+    this->worldArea = worldArea;
+    this->shadow = shadow;
     SetupImgui();
 }
 /*
@@ -66,14 +68,14 @@ void Menu::Open() {
     int x, y;
 
     menuIsOpen = true;
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    glfwGetWindowSize(window, &x, &y);
-    glfwSetCursorPos(window, x / 2.0, y / 2.0);
+    glfwSetInputMode(window->context, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwGetWindowSize(window->context, &x, &y);
+    glfwSetCursorPos(window->context, x / 2.0, y / 2.0);
 }
 
 void Menu::Close() {
     menuIsOpen = false;
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window->context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Menu::Toogle() {
@@ -93,7 +95,7 @@ void Menu::fpsTitle(float time, float latence) {
     diff = time - previousUpdateTime_title;
     if (diff >= 0.2f) {
         sprintf(title, "Minecraft :  FPS: %d (%.3f ms)", frame_title * 5, latence * 1000);
-        glfwSetWindowTitle(window, title);
+        glfwSetWindowTitle(window->context, title);
         previousUpdateTime_title = time - (diff - 0.2f);
         frame_title = 0;
     }
@@ -133,6 +135,7 @@ void Menu::DrawInfo() {
     ImGui::Text("Coordinate  x %3d, z %3d", (int)(player->position.x) >> 4, (int)(player->position.z) >> 4);
     
     ImGui::NewLine();
+    ImGui::SeparatorText("Render");
     ImGui::Text("Minecraft average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     
     ImGui::End();
@@ -140,13 +143,61 @@ void Menu::DrawInfo() {
 
 void Menu::DrawMenu() {
     ImVec2 buttonSize;
+    float  FOV, volume, mouseSensitivity;
+    static bool shadowActive = true;
+    static bool fullScreen = false;
+    static bool wireFrameMode = false;
+    int renderDistance = 12;
 
     ImGui::Begin("Menu");
     ImGui::SetWindowFocus();
     buttonSize.x = ImGui::GetWindowWidth() - 2 * ImGui::GetStyle().WindowPadding.x;
     buttonSize.y = 0;
 
-    ImGui::SeparatorText("Options");
+  //  ImGui::SeparatorText("Options");
+   // if (ImGui::CollapsingHeader("Options")) {
+        ImGui::PushItemWidth(buttonSize.x);
+        FOV = 80.0f;
+        if (ImGui::SliderFloat("  ", &FOV, 20.0f, 160.0f, "FOV %.2f")) {
+        }
+
+        volume = 0.0f;
+        ImGui::SliderFloat(" ", &volume, 0.0f, 100.0f, "Volume %.2f");
+
+        ImGui::SliderFloat("    ", &mouseSensitivity, 0.0f, 100.0f, "Sensitivity %.2f");
+
+        ImGui::SliderInt("   ", &renderDistance, 8, 64, "Render distance %d");
+
+        ImGui::PopItemWidth();
+
+        if (ImGui::Checkbox("Shadow", &shadowActive)) {
+            std::vector<std::string> shaderOption;
+            if (shadowActive) {
+                shaderOption.push_back("SHADOW");
+                shadow->Activate();
+            }
+            else
+                shadow->Delete();
+            worldArea->ReloadShader(wireFrameMode, shaderOption);
+            worldArea->initUniforms(player->camera);
+        }
+        
+        ImGui::SameLine(); if (ImGui::Checkbox("Wireframe", &wireFrameMode)) {
+            worldArea->ReloadShader(wireFrameMode, {});
+            worldArea->initUniforms(player->camera);
+        }
+        
+        ImGui::SameLine(); if (ImGui::Checkbox("Fullscreen", &fullScreen)) {
+            if (fullScreen)
+                window->FullScreen();
+            else
+                window->Windowed();
+        }
+
+        ImGui::SameLine(); ImGui::Checkbox("Collisions", &player->hasCollision);
+
+        ImGui::NewLine();
+  //  }
 
     if (ImGui::Button("Info", buttonSize))
         showInfo = !showInfo;

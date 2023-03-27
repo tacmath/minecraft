@@ -45,51 +45,11 @@ void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
 void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static GlfwCallbackData* data = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
-    static bool wireFrameMode = false;
-    static bool fullScreen = false;
-    static bool shadow = true;
 
     (void)scancode;
     (void)mods;
-    if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
-        if (fullScreen)
-            data->window->Windowed();
-        else
-            data->window->FullScreen();
-        fullScreen = !fullScreen;
-    }
-    if (key == GLFW_KEY_F2 && action == GLFW_PRESS) {
-        std::vector<std::string> shaderOption;
-        shadow = !shadow;
-
-        if (shadow) {
-            shaderOption.push_back("SHADOW");
-            data->shadow->Activate();
-        }
-        else {
-            data->shadow->Delete();
-        }
-        data->worldArea->ReloadShader(wireFrameMode, shaderOption);
-        data->worldArea->initUniforms(data->player->camera);
-    }
-    if (key == GLFW_KEY_C && action == GLFW_PRESS)
-        data->player->hasCollision = !data->player->hasCollision;
-
-    if (key == GLFW_KEY_P && action == GLFW_PRESS) {
-        *data->perspective = !(*data->perspective);
-        *data->lookChanged = true;
-    }
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
         data->menu->Toogle();
-    if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
-        std::vector<std::string> shaderOption;
-        if (shadow)
-            shaderOption.push_back("SHADOW");
-
-        wireFrameMode = !wireFrameMode;
-        data->worldArea->ReloadShader(wireFrameMode, shaderOption);
-        data->worldArea->initUniforms(data->player->camera);
-    }
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         data->player->selectedItem = 1;
     if (key == GLFW_KEY_2 && action == GLFW_PRESS)
@@ -107,7 +67,6 @@ Event::Event() {
     mousePos = glm::dvec2(0);
     playerUpdated = false;
     inMenu = true;
-    perspective = NORMAL_PERSPECTIVE;
     speed = 10.0f;
     mouseSensitivity = 0.5f;
     Yaw = -90.0f;
@@ -118,7 +77,7 @@ Event::~Event() {
     free(glfwGetWindowUserPointer(window));
 }
 
-void Event::Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns* cooldowns, Shadow *shadow) {
+void Event::Link(Window* window, Menu *menu, Player *player, WorldArea* worldArea, Cooldowns* cooldowns) {
     this->window = window->context;
     this->player = player;
     this->cooldowns = cooldowns;
@@ -131,10 +90,8 @@ void Event::Link(Window* window, Menu *menu, Player *player, WorldArea* worldAre
     toggleData->player = player;
     toggleData->worldArea = worldArea;
     toggleData->window = window;
-    toggleData->shadow = shadow;
     toggleData->cooldowns = cooldowns;
     toggleData->lookChanged = &this->playerUpdated;
-    toggleData->perspective = &this->perspective;
     toggleData->windowSizeCallback = [](int width, int height) {(void)width;(void)height;};
     glfwSetWindowUserPointer(this->window, toggleData);
     glfwSetKeyCallback(this->window, keyToogleCallback);
@@ -238,20 +195,16 @@ void Event::MouseEvent() {
 void Event::GetEvents(float latency) {
     playerUpdated = false;
     glfwPollEvents();
+    MovementEvent(latency);
     if (menu->IsOpen()) { //maybe just switch the callbacks instead when in menu
         glfwGetCursorPos(window, &mousePos.x, &mousePos.y);
+        if (playerUpdated)
+            player->Update();
         return;
     }
-    MovementEvent(latency);
     MouseEvent();
-    if (playerUpdated) {
+    if (playerUpdated)
         player->Update();
-        if (perspective) {
-            player->camera.view = glm::lookAt(glm::vec3(player->position.x, 300, player->position.z),
-                glm::vec3(player->position.x + 1, 60, player->position.z), glm::vec3(0, 1, 0));
-            player->UpdateCallback();
-        }
-    }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
         removePointedCube(*player, *cooldowns);
