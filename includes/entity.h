@@ -8,6 +8,7 @@
 #include "aabb.h"
 
 unsigned char GetCubeAt(int x, int y, int z);
+int GetColliders(AABB area, std::vector<AABB>& colliders);
 
 class Entity {		//maybe add the chunk the entity is in and update the chunk when x >> 4 != chunk.posx && z >> 4 != chunk.posz
 public:

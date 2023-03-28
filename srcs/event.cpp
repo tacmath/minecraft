@@ -124,10 +124,19 @@ glm::vec3  Event::spectatorMovement() {
     return newPos;
 }
 
+#define JUMP_TIME       0.10f
+#define JUMP_HEIGHT     1.3f
+#define JUMP_GRAVITY    -2 * JUMP_HEIGHT / (JUMP_TIME * JUMP_TIME)
+#define JUMP_V0         2 * JUMP_HEIGHT / JUMP_TIME
+
 void Event::MovementEvent(float latency) {
     glm::vec3 newPos = glm::vec3(0);
     glm::vec3 oldPos = player->position;
     glm::vec3 look = glm::normalize(glm::vec3(player->look.x, 0, player->look.z));
+
+    static float startTime = 0;
+    static int jumping = 0;
+    static std::vector<AABB> colliders;
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 160.0f;
@@ -145,13 +154,25 @@ void Event::MovementEvent(float latency) {
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             newPos += glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
         newPos.y = 0;
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            newPos.y = 1.0f;
-        if (!newPos.y)
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+            if (oldPos.y > 1 && (oldPos.y - (int)oldPos.y) < 0.005f && (float)glfwGetTime() - startTime > JUMP_TIME
+                && GetColliders(player->aabb().translate(glm::vec3(0, -0.1f, 0)), colliders)) {
+                colliders.clear();
+                jumping = 1;
+                startTime = (float)glfwGetTime();
+            }
+        }
+        if (jumping) {
+            float time = (float)glfwGetTime() - startTime;
+            newPos.y += 0.5f * JUMP_GRAVITY * time * time + JUMP_V0 * time;
+            if (time > 0.25f)
+               jumping = 0;
+        }
+        else if (!newPos.y)
             newPos.y -= 1.0f;
     }
     newPos *= speed * latency;
-    player->Move(newPos);
+    player->Move(newPos); // implémenter la graviter et le jump dans move 
     if (player->position != oldPos)
         playerUpdated = true;
 }

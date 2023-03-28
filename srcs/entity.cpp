@@ -33,7 +33,7 @@ AABB Entity::aabb() {
 }
 
 
-int GetColliders(AABB area, std::vector<AABB> &colliders) {
+int GetColliders(AABB area, std::vector<AABB> &colliders) { // changer pour qu'il soit plus opti et perenne un  std array
     int x, y, z, n;
     Chunk *chunk;
     glm::ivec3 start, size;
