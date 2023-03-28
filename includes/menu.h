@@ -30,7 +30,7 @@ class Menu {
     bool        menuIsOpen;
 
     std::function<void(void)> onExitCallback;
-    std::function<void(float)> updateFOVCallback;
+    std::function<void(void)> updatePerspectiveCallback;
 
 public:
 
@@ -52,7 +52,7 @@ public:
 
     void SetOnExitCallback(std::function<void(void)> onExitCallback);
 
-    void SetUpdateFOVCallback(std::function<void(float)> updateFOVCallback);
+    void SetUpdatPerspectiveCallback(std::function<void(void)> updatePerspectiveCallback);
     
 private:
     void SetupImgui();

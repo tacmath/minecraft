@@ -1,6 +1,4 @@
 #include "world_area.h"
-#include "perlinNoise.h"
-#include <algorithm>
 
 void parseBlockData(std::vector<std::string>& textures);
 
@@ -18,7 +16,8 @@ WorldArea::WorldArea(void) {
     
     initChunks(STARTING_RENDER_DISTANCE);
 
-    loadedChunks = (Chunk**)calloc((DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1), sizeof(Chunk*));
+    dataLoadDistance = DATA_LOAD_DISTANCE(RENDER_DISTANCE);
+    loadedChunks = (Chunk**)calloc((dataLoadDistance << 1) * (dataLoadDistance << 1), sizeof(Chunk*));
     if (!loadedChunks)
         exit(1);
 }
@@ -49,31 +48,28 @@ WorldArea::~WorldArea(void) {
 }
 
 void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& position) {
-    int x, z, playerPosx, playerPosz, maxChunk;
-    int n, chunkNumber;
-    Chunk* chunk;
+    int playerPosx, playerPosz, maxChunk;
 
-    maxChunk = DATA_RENDER_DISTANCE << 1;
-    playerPosx = ((int)position.x >> 4) - DATA_RENDER_DISTANCE;
-    playerPosz = ((int)position.z >> 4) - DATA_RENDER_DISTANCE;
-    chunkNumber = (int)chunks.size();
-    n = -1;
-    while (++n < chunkNumber) {
-        chunk = chunks[n];
+    maxChunk = dataLoadDistance << 1;
+    playerPosx = ((int)position.x >> 4) - dataLoadDistance;
+    playerPosz = ((int)position.z >> 4) - dataLoadDistance;
+    auto it = std::remove_if(chunks.begin(), chunks.end(), [&](Chunk* chunk) {
+        int x, z;
+
         x = chunk->posx - playerPosx;
         z = chunk->posz - playerPosz;
-
         // check if a chunk is too far away and delete it if nessesary
-        if ((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunk->threadStatus == CHUNK_NOT_PROCESSING) {
-            delete chunk; // delete (chunk destructor) = 60 % of the function perf
-            chunks.erase(chunks.begin() + n);
-            n--;
-            chunkNumber--;
+        if((x < -UNLOAD_OFFSET || z < -UNLOAD_OFFSET || x > maxChunk + UNLOAD_OFFSET || z > maxChunk + UNLOAD_OFFSET) && chunk->threadStatus == CHUNK_NOT_PROCESSING) {
+            delete chunk;
+            return true;
         }
         // fill the 2d array if a chunk is in the RENDER_DISTANCE
-        else if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
+        if (x >= 0 && z >= 0 && x < maxChunk && z < maxChunk)
             loadedChunks[x * maxChunk + z] = chunk;
-    }
+        return false;
+    });
+    if (it != chunks.end())
+        chunks.erase(it, chunks.end());
 }
 
 void WorldArea::sortChunksLoading(glm::vec3& position, Camera& camera) {
@@ -96,14 +92,14 @@ void WorldArea::sortChunksLoading(glm::vec3& position, Camera& camera) {
 void WorldArea::loadNewChunks(glm::vec3 &position) {
     int playerPosx, playerPosz, maxChunk;
 
-    maxChunk = DATA_RENDER_DISTANCE << 1;
-    playerPosx = ((int)position.x >> 4) - DATA_RENDER_DISTANCE;
-    playerPosz = ((int)position.z >> 4) - DATA_RENDER_DISTANCE;
+    maxChunk = dataLoadDistance << 1;
+    playerPosx = ((int)position.x >> 4) - dataLoadDistance;
+    playerPosz = ((int)position.z >> 4) - dataLoadDistance;
     //add all the chunk that are in loadedChunks but didn't exist
     for (int x = 0; x < maxChunk; x++)
         for (int z = 0; z < maxChunk; z++) {
             // load new chunks if it is in the render distance but didn't exist
-            if (!loadedChunks[x * maxChunk + z] /*&& VEC2_LEN((x - DATA_RENDER_DISTANCE), (z - DATA_RENDER_DISTANCE)) <= DATA_RENDER_DISTANCE*/) {
+            if (!loadedChunks[x * maxChunk + z] /*&& VEC2_LEN((x - dataLoadDistance), (z - dataLoadDistance)) <= dataLoadDistance*/) {
                 Chunk* newChunk = new Chunk;
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
                 Chunk::chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
@@ -115,7 +111,7 @@ void WorldArea::loadNewChunks(glm::vec3 &position) {
 
 void WorldArea::LoadChunks(glm::vec3 &position, Camera& camera) {
 
-    memset(loadedChunks, 0, (DATA_RENDER_DISTANCE << 1) * (DATA_RENDER_DISTANCE << 1) * sizeof(Chunk*));
+    memset(loadedChunks, 0, (dataLoadDistance << 1) * (dataLoadDistance << 1) * sizeof(Chunk*));
 
     fillLoadedChunks(chunks, position);
     fillLoadedChunks(chunksLoading, position);
@@ -136,6 +132,14 @@ void WorldArea::setChunksVisibility(Camera &camera) {
         if (chunk->status == CHUNK_LOADED)
             chunk->isVisible = camera.frustum.chunkIsVisible(chunk->posx, chunk->posz);
     }
+}
+
+void WorldArea::UpdateRenderDistance(unsigned newRenderDistance) {
+    dataLoadDistance = DATA_LOAD_DISTANCE(newRenderDistance);
+    free(loadedChunks);
+    loadedChunks = (Chunk**)calloc((dataLoadDistance << 1) * (dataLoadDistance << 1), sizeof(Chunk*));
+    if (!loadedChunks)
+        exit(1);
 }
 
 void WorldArea::ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption) {

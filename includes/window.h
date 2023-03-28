@@ -64,12 +64,12 @@ public:
 
     void FullScreen(void) {
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
         glfwSetWindowMonitor(context, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
     }
 
     void Windowed(void) {
-        glfwSetWindowMonitor(context, nullptr, 0, 0, (int)size.x, (int)size.y, 60);
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(context, nullptr, 0, 0, (int)size.x, (int)size.y, mode->refreshRate);
     }
 
     void enableGlParam(void) {

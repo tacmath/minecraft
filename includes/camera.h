@@ -16,6 +16,7 @@ private:
 	float width;
 	float height;
 	float fov;
+	float far;
 
 	//position of the camera
 	glm::vec3 position;

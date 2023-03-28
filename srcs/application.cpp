@@ -62,8 +62,9 @@ void Application::EveryFrames(float time, float latency) {
     worldArea.Draw();
     background.Draw();
     UI.Draw(player);
-    menu.fpsTitle(time, latency);
     menu.Draw();
+
+    //   menu.fpsTitle(time, latency);
 
     glfwSwapBuffers(window.context);
 }
@@ -76,7 +77,7 @@ void Application::EveryTicks() {
 }
 
 void Application::SetCallbacks() {
-    player.SetUpdateCallback([&](Player &player) {
+    player.SetUpdateCallback([&](Player &player) { //maybe set the callback in the camera class
         worldArea.setChunksVisibility(player.camera);
         worldArea.LoadViewMatrix(player.camera);
         background.LoadViewMatrix(player.camera);
@@ -84,19 +85,22 @@ void Application::SetCallbacks() {
      });
 
     event.SetWindowSizeCallback([&](int width, int height) {
-        player.camera.ChangePerspective(0, (float)width, (float)height, 0.1f, 24.0f * RENDER_DISTANCE);
+        player.camera.ChangePerspective(0, (float)width, (float)height, 0.1f, 0);
         worldArea.initUniforms(player.camera);
         background.initUniforms(player.camera);
         UI.InitUniforms(player.camera.projection);
      });
 
-    menu.SetUpdateFOVCallback([&](float fov) {
-            player.camera.ChangePerspective(fov, 0, 0, 0.1f, 24.0f * RENDER_DISTANCE);
+    menu.SetUpdatPerspectiveCallback([&](void) { //maybe set the callback in the camera class
             worldArea.setChunksVisibility(player.camera);
             worldArea.initUniforms(player.camera);
             background.initUniforms(player.camera);
             UI.InitUniforms(player.camera.projection);
             background.sun.UpdateCallback();
+    });
+
+    menu.SetOnExitCallback([&](void) {
+        status = 0;
     });
 
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
@@ -111,9 +115,5 @@ void Application::SetCallbacks() {
 
         if (position.y < 1)
             shadow.GenerateShadowMap(position);
-    });
-
-    menu.SetOnExitCallback([&](void) {
-        status = 0;
     });
 }

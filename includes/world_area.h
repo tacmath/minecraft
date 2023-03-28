@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "chunk.h"
 #include "thread.h"
+#include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
@@ -20,7 +21,7 @@
 
 # define STARTING_RENDER_DISTANCE 1
 # define RENDER_DISTANCE 20
-# define DATA_RENDER_DISTANCE (RENDER_DISTANCE + 1)
+# define DATA_LOAD_DISTANCE(renderDistance) (renderDistance) + 1
 # define UNLOAD_OFFSET 2
 
 class WorldArea {
@@ -34,6 +35,9 @@ private:
     //list of all the chunks in the render distance
     Chunk** loadedChunks;
 
+    //LOAD_DISTANCE of the data
+    unsigned dataLoadDistance;
+
     //chunk shader
     Shader  chunkShader;  //maybe set as static
     // texture atlas
@@ -43,10 +47,6 @@ public:
 
     // multithreading object
     ThreadControleur thread;
-    
-    // seed used to generate random chunk
-    unsigned int seed;
-
 
     // constuctor
 	WorldArea(void);
@@ -64,6 +64,9 @@ public:
 
     // set the visibility of each chunk
     void setChunksVisibility(Camera& camera);
+
+    // change the render distance 
+    void UpdateRenderDistance(unsigned newRenderDistance);
 
     // use options to reload the chunk shader
     void ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption);

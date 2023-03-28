@@ -6,7 +6,7 @@ Menu::Menu() {
     mouseSensitivity = 0;
     FOV = 80;
     onExitCallback = [](void){};
-    updateFOVCallback = [](float){};
+    updatePerspectiveCallback = [](void){};
 }
 
 Menu::~Menu() {
@@ -17,8 +17,8 @@ void Menu::SetOnExitCallback(std::function<void(void)> onExitCallback) {
     this->onExitCallback = onExitCallback;
 }
 
-void Menu::SetUpdateFOVCallback(std::function<void(float)> updateFOVCallback) {
-    this->updateFOVCallback = updateFOVCallback;
+void Menu::SetUpdatPerspectiveCallback(std::function<void(void)> updatePerspectiveCallback) {
+    this->updatePerspectiveCallback = updatePerspectiveCallback;
 }
 
 void Menu::SetupImgui() {
@@ -129,10 +129,6 @@ void Menu::DrawViews() {
 }
 
 void Menu::DrawInfo() {
-    static float f = 0.0f;
-    static int counter = 0;
-    bool test;
-
     ImGui::Begin("Minecraft Info", &showInfo, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
     
     ImGui::SeparatorText("Player");
@@ -153,10 +149,11 @@ void Menu::DrawInfo() {
 void Menu::DrawMenu() {
     ImVec2 buttonSize;
     float  volume;
+    static bool vsync = false;
     static bool shadowActive = true;
     static bool fullScreen = false;
     static bool wireFrameMode = false;
-    int renderDistance = 12;
+    static int renderDistance = RENDER_DISTANCE;
 
     ImGui::Begin("Menu");
     ImGui::SetWindowFocus();
@@ -166,15 +163,23 @@ void Menu::DrawMenu() {
   //  ImGui::SeparatorText("Options");
    // if (ImGui::CollapsingHeader("Options")) {
         ImGui::PushItemWidth(buttonSize.x);
-        if (ImGui::SliderFloat(" ", &FOV, 20.0f, 160.0f, "FOV %.2f"))
-            updateFOVCallback(FOV);
+        if (ImGui::SliderFloat("##FOV", &FOV, 20.0f, 160.0f, "FOV %.2f")) {
+            player->camera.ChangePerspective(FOV, 0, 0, 0.1f, 0);
+            updatePerspectiveCallback();
+        }
 
         volume = 0.0f;
-        ImGui::SliderFloat("  ", &volume, 0.0f, 100.0f, "Volume %.2f");
+        ImGui::SliderFloat("##Volume", &volume, 0.0f, 100.0f, "Volume %.2f");
 
-        ImGui::SliderFloat("   ", mouseSensitivity, 0.0f, 1.0f, "Mouse sensitivity %.2f");
+        ImGui::SliderFloat("##Mouse sensitivity", mouseSensitivity, 0.0f, 1.0f, "Mouse sensitivity %.2f");
 
-        ImGui::SliderInt("    ", &renderDistance, 8, 64, "Render distance %d");
+        if (ImGui::SliderInt("##Render distance", &renderDistance, 8, 64, "Render distance %d")) {
+            worldArea->UpdateRenderDistance(renderDistance);
+            player->camera.ChangePerspective(0, 0, 0, 0.1f, 24.0f * renderDistance);
+            updatePerspectiveCallback();
+        }
+
+    //    ImGui::SliderInt("##FPS", &renderDistance, 30, 3000, "FPS %d");
 
         ImGui::PopItemWidth();
 
@@ -199,13 +204,14 @@ void Menu::DrawMenu() {
         }
         
         ImGui::SameLine(); if (ImGui::Checkbox("Fullscreen", &fullScreen)) {
-            if (fullScreen)
-                window->FullScreen();
-            else
-                window->Windowed();
+            fullScreen ? window->FullScreen() : window->Windowed();
+            glfwSwapInterval((vsync ? 1 : 0));
         }
 
         ImGui::SameLine(); ImGui::Checkbox("Collisions", &player->hasCollision);
+
+        if (ImGui::Checkbox("Vsync", &vsync))
+            glfwSwapInterval((vsync ? 1 : 0));
 
         ImGui::NewLine();
   //  }
