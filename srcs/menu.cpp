@@ -110,24 +110,6 @@ void Menu::fpsTitle(float time, float latence) {
     }
 }
 
-void Menu::DrawViews() {
-    glm::mat4 matrix = glm::translate(glm::mat4(1), glm::vec3(-0.9f, 0.1f, 0));
-
-    glDisable(GL_DEPTH_TEST);
-    quadShader.Activate();
-    quadShader.setInt("depthMap", 3);
-    quadShader.setInt("index", 0);
-    quadShader.setMat4("matrix", matrix);
-    quad.Render();
-    quadShader.setInt("index", 1);
-    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(1.0f, 0, 0)));
-    quad.Render();
-    quadShader.setInt("index", 2);
-    quadShader.setMat4("matrix", glm::translate(matrix, glm::vec3(0, -1.0f, 0)));
-    quad.Render();
-    glEnable(GL_DEPTH_TEST);
-}
-
 void Menu::DrawInfo() {
     ImGui::Begin("Minecraft Info", &showInfo, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
     
@@ -155,8 +137,7 @@ void Menu::DrawMenu() {
     static bool wireFrameMode = false;
     static int renderDistance = RENDER_DISTANCE;
 
-    ImGui::Begin("Menu");
-    ImGui::SetWindowFocus();
+    ImGui::Begin("Menu", 0, ImGuiWindowFlags_NoScrollbar);
     buttonSize.x = ImGui::GetWindowWidth() - 2 * ImGui::GetStyle().WindowPadding.x;
     buttonSize.y = 0;
 
@@ -175,7 +156,7 @@ void Menu::DrawMenu() {
 
         if (ImGui::SliderInt("##Render distance", &renderDistance, 8, 64, "Render distance %d")) {
             worldArea->UpdateRenderDistance(renderDistance);
-            player->camera.ChangePerspective(0, 0, 0, 0.1f, 24.0f * renderDistance);
+            player->camera.ChangePerspective(0, 0, 0, 0.1f, 24.0f * renderDistance + 50);
             updatePerspectiveCallback();
         }
 
@@ -215,6 +196,7 @@ void Menu::DrawMenu() {
 
         ImGui::NewLine();
   //  }
+     ON_DEBUG(debugWindows.DrawMenu();)
 
     if (ImGui::Button("Info", buttonSize))
         showInfo = !showInfo;
@@ -230,8 +212,9 @@ void Menu::DrawMenu() {
 
 
 void Menu::Draw() {
+    static bool test = true;
 
-    if (!menuIsOpen && !showInfo) return;
+    if (!menuIsOpen && !showInfo ON_DEBUG(&& !debugWindows.IsActive())) return;
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -243,11 +226,8 @@ void Menu::Draw() {
     if (menuIsOpen)
         DrawMenu();
 
+    ON_DEBUG(debugWindows.Draw(window->context);)
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    /*
-    if (status & DEBUG_VIEW) {
-        DrawViews();
-        return;
-    }*/
 }

@@ -209,6 +209,9 @@
     <ClInclude Include="includes\texture.h">
       <Filter>Fichiers d%27en-tête\opengl utils</Filter>
     </ClInclude>
+    <ClInclude Include="includes\global_defines.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cubeVS.glsl">

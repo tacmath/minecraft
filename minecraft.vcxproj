@@ -185,6 +185,7 @@
     <ClInclude Include="includes\blocks.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
+    <ClInclude Include="includes\global_defines.h" />
     <ClInclude Include="includes\menu.h" />
     <ClInclude Include="includes\generation.h" />
     <ClInclude Include="includes\quad.h" />

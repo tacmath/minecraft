@@ -2,17 +2,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H  
 #include "application.h"
-
-
-#define DEBUG_MODE 1
-
-#if DEBUG_MODE == 1
-#define ON_DEBUG(x) x
-#else
-#define ON_DEBUG(x)
-#endif // DEBUG_MODE == 1
-
-
+#include "global_defines.h"
 
 std::string glStringEnum(GLenum glenum)
 {
