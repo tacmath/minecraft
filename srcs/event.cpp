@@ -124,8 +124,8 @@ glm::vec3  Event::spectatorMovement() {
     return newPos;
 }
 
-#define JUMP_TIME       0.10f
-#define JUMP_HEIGHT     1.3f
+#define JUMP_TIME       0.15f
+#define JUMP_HEIGHT     1.2f
 #define JUMP_GRAVITY    -2 * JUMP_HEIGHT / (JUMP_TIME * JUMP_TIME)
 #define JUMP_V0         2 * JUMP_HEIGHT / JUMP_TIME
 
@@ -155,7 +155,7 @@ void Event::MovementEvent(float latency) {
             newPos += glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
         newPos.y = 0;
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            if (oldPos.y > 1 && (oldPos.y - (int)oldPos.y) < 0.005f && (float)glfwGetTime() - startTime > JUMP_TIME
+            if (oldPos.y > 1 && (float)glfwGetTime() - startTime > JUMP_TIME
                 && GetColliders(player->aabb().translate(glm::vec3(0, -0.1f, 0)), colliders)) {
                 colliders.clear();
                 jumping = 1;
@@ -165,14 +165,14 @@ void Event::MovementEvent(float latency) {
         if (jumping) {
             float time = (float)glfwGetTime() - startTime;
             newPos.y += 0.5f * JUMP_GRAVITY * time * time + JUMP_V0 * time;
-            if (time > 0.25f)
+            if (time > 0.35f)
                jumping = 0;
         }
         else if (!newPos.y)
-            newPos.y -= 1.0f;
+            newPos.y -= 1.0f; // a remplacer par la vrai formule de graviter pour une persone de 75 kg
     }
     newPos *= speed * latency;
-    player->Move(newPos); // implémenter la graviter et le jump dans move 
+    player->Move(newPos); // implémenter la graviter et le jump dans move ou crée une fonction apply gavity 
     if (player->position != oldPos)
         playerUpdated = true;
 }
