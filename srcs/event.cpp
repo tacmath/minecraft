@@ -10,7 +10,7 @@ void removePointedCube(Player &player, Cooldowns &cooldowns) {
     if (player.selectedCube.id == AIR || !cooldowns.Use(ACTION))
         return;
     pos = player.selectedCube.position;
-    Chunk::blocks[player.selectedCube.id].PlaySound((float)pos.x, (float)pos.y, (float)pos.z);
+    Chunk::blocks[player.selectedCube.id].PlaySound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
