@@ -18,6 +18,7 @@ void Application::Start() {
     background.initUniforms(player.camera);
 
     shadow.Activate();
+//    InitMusic(music);
     SetCallbacks();
     ImGui_ImplGlfw_InstallCallbacks(window.context); //maybe add imgui callbacks directly in my callbacks
     glfwSwapInterval(0);
@@ -49,6 +50,9 @@ void Application::Run() {
 
 void Application::Stop() {
     worldArea.thread.StopThreads();
+    for (int n = 0; n < 256; n++)
+        Chunk::blocks[n].Delete();
+    music.Delete();
 }
 
 void Application::EveryFrames(float time, float latency) {
@@ -82,6 +86,8 @@ void Application::SetCallbacks() {
         worldArea.LoadViewMatrix(player.camera);
         background.LoadViewMatrix(player.camera);
         UI.SetViewMatrix(player.camera.view);
+        Listener::SetPosition(player.position.x, player.position.y, player.position.z);
+        Listener::SetDirection(player.look.x, player.look.y, player.look.z);
      });
 
     event.SetWindowSizeCallback([&](int width, int height) {

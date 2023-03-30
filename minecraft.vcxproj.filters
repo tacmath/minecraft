@@ -120,6 +120,9 @@
     <ClCompile Include="srcs\parseConfig.cpp">
       <Filter>Fichiers sources\utils</Filter>
     </ClCompile>
+    <ClCompile Include="srcs\sound.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\camera.h">
@@ -210,6 +213,9 @@
       <Filter>Fichiers d%27en-tête\opengl utils</Filter>
     </ClInclude>
     <ClInclude Include="includes\global_defines.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\sound.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

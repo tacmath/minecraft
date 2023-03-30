@@ -130,7 +130,7 @@ void Menu::DrawInfo() {
 
 void Menu::DrawMenu() {
     ImVec2 buttonSize;
-    float  volume;
+    static float  volume = 30.0f;
     static bool vsync = false;
     static bool shadowActive = true;
     static bool fullScreen = false;
@@ -149,8 +149,8 @@ void Menu::DrawMenu() {
             updatePerspectiveCallback();
         }
 
-        volume = 0.0f;
-        ImGui::SliderFloat("##Volume", &volume, 0.0f, 100.0f, "Volume %.2f");
+        if (ImGui::SliderFloat("##Volume", &volume, 0.0f, 100.0f, "Volume %.2f"))
+            alListenerf(AL_GAIN, volume / 30.0f);
 
         ImGui::SliderFloat("##Mouse sensitivity", mouseSensitivity, 0.0f, 1.0f, "Mouse sensitivity %.2f");
 
