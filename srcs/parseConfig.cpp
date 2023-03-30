@@ -37,7 +37,7 @@ void parseBlockData(std::vector<std::string>& textures) {
         if (line.substr(0, 4) == "Name") {
             Chunk::blocks[blockID] = block;
             blockID = 0;
-            block.SetTextures(0, 0, 0);
+            memset(&block, 0, sizeof(block));
         }
         else if (line.substr(1, 2) == "ID")
             blockID = std::stoi(line.substr(3, line.size() - 3));
@@ -57,6 +57,11 @@ void parseBlockData(std::vector<std::string>& textures) {
                     textures.push_back(splitLine[1]);
                 }
                 block.SetTexture(splitLine[0], index);
+            }
+            else if (splitLine[0] == "Break") {
+                block.soundBuffer.Load(splitLine[1].c_str());
+                block.sound.Gen();
+                
             }
         }
     }

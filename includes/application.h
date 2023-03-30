@@ -10,6 +10,7 @@
 #include "event.h"
 #include "cooldown.h"
 #include "shadow.h"
+#include "sound.h"
 
 #include "generation.h"
 #include "blocks.h"
@@ -30,6 +31,7 @@ private:
 
 	// modules
 	Window			window;
+	Listener		listener;
 	WorldArea		worldArea;
 	Background		background;
 	Player          player;
@@ -38,6 +40,7 @@ private:
 	Event           event;
 	Cooldowns		cooldowns;
 	Shadow			shadow;
+	Music			music;
 
 public:
 	//default constructor

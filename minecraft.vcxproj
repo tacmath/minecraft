@@ -168,6 +168,7 @@
     <ClCompile Include="srcs\menu.cpp" />
     <ClCompile Include="srcs\cubeMesh.cpp" />
     <ClCompile Include="srcs\shader.cpp" />
+    <ClCompile Include="srcs\sound.cpp" />
     <ClCompile Include="srcs\texture.cpp" />
     <ClCompile Include="srcs\thread.cpp" />
     <ClCompile Include="srcs\VAO.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="includes\quad.h" />
     <ClInclude Include="includes\raycast.h" />
     <ClInclude Include="includes\shadow.h" />
+    <ClInclude Include="includes\sound.h" />
     <ClInclude Include="includes\sun.h" />
     <ClInclude Include="includes\simplex_noise.h" />
     <ClInclude Include="includes\event.h" />

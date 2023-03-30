@@ -8,6 +8,7 @@
 #include "shadow.h"
 #include "world_area.h"
 #include "global_defines.h"
+#include "AL/al.h"
 
 #include <functional>
 
@@ -121,6 +122,8 @@ public:
     void DrawMenu() {
         if (ImGui::CollapsingHeader("Debug views")) {
             for (unsigned n = 0; n < MAX_DEBUG_WINDOWS; n++) {
+                if ((n % 3))
+                    ImGui::SameLine();
                 if (ImGui::Checkbox(window[n].name, &open[n])) {
                     if (open[n]) {
                         window[n].Open();
@@ -137,6 +140,18 @@ public:
                 }
             }
         }
+
+       /* if (ImGui::Checkbox("All views", )) {
+            for (unsigned n = 0; n < MAX_DEBUG_WINDOWS; n++) {
+                if (!open[n]) {
+                    open[n] = true;
+                    window[n].Open();
+                    nbOpen++;
+                    if (nbOpen == 1)
+                        Init();
+                }
+            }
+        }*/
     }
 
     void Draw(GLFWwindow *context) {

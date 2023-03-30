@@ -42,10 +42,16 @@ public:
 	}
 
 	void Update() {
-		selectedCube = rayCastGetCube(position + cameraOffset, look, PLAYER_RANGE);
-		camera.SetPosition(position + cameraOffset);
+		glm::vec3 eyePos;
+
+		eyePos = position + cameraOffset;
+		selectedCube = rayCastGetCube(eyePos, look, PLAYER_RANGE);
+		camera.SetPosition(eyePos);
 		camera.SetDirection(look);
 		camera.Update();
+
+		Listener::SetPosition(eyePos.x, eyePos.y, eyePos.z);
+		Listener::SetDirection(look.x, look.y, look.z);
 		updateCallback(*this);
 	}
 

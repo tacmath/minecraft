@@ -1,16 +1,24 @@
 #ifndef BLOCKS_CLASS_H
 #define BLOCKS_CLASS_H
 
+#include "sound.h"
 
 struct Block {
 	char top;
 	char side;
 	char bottom;
+	SoundBuffer soundBuffer;
+	SoundSource sound;
 	
 	Block() {
 		top = 0;
 		side = 0;
 		bottom = 0;
+	};
+
+	void Delete() {
+		sound.Delete();
+		soundBuffer.Delete();
 	};
 
 	void SetTextures(char top, char side, char bottom) {
@@ -26,6 +34,14 @@ struct Block {
 		else if (type == "Bottom")
 			this->bottom = textureIndex;
 	}
+
+	void PlaySound(float x, float y, float z) {
+		if (soundBuffer.ID) {
+			sound.SetPosition(x, y, z);
+			sound.Play(soundBuffer);
+		}
+	}
+
 };
 
 #endif
