@@ -41,7 +41,7 @@ public:
 	}
 
 	void Launch(void (*routine)(Thread&)) {
-		std::thread(routine, std::ref(*this)).detach();
+		std::thread(routine, std::ref(*this)).detach(); //test std::async avec std::future
 	}
 };
 /*

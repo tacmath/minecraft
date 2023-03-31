@@ -55,6 +55,7 @@ void Application::Stop() {
 }
 
 void Application::EveryFrames(float time, float latency) {
+    (void)time;
     cooldowns.Update();
     event.GetEvents(latency);
     if (glfwWindowShouldClose(window.context) == 1)
