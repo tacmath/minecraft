@@ -18,7 +18,6 @@ void Application::Start() {
     background.initUniforms(player.camera);
 
     shadow.Activate();
-    InitMusic(music);
     SetCallbacks();
     ImGui_ImplGlfw_InstallCallbacks(window.context); //maybe add imgui callbacks directly in my callbacks
     glfwSwapInterval(0);

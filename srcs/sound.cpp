@@ -1,4 +1,7 @@
 #include "sound.h"
+#include <mutex>
+
+static std::mutex music_mtx;
 
 Listener::Listener() {
     ALCdevice* Device = alcOpenDevice(NULL);
@@ -87,18 +90,50 @@ void SoundBuffer::Delete()
 }
 
 
+static void loadMusicFile(const std::string& Filename, Music *music) {
+    SF_INFO FileInfos;
+    SNDFILE* File = sf_open(Filename.c_str(), SFM_READ, &FileInfos);
+    if (!File)
+        return;
+    ALsizei NbSamples = static_cast<ALsizei>(FileInfos.channels * FileInfos.frames);
+    ALsizei SampleRate = static_cast<ALsizei>(FileInfos.samplerate);
+    // Lecture des échantillons audio au format entier 16 bits signé (le plus commun)
+    std::vector<ALshort> Samples(NbSamples);
+    if (sf_read_short(File, &Samples[0], NbSamples) < NbSamples)
+        return;
+    // Fermeture du fichier
+    sf_close(File);
+    ALenum Format;
+    switch (FileInfos.channels)
+    {
+    case 1:  Format = AL_FORMAT_MONO16; break;
+    case 2:  Format = AL_FORMAT_STEREO16; break;
+    default: return;
+    }
+
+    // Création du tampon OpenAL
+    ALuint buffer = 0;
+    alGenBuffers(1, &buffer);
+    // Remplissage avec les échantillons lus
+    alBufferData(buffer, Format, &Samples[0], NbSamples * sizeof(ALushort), SampleRate);
+
+    music_mtx.lock();
+    music->Add(buffer);
+    music_mtx.unlock();
+}
+
+
+
 Music::Music() {
-    source = 0;
+    alGenSources(1, &source);
+    LoadPlayList({ "sound/piano1", "sound/hall13", "sound/piano2", "sound/hall14", "sound/piano3"});
+    Play();
 }
 
 Music::~Music() {
 }
 
-void Music::Load(const std::string& Filename) {
-    // Ouverture du fichier audio avec libsndfile
-    if (!source) {
-        alGenSources(1, &source);
-    }
+void Music::Add(const std::string& Filename) {
     SF_INFO FileInfos;
     SNDFILE* File = sf_open(Filename.c_str(), SFM_READ, &FileInfos);
     if (!File)
@@ -129,6 +164,23 @@ void Music::Load(const std::string& Filename) {
     alSourceQueueBuffers(source, 1, &buffer);
 }
 
+void Music::Add(ALuint buffer) {
+    buffers.push_back(buffer);
+    alSourceQueueBuffers(source, 1, &buffer);
+}
+
+void Music::LoadPlayList(const std::vector<std::string>& Filenames) { // try to use std::async, std::future pour charger des gros assest et utiliser std::for_eatch a des endrois répétitif
+
+    std::vector<std::thread> threads;
+
+    buffers.reserve(Filenames.size());
+    threads.resize(Filenames.size());
+    for (int n = 0; n < threads.size(); ++n)
+        threads[n] = std::thread(loadMusicFile, Filenames[n], this);
+
+    for (auto& th : threads) th.join();
+}
+
 void Music::Play() {
     alSourcei(source, AL_LOOPING, AL_TRUE);
     alSourcePlay(source);
@@ -149,27 +201,11 @@ ALint Music::Status() {
 }
 
 void Music::Delete() {
-    if (source) {
-        alSourceStop(source);
-        alSourcei(source, AL_BUFFER, 0);
+    if (source)
         alDeleteSources(1, &source);
-    }
+
     for (auto buffer : buffers)
         alDeleteBuffers(1, &buffer);
     buffers.clear();
     source = 0;
 }
-
-static void loadMusic(Music& music) { //need to upgade the system it can crash
-    music.Load("sound/piano1");
-    music.Load("sound/hall13");
-    music.Load("sound/piano2");
-    music.Load("sound/hall14");
-    music.Load("sound/piano3");
-    music.Play();
-}
-
-void InitMusic(Music& music) {
-    std::thread(loadMusic, std::ref(music)).detach();
-}
-
