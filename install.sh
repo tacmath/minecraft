@@ -7,6 +7,8 @@ mkdir -p ./libraries/include
 git submodule init
 git submodule update
 
+sudo apt-get install libimgui-dev libglfw3-dev libopenal-dev libsndfile1-dev
+
 path=./libraries/include/glad/khrplatform.h
 if [  ! -e $path ]
 then
@@ -62,13 +64,22 @@ then
 
 fi
 
-
-path=./libraries/include/freetype
-if [  ! -e $path ]
+path=./libraries/include/AL
+if [ ! -e  $path ]
 then
-    echo 'installing freetype'
-    git clone https://github.com/freetype/freetype.git ./.tmp
-    mv -f ./.tmp/include/* ./libraries/include/
+    printf '\ninstalling openAl\n'
+    git clone https://github.com/kcat/openal-soft.git ./.tmp
+    mv -f ./.tmp/include/AL ./libraries/include/
+    rm -rf ./.tmp
+
+fi
+
+path=./libraries/include/sndfile.h
+if [ ! -e  $path ]
+then
+    printf '\ninstalling libsndfile\n'
+    git clone https://github.com/libsndfile/libsndfile.git ./.tmp
+    mv -f ./.tmp/include/sndfile.h ./libraries/include/
     rm -rf ./.tmp
 
 fi
@@ -80,10 +91,9 @@ then
     mkdir -p ~/.dep
     cd ~/.dep
     apt download libglfw3
-    apt download libfreetype6
     dpkg -x libglfw* .
-    dpkg -x libfreetype* .
-    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.dep/glfw3/usr/lib/x86_64-linux-gnu/' >> .bashrc
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.dep/usr/lib/x86_64-linux-gnu/' >> ~/.bashrc
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.dep/usr/lib/x86_64-linux-gnu/' >> ~/.zshrc
     cd -
 fi
 
@@ -96,17 +106,6 @@ then
     dpkg -x libglfw* .
     cd -
 fi
-
-path=~/.dep/usr/lib/*/libfreetype.so.6
-if [  ! -e $path ]
-then
-    echo 'instaling libfreetype'
-    cd ~/.dep
-    apt download libfreetype6
-    dpkg -x libfreetype* .
-    cd -
-fi
-
 
 path=./libraries/lib/glfw3lib
 if [  ! -e $path ]
