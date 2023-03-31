@@ -212,8 +212,6 @@ void Menu::DrawMenu() {
 
 
 void Menu::Draw() {
-    static bool test = true;
-
     if (!menuIsOpen && !showInfo ON_DEBUG(&& !debugWindows.IsActive())) return;
 
     ImGui_ImplOpenGL3_NewFrame();

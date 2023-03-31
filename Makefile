@@ -36,14 +36,15 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -ldl -lpthread  `pkg-config --static --libs glfw3 freetype2`
-FRAMEWORK_INC = libraries/include
+FRAMEWORK= -ldl -lpthread -lglfw -lopenal -lsndfile -limgui -lGL #`pkg-config --static --libs glfw3`
+FRAMEWORK_INC = -I libraries/include -I libraries/imgui/ -I libraries/imgui/backends
 
 NAME_SRC=	camera.cpp\
 			chunk.cpp\
 			cubeMap.cpp\
 			cubeMesh.cpp\
-			debug.cpp\
+			menu.cpp\
+			sound.cpp\
 			entity.cpp\
 			event.cpp\
 			init.cpp \
@@ -53,7 +54,6 @@ NAME_SRC=	camera.cpp\
 			perlin_noise.cpp\
 			shader.cpp\
 			simplex_noise.cpp\
-			textDisplay.cpp\
 			texture.cpp\
 			thread.cpp\
 			VAO.cpp\
@@ -62,6 +62,16 @@ NAME_SRC=	camera.cpp\
 			raycast.cpp\
 			application.cpp\
 			background.cpp\
+
+IMGUI_DIR = libraries/imgui/
+
+IMGUI_SOURCES = $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
+IMGUI_SOURCES += $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+IMGUI_OBJS = $(addsuffix .o, $(basename $(notdir $(IMGUI_SOURCES))))
+
+CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
+CXXFLAGS += -g -Wall -Wformat
+CXX = g++
 			
 
 NAME_SRC_C=glad.c \
@@ -73,7 +83,7 @@ OBJ_NAME		= $(NAME_SRC:.cpp=.o)
 
 OBJ_NAME_C		= $(NAME_SRC_C:.c=.o)
 
-OBJS = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME)) $(addprefix $(OBJ_PATH)/,$(OBJ_NAME_C))
+OBJS = $(addprefix $(OBJ_PATH)/,$(OBJ_NAME)) $(addprefix $(OBJ_PATH)/,$(OBJ_NAME_C)) $(addprefix $(OBJ_PATH)/,$(IMGUI_OBJS))
 
 DEBUG_FLAG = -Wall -Wextra #-fsanitize=address
 
@@ -92,13 +102,19 @@ $(NAME) : $(OBJS)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp $(HEADER) Makefile
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
-	@$(GPP) -I $(INC_PATH) -I $(FRAMEWORK_INC) -c $< -o $@
+	@$(GPP) -I $(INC_PATH) $(FRAMEWORK_INC) -c $< -o $@
 	@$(eval I=$(shell echo $$(($(I)+1))))
 	@printf "\033[2K\r${G}$(DARK_BLUE)>>\t\t\t\t$(I)/$(shell echo $(NAME_SRC_LEN)) ${N}$(BLUE)$<\033[36m \033[0m"
 
 $(OBJ_PATH)/%.o: %.c $(HEADER) Makefile
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
-	@$(CC) -I $(FRAMEWORK_INC) -c $< -o $@
+	@$(CC) $(FRAMEWORK_INC) -c $< -o $@
+
+$(OBJ_PATH)/%.o:$(IMGUI_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ_PATH)/%.o:$(IMGUI_DIR)/backends/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 
 clean:
