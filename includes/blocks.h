@@ -7,7 +7,7 @@ struct Block {
 	char top;
 	char side;
 	char bottom;
-	SoundBuffer soundBuffer;
+	SoundBuffer soundBuffer; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour éviter plusieurs mème buffer
 	SoundSource sound;
 	
 	Block() {
@@ -35,22 +35,12 @@ struct Block {
 			this->bottom = textureIndex;
 	}
 
-	void PlayBreakSound(float x, float y, float z) {
+	void PlaySound(float x, float y, float z) {
 		if (soundBuffer.ID) {
-			sound.SetPitch(1.0f);
 			sound.SetPosition(x, y, z);
 			sound.Play(soundBuffer);
 		}
 	}
-
-	void PlayPlaceSound(float x, float y, float z) {
-		if (soundBuffer.ID) {
-			sound.SetPitch(0.6f);
-			sound.SetPosition(x, y, z);
-			sound.Play(soundBuffer);
-		}
-	}
-
 };
 
 #endif

@@ -7,9 +7,10 @@
 #include "quad.h"
 
 class UserInterface {
-    Shader highlightShader;
+    Shader  highlightShader;
     Quad    quad;
-    Shader quadShader;
+    Texture cursorTex;
+    Shader  quadShader;
     VAO highlight;
 
 public:
@@ -17,8 +18,11 @@ public:
 
     UserInterface() {
         initHighlight();
-        quad.Init(glm::vec2(-0.01f), glm::vec2(0.02f));
+        quad.Init(glm::vec2(-0.015f), glm::vec2(0.03f));
         quadShader.Load("shaders/quadVS.glsl", "shaders/quadFs.glsl");
+        quadShader.setInt("Texture", 1);
+        cursorTex.Load("texture/ui/cursor.png", 1);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
         hasHighlight = false;
     }
 
@@ -60,8 +64,10 @@ private:
     }
 
     void DrawCross() {
+        glEnable(GL_BLEND);
         quadShader.Activate();
         quad.Render();
+        glDisable(GL_BLEND);
     }
 
     void initHighlight() {
