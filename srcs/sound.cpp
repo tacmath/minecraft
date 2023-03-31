@@ -16,6 +16,8 @@ Listener::Listener() {
     // Activation du contexte
     if (!alcMakeContextCurrent(Context))
         return;
+
+    alDistanceModel(AL_INVERSE_DISTANCE);
 }
 
 Listener::~Listener() {
@@ -126,7 +128,7 @@ static void loadMusicFile(const std::string& Filename, Music *music) {
 
 Music::Music() {
     alGenSources(1, &source);
-    LoadPlayList({ "sound/piano1", "sound/hall13", "sound/piano2", "sound/hall14", "sound/piano3"});
+    LoadPlayList({"sound/hall14", "sound/piano2", "sound/hall13", "sound/piano3"});
     Play();
 }
 

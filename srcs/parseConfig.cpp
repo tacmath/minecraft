@@ -61,6 +61,7 @@ void parseBlockData(std::vector<std::string>& textures) {
             else if (splitLine[0] == "Break") {
                 block.soundBuffer.Load(splitLine[1].c_str());
                 block.sound.Gen();
+                block.sound.SetRolloffFactor(0.5f);
                 
             }
         }

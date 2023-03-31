@@ -35,8 +35,17 @@ struct Block {
 			this->bottom = textureIndex;
 	}
 
-	void PlaySound(float x, float y, float z) {
+	void PlayBreakSound(float x, float y, float z) {
 		if (soundBuffer.ID) {
+			sound.SetPitch(1.0f);
+			sound.SetPosition(x, y, z);
+			sound.Play(soundBuffer);
+		}
+	}
+
+	void PlayPlaceSound(float x, float y, float z) {
+		if (soundBuffer.ID) {
+			sound.SetPitch(0.6f);
 			sound.SetPosition(x, y, z);
 			sound.Play(soundBuffer);
 		}

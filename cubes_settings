@@ -119,12 +119,14 @@ Name BirchLog
 	Top		birch/birch_log_top.png
 	Side	birch/birch_log.png
 	Bottom	birch/birch_log_top.png
+	Break	sound/break/stone
 
 Name BirchPlank
 	ID		20
 	Top		birch/birch_planks.png
 	Side	birch/birch_planks.png
 	Bottom	birch/birch_planks.png
+	Break	sound/break/stone
 
 Name BirchLeaves
 	ID		21

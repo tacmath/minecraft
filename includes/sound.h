@@ -15,9 +15,7 @@ public:
     ~Listener();
 
     static void SetVolume(float volume);
-
     static void SetPosition(float x, float y, float z);
-
     static void SetDirection(float x, float y, float z);
 };
 
@@ -35,8 +33,9 @@ public:
 
 class SoundSource
 {
-    ALuint ID;
 public:
+    ALuint ID;
+
     SoundSource() {
         ID = 0;
     }
@@ -91,6 +90,14 @@ public:
 
     void SetPitch(float pitch) {
         alSourcef(ID, AL_PITCH, pitch);
+    }
+
+    void SetType(ALint type) {
+        alSourcei(ID, AL_SOURCE_TYPE, type);
+    }
+
+    void SetRolloffFactor(float rolloffFactor) {
+        alSourcef(ID, AL_ROLLOFF_FACTOR, rolloffFactor);
     }
 
     void SetPosition(float x, float y, float z)
