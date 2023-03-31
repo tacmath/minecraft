@@ -1,5 +1,17 @@
 # minecraft
-Un projet pour tester des techniques de rendering graphique et m'entrainer au c++ 
+Un projet pour tester des techniques de rendering graphique et m'entrainer au c++
+
+# Dependency
+OpenGl 4.6
+Glfw3.3
+Glad
+Glm
+stb_image
+ImGui
+OpenAl
+SndFile
+
+
 # Chunk bit layout
 
 Vertex pos :

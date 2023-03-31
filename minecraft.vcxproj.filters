@@ -277,5 +277,8 @@
     <None Include="shaders\quadVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="README.md">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>
