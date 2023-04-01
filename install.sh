@@ -54,91 +54,51 @@ then
 
 fi
 
-path=./libraries/include/GLFW
-if [ ! -e  $path ]
-then
-    printf '\ninstalling glfw\n'
-    git clone https://github.com/glfw/glfw.git ./.tmp
-    mv -f ./.tmp/include/* ./libraries/include/
-    rm -rf ./.tmp
+DEPENDENCY_FOLDER=~/.dep
+LIB_FOLDER=$DEPENDENCY_FOLDER/usr/lib/x86_64-linux-gnu
 
-fi
+echo DEPENDENCY_FOLDER = "$DEPENDENCY_FOLDER"
+echo LIB_FOLDER = "$LIB_FOLDER"
 
-path=./libraries/include/AL
-if [ ! -e  $path ]
-then
-    printf '\ninstalling openAl\n'
-    git clone https://github.com/kcat/openal-soft.git ./.tmp
-    mv -f ./.tmp/include/AL ./libraries/include/
-    rm -rf ./.tmp
-
-fi
-
-path=./libraries/include/sndfile.h
-if [ ! -e  $path ]
-then
-    printf '\ninstalling libsndfile\n'
-    git clone https://github.com/libsndfile/libsndfile.git ./.tmp
-    mv -f ./.tmp/include/sndfile.h ./libraries/include/
-    rm -rf ./.tmp
-
-fi
-
-path=~/.dep
-if [  ! -e $path ]
-then
-    echo 'init .dep'
-    mkdir -p ~/.dep
-    echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:~/.dep/usr/lib/x86_64-linux-gnu/pkgconfig' >> ~/.bashrc
-    echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:~/.dep/usr/lib/x86_64-linux-gnu/pkgconfig' >> ~/.zshrc
-fi
-
-path=~/.dep/usr/lib/*/libglfw.so.3
-if [  ! -e $path ]
-then
-    echo 'instaling libglfw'
-    cd ~/.dep
-    apt download libglfw3
-    dpkg -x libglfw* .
+install_lib()
+{
+    pkg_name=$1
+    printf '\ninstalling %s\n' "$pkg_name"
+    cd $DEPENDENCY_FOLDER
+    for pkg in `apt-cache pkgnames "$pkg_name"`
+    do 
+        apt download $pkg
+        dpkg -x "$pkg"*.deb $DEPENDENCY_FOLDER
+        rm $pkg*.deb
+    done
     cd -
+    pkg-config --define-prefix "$DEPENDENCY_FOLDER/usr" $LIB_FOLDER/*
+}
+
+install_libs()
+{
+    uptade_lib=false
+    for lib_name in "$@"
+    do
+        path=$LIB_FOLDER/$lib_name.so
+        if [  ! -e $path ]; then
+            install_lib $lib_name
+            uptade_lib=true
+        fi
+
+    done
+    if [ $uptade_lib = true ]; then
+        cp -rf $DEPENDENCY_FOLDER/usr/include libraries/
+    fi
+}
+
+if [  ! -e $DEPENDENCY_FOLDER ]
+then
+    printf "\ninit  $DEPENDENCY_FOLDER\n"
+    mkdir $DEPENDENCY_FOLDER
+    printf 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:%s/pkgconfig\n' "$LIB_FOLDER" >> ~/.bashrc
+    printf 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:%s/pkgconfig\n' "$LIB_FOLDER" >> ~/.zshrc
 fi
 
-path=./libraries/lib/glfw3lib
-if [  ! -e $path ]
-then
-    echo 'copy libglfw'
-    mkdir -p ./libraries/lib/glfw3lib
-    cp ~/.dep/usr/lib/*/libglfw* ./libraries/lib/glfw3lib
-fi
 
-path=~/.dep/usr/lib/*/libopenal.so
-if [  ! -e $path ]
-then
-    echo 'instaling libopenal'
-    cd ~/.dep
-    apt download libopenal1 libopenal-dev
-    dpkg -x libopenal1* .
-    dpkg -x libopenal-dev* .
-    pkg-config --define-prefix ~/.dep/usr ./usr/lib/x86_64-linux-gnu/pkgconfig/openal.pc
-    cd -
-fi
-
-path=~/.dep/usr/lib/*/libsndfile.so
-if [  ! -e $path ]
-then
-    echo 'instaling libsndfile'
-    cd ~/.dep
-    apt download libsndfile1 libsndfile1-dev
-    dpkg -x libsndfile1_* .
-    dpkg -x libsndfile1-dev* .
-    pkg-config --define-prefix ~/.dep/usr ./usr/lib/x86_64-linux-gnu/pkgconfig/sndfile.pc
-    cd -
-fi
-
-path=./libraries/lib/freetypelib
-if [  ! -e $path ]
-then
-    echo 'copy libfreetype'
-    mkdir -p ./libraries/lib/freetypelib
-    cp ~/.dep/usr/lib/*/libfreetype* ./libraries/lib/freetypelib
-fi
+install_libs libglfw libsndfile libopenal

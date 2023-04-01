@@ -140,6 +140,6 @@ test: all
 	@./vox
 
 install:
-	@sh install.sh
+	@./install.sh
 
 .PHONY: all re clean fclean lib silent

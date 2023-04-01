@@ -1,6 +1,4 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include <ft2build.h>
-#include FT_FREETYPE_H  
 #include "application.h"
 #include "global_defines.h"
 
