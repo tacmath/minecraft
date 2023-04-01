@@ -25,7 +25,7 @@ void placeCube(Player &player, Cooldowns &cooldowns) { // maybe place the functi
         player.aabb().collide(AABB::unit().translate(player.selectedCube.side)) || !cooldowns.Use(ACTION))
         return;
     pos = player.selectedCube.side;
-    Chunk::blocks[player.selectedItem].PlaySound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
+    Chunk::blocks[(int)player.selectedItem].PlaySound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(player.selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
@@ -174,7 +174,7 @@ void Event::MovementEvent(float latency) {
             newPos.y -= 1.0f; // a remplacer par la vrai formule de graviter pour une persone de 75 kg
     }
     newPos *= speed * latency;
-    player->Move(newPos); // implémenter la graviter et le jump dans move ou crée une fonction apply gavity 
+    player->Move(newPos); // implï¿½menter la graviter et le jump dans move ou crï¿½e une fonction apply gavity 
     if (player->position != oldPos)
         playerUpdated = true;
 }

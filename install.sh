@@ -7,7 +7,7 @@ mkdir -p ./libraries/include
 git submodule init
 git submodule update
 
-sudo apt-get install libimgui-dev libglfw3-dev libopenal-dev libsndfile1-dev
+#sudo apt-get install libimgui-dev libglfw3-dev libopenal-dev libsndfile1-dev
 
 path=./libraries/include/glad/khrplatform.h
 if [  ! -e $path ]
@@ -87,14 +87,10 @@ fi
 path=~/.dep
 if [  ! -e $path ]
 then
-    echo 'instaling lib'
+    echo 'init .dep'
     mkdir -p ~/.dep
-    cd ~/.dep
-    apt download libglfw3
-    dpkg -x libglfw* .
-    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.dep/usr/lib/x86_64-linux-gnu/' >> ~/.bashrc
-    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.dep/usr/lib/x86_64-linux-gnu/' >> ~/.zshrc
-    cd -
+    echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:~/.dep/usr/lib/x86_64-linux-gnu/pkgconfig' >> ~/.bashrc
+    echo 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:~/.dep/usr/lib/x86_64-linux-gnu/pkgconfig' >> ~/.zshrc
 fi
 
 path=~/.dep/usr/lib/*/libglfw.so.3
@@ -113,6 +109,30 @@ then
     echo 'copy libglfw'
     mkdir -p ./libraries/lib/glfw3lib
     cp ~/.dep/usr/lib/*/libglfw* ./libraries/lib/glfw3lib
+fi
+
+path=~/.dep/usr/lib/*/libopenal.so
+if [  ! -e $path ]
+then
+    echo 'instaling libopenal'
+    cd ~/.dep
+    apt download libopenal1 libopenal-dev
+    dpkg -x libopenal1* .
+    dpkg -x libopenal-dev* .
+    pkg-config --define-prefix ~/.dep/usr ./usr/lib/x86_64-linux-gnu/pkgconfig/openal.pc
+    cd -
+fi
+
+path=~/.dep/usr/lib/*/libsndfile.so
+if [  ! -e $path ]
+then
+    echo 'instaling libsndfile'
+    cd ~/.dep
+    apt download libsndfile1 libsndfile1-dev
+    dpkg -x libsndfile1_* .
+    dpkg -x libsndfile1-dev* .
+    pkg-config --define-prefix ~/.dep/usr ./usr/lib/x86_64-linux-gnu/pkgconfig/sndfile.pc
+    cd -
 fi
 
 path=./libraries/lib/freetypelib

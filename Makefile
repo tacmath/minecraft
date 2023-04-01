@@ -36,7 +36,7 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -ldl -lpthread -lglfw -lopenal -lsndfile -limgui -lGL #`pkg-config --static --libs glfw3`
+FRAMEWORK= -ldl -lpthread `pkg-config --static --libs gl glfw3` -L ~/.dep/usr/lib/x86_64-linux-gnu/ -lopenal -lsndfile
 FRAMEWORK_INC = -I libraries/include -I libraries/imgui/ -I libraries/imgui/backends
 
 NAME_SRC=	camera.cpp\

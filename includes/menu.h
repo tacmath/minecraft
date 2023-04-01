@@ -95,6 +95,9 @@ public:
 
     DebugWindows() {
         nbOpen = 0;
+        for (unsigned n = 0; n < MAX_DEBUG_WINDOWS; n++)
+            open[n] = false;
+            
         window[0].Init("Shadow map 1", [&](void) {
             shader.Activate();
             shader.setInt("index", 0);

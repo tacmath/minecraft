@@ -5,6 +5,7 @@
 #include "VAO.h"
 #include "player.h"
 #include "quad.h"
+#include "texture.h"
 
 class UserInterface {
     Shader  highlightShader;
@@ -19,7 +20,7 @@ public:
     UserInterface() {
         initHighlight();
         quad.Init(glm::vec2(-0.015f), glm::vec2(0.03f));
-        quadShader.Load("shaders/quadVS.glsl", "shaders/quadFs.glsl");
+        quadShader.Load("shaders/quadVS.glsl", "shaders/quadFS.glsl");
         quadShader.setInt("Texture", 1);
         cursorTex.Load("texture/ui/cursor.png", 1);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
