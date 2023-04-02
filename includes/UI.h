@@ -7,24 +7,40 @@
 #include "quad.h"
 #include "texture.h"
 
+/*
+class Sprite {
+    GLuint      vao;
+    GLuint      vbo;
+public:
+    glm::ivec2  size;
+
+    void Load(const char *fileName);
+  //  void LoadFromAtlas(glm::ivec2 start, glm::ivec2 end, Atlas atlas);
+    void Render();
+};*/
+
 class UserInterface {
     Shader  highlightShader;
     Quad    quad;
     Texture cursorTex;
+    Texture inventoryTex;
     Shader  quadShader;
-    VAO highlight;
+    Quad    inventory;
+    VAO     highlight;
+
+    GLuint  inventoryTextureID;
 
 public:
     bool hasHighlight;
 
     UserInterface() {
+        inventoryTextureID = 0;
         initHighlight();
-        quad.Init(glm::vec2(-0.015f), glm::vec2(0.03f));
-        quadShader.Load("shaders/quadVS.glsl", "shaders/quadFS.glsl");
-        quadShader.setInt("Texture", 1);
-        cursorTex.Load("texture/ui/cursor.png", 1);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
-        hasHighlight = false;
+        InitUI();
+    }
+
+    ~UserInterface() {
+        glDeleteTextures(1, &inventoryTextureID);
     }
 
     void InitUniforms(glm::mat4& projection) {
@@ -38,13 +54,36 @@ public:
         highlightShader.setMat4("view", view);
     }
 
+    void UpdateInventory() {
+    }
+
     void Draw(Player &player) {
         SetHighlight(player.selectedCube);
         DrawHighlight();
-        DrawCross();
+        DrawUI();
     }
 
 private:
+
+    void InitUI() {
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        quad.Init(glm::vec2(-0.015f), glm::vec2(0.03f));
+        quadShader.Load("shaders/quadVS.glsl", "shaders/quadFS.glsl");
+        cursorTex.Load("texture/ui/cursor.png", 1);
+        inventoryTex.Load("texture/ui/menu_bar.png", 2);
+        inventory.Init(glm::vec2(-0.7f, -0.95f), glm::vec2(1.4f, 0.15f));
+        
+        /*
+        glCreateTextures(GL_TEXTURE_2D, 1, &inventoryTextureID);
+        glBindTextureUnit(GL_TEXTURE2, inventoryTextureID);
+        glTextureParameteri(inventoryTextureID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTextureParameteri(inventoryTextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTextureParameteri(inventoryTextureID, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTextureParameteri(inventoryTextureID, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTextureStorage2D(inventoryTextureID, 1, GL_RGBA, 182, 22);*/
+
+        
+    }
 
 
     void SetHighlight(RayCastInfo selectedCube) {
@@ -64,11 +103,16 @@ private:
         glDrawArrays(GL_LINES, 0, 24);
     }
 
-    void DrawCross() {
+    void DrawUI() {
+        glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         quadShader.Activate();
+        quadShader.setInt("Texture", 1);
         quad.Render();
+        quadShader.setInt("Texture", 2);
+        inventory.Render();
         glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
     }
 
     void initHighlight() {
@@ -117,6 +161,7 @@ private:
 
         highlight.Gen();
         highlight.LinkAttrib((void*)CubeVertices, 24, 0, 3, GL_FLOAT, sizeof(float), 0);
+        hasHighlight = false;
     }
 
 

@@ -1,6 +1,12 @@
 # minecraft
 Un projet pour tester des techniques de rendering graphique et m'entrainer au c++
 
+# To Run
+
+make install
+make
+./vox
+
 # Dependency
 OpenGl 4.6
 Glfw3.3
@@ -19,7 +25,7 @@ Vertex pos :
 |-----------|:----------:|:-----:|:-----:|:-------:|
 |luminosity	|	unused     |	posZ |	posX | posY    |
 
-vertex data :
+Vertex data :
 |0000000000000|0000|0000|0000|00000000|
 |:------:|:--------:|:-----:|:-----:|:-----:|
 |unused  |  normal  |	textY	|	textX	|	textID|
