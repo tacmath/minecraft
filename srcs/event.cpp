@@ -25,19 +25,29 @@ void placeCube(Player &player, Cooldowns &cooldowns) { // maybe place the functi
         player.aabb().collide(AABB::unit().translate(player.selectedCube.side)) || !cooldowns.Use(ACTION))
         return;
     pos = player.selectedCube.side;
-    Chunk::blocks[(int)player.selectedItem].PlaySound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
+    Chunk::blocks[(int)player.SelectedItem()].PlaySound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
-    chunk->SetCube(player.selectedItem, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
+    chunk->SetCube(player.SelectedItem(), pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
     player.UpdateRayCast();
 }
 
-void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    static Player* player = ((GlfwCallbackData*)glfwGetWindowUserPointer(window))->player;
+    (void)xoffset;
+
+    if (yoffset < 0)
+        player->SetSelectedSlot((player->GetSelectedSlot() + 1) * (player->GetSelectedSlot() < INVENTORY_SIZE - 1));
+    else if (yoffset > 0)
+        player->SetSelectedSlot(((player->GetSelectedSlot() > 0) ? player->GetSelectedSlot() - 1 : INVENTORY_SIZE - 1));
+}
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     static GlfwCallbackData* data = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
 
     (void)mods;
     if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
-        data->player->selectedItem = data->player->selectedCube.id;
+        data->player->SetInventoryItem(data->player->GetSelectedSlot(), data->player->selectedCube.id);
 
     if ((button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT) && action == GLFW_PRESS)
         data->cooldowns->Reset(ACTION);
@@ -52,16 +62,6 @@ void keyToogleCallback(GLFWwindow* window, int key, int scancode, int action, in
     (void)mods;
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
         data->menu->Toogle();
-    if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-        data->player->selectedItem = 1;
-    if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-        data->player->selectedItem = 2;
-    if (key == GLFW_KEY_3 && action == GLFW_PRESS)
-        data->player->selectedItem = 3;
-    if (key == GLFW_KEY_4 && action == GLFW_PRESS)
-        data->player->selectedItem = 4;
-    if (key == GLFW_KEY_5 && action == GLFW_PRESS)
-        data->player->selectedItem = 5;
 }
 
 Event::Event() {
@@ -95,6 +95,7 @@ void Event::Link(Window* window, Menu *menu, Player *player, Cooldowns* cooldown
     glfwSetWindowUserPointer(this->window, toggleData);
     glfwSetKeyCallback(this->window, keyToogleCallback);
     glfwSetMouseButtonCallback(this->window, mouseButtonCallback);
+    glfwSetScrollCallback(this->window, scroll_callback);
     glfwSetWindowSizeCallback(this->window, [](GLFWwindow* window, int width, int height) {
         static GlfwCallbackData* toggleData = (GlfwCallbackData*)glfwGetWindowUserPointer(window);
         

@@ -23,14 +23,14 @@ void Background::Draw(void) {
 }
 
 //load the view matrix in all the shaders
-void Background::LoadViewMatrix(Camera& camera) {
+void Background::LoadViewMatrix(const Camera& camera) {
     glm::mat4 view = glm::mat4(glm::mat3(camera.view));
 
     shader.setMat4("view", view);
     sun.SetView(view);
 }
 
-void Background::initUniforms(Camera& camera) {
+void Background::initUniforms(const Camera& camera) {
     glm::mat4 view = glm::mat4(glm::mat3(camera.view));
 
     shader.setInt("skybox", 0);

@@ -66,11 +66,11 @@ public:
 		updateCallback(position);
 	}
 
-	void SetView(glm::mat4 &view) {
+	void SetView(const glm::mat4 &view) {
 		shader.setMat4("view", view);
 	}
 
-	void SetProjection(glm::mat4& projection) {
+	void SetProjection(const glm::mat4& projection) {
 		shader.setMat4("projection", projection);
 	}
 

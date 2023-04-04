@@ -34,9 +34,9 @@ public:
     void Draw(void);
 
     //load the view matrix in all the shaders
-    void LoadViewMatrix(Camera& camera);
+    void LoadViewMatrix(const Camera& camera);
 
-    void initUniforms(Camera& camera);
+    void initUniforms(const Camera& camera);
 
 private:
     void initSkybox(void);

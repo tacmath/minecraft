@@ -32,7 +32,7 @@ void WorldArea::Draw(void) {
 
 
 //load the view matrix in all the shaders
-void WorldArea::LoadViewMatrix(Camera& camera) {
+void WorldArea::LoadViewMatrix(const Camera& camera) {
     chunkShader.setMat4("view", camera.view);
 }
 
@@ -47,7 +47,7 @@ WorldArea::~WorldArea(void) {
     chunkShader.Delete();
 }
 
-void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& position) {
+void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, const glm::vec3& position) {
     int playerPosx, playerPosz, maxChunk;
 
     maxChunk = dataLoadDistance << 1;
@@ -72,7 +72,7 @@ void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3& positio
         chunks.erase(it, chunks.end());
 }
 
-void WorldArea::sortChunksLoading(glm::vec3& position, Camera& camera) {
+void WorldArea::sortChunksLoading(const glm::vec3& position, const Camera& camera) {
     for (size_t n = 0; n < chunksLoading.size(); n++) {
         Chunk* chunk;
 
@@ -89,7 +89,7 @@ void WorldArea::sortChunksLoading(glm::vec3& position, Camera& camera) {
 
 
 
-void WorldArea::loadNewChunks(glm::vec3 &position) {
+void WorldArea::loadNewChunks(const glm::vec3 &position) {
     int playerPosx, playerPosz, maxChunk;
 
     maxChunk = dataLoadDistance << 1;
@@ -109,7 +109,7 @@ void WorldArea::loadNewChunks(glm::vec3 &position) {
         }
 }
 
-void WorldArea::LoadChunks(glm::vec3 &position, Camera& camera) {
+void WorldArea::LoadChunks(const glm::vec3 &position, const Camera& camera) {
 
     memset(loadedChunks, 0, (dataLoadDistance << 1) * (dataLoadDistance << 1) * sizeof(Chunk*));
 
@@ -124,7 +124,7 @@ void WorldArea::LoadChunks(glm::vec3 &position, Camera& camera) {
     thread.CreateMesh(chunks, chunksLoading);
 }
 
-void WorldArea::setChunksVisibility(Camera &camera) {
+void WorldArea::setChunksVisibility(const Camera &camera) {
     Chunk* chunk;
 
     for (unsigned n = 0; n < chunks.size(); n++) {

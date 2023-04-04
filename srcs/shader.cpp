@@ -1,4 +1,5 @@
 #include "shader.h"
+#include "global_defines.h"
 
 #ifdef _WIN32
 #define STRDUP _strdup
@@ -67,6 +68,7 @@ void Shader::Load(const std::vector<std::string> &options, const char *vertexSha
     free(vertexShaderSource);
     free(fragmentShaderSource);
     free(geometryShaderSource);
+    ON_DEBUG(std::cout << "shader " << ID << " created with sources VS " << vertexShaderFile << " FS " << fragmentShaderFile << std::endl;)
 }
 
 void Shader::LoadSources(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource) {

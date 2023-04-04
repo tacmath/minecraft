@@ -17,8 +17,10 @@ void Application::Start() {
     worldArea.initUniforms(player.camera);
     background.initUniforms(player.camera);
 
+    
     shadow.Activate();
     SetCallbacks();
+    player.InventoryUpdateCallback();
     ImGui_ImplGlfw_InstallCallbacks(window.context); //maybe add imgui callbacks directly in my callbacks
     glfwSwapInterval(0);
     status = APPLICATION_RUNNING;
@@ -81,12 +83,19 @@ void Application::EveryTicks() {
 }
 
 void Application::SetCallbacks() {
-    player.SetUpdateCallback([&](Player &player) { //maybe set the callback in the camera class
+    player.SetUpdateCallback([&](const Player &player) { //maybe set the callback in the camera class
         worldArea.setChunksVisibility(player.camera);
         worldArea.LoadViewMatrix(player.camera);
         background.LoadViewMatrix(player.camera);
         UI.SetViewMatrix(player.camera.view);
      });
+
+    player.SetInventoryUpdateCallback([&](const Player& player) { //maybe set the callback in the camera class
+        UI.UpdateInventory(player);
+        int width, height;
+        glfwGetFramebufferSize(window.context, &width, &height);
+        glViewport(0, 0, width, height);
+    });
 
     event.SetWindowSizeCallback([&](int width, int height) {
         player.camera.ChangePerspective(0, (float)width, (float)height, 0.1f, 0);

@@ -19,7 +19,7 @@ public:
 		Delete();
 	};
 
-	void Init() {
+	void Init(GLuint usage = GL_STATIC_DRAW) {
 		float quadVertices[] = {
 			// positions        // texture Coords
 			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
@@ -32,7 +32,7 @@ public:
 		glGenBuffers(1, &VBO);
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, usage);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(1);
@@ -40,7 +40,7 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void Init(glm::vec2 start, glm::vec2 len)
+	void Init(glm::vec2 start, glm::vec2 len, GLuint usage = GL_STATIC_DRAW)
 	{
 		float quadVertices[] = {
 			// positions        // texture Coords
@@ -54,7 +54,7 @@ public:
 		glGenBuffers(1, &VBO);
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, usage);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(1);

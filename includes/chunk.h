@@ -164,7 +164,7 @@ public:
 	void UnlockNeighbours();
 
 	// set player proximity
-	void SetPlayerProximity(glm::vec3 &playerPos);
+	void SetPlayerProximity(const glm::vec3 &playerPos);
 private:
 	void addTopVertices(const int x, const int y, const int z);
 	void addBottomVertices(const int x, const int y, const int z);

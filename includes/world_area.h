@@ -57,13 +57,13 @@ public:
     void Draw(void);
 
     //load the view matrix in all the shaders
-    void LoadViewMatrix(Camera& camera);
+    void LoadViewMatrix(const Camera& camera);
 
     // create and delete chunks based on the render distance
-    void LoadChunks(glm::vec3& position, Camera& camera);
+    void LoadChunks(const glm::vec3& position, const Camera& camera);
 
     // set the visibility of each chunk
-    void setChunksVisibility(Camera& camera);
+    void setChunksVisibility(const Camera& camera);
 
     // change the render distance 
     void UpdateRenderDistance(unsigned newRenderDistance);
@@ -79,9 +79,9 @@ public:
 
 private:
     void initChunks(int radius);
-    void fillLoadedChunks(std::vector<Chunk*>& chunks, glm::vec3 &position);
-    void sortChunksLoading(glm::vec3& position, Camera &camera);
-    void loadNewChunks(glm::vec3& position);
+    void fillLoadedChunks(std::vector<Chunk*>& chunks, const glm::vec3 &position);
+    void sortChunksLoading(const glm::vec3& position, const Camera &camera);
+    void loadNewChunks(const glm::vec3& position);
 };
 
 #endif

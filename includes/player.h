@@ -4,22 +4,29 @@
 #include "entity.h"
 #include "raycast.h"
 #include "camera.h"
+#include <array>
 #include <functional>
 
-#define PLAYER_RANGE 5
+#define INVENTORY_SIZE 9
+
+typedef std::array<char, INVENTORY_SIZE> inventory_t;
 
 //maybe add a playerInfo struct and add a GetInfo() method
 
 class Player : public Entity {
+	#define PLAYER_RANGE 5
 private:
 	// the updateCallback
-	std::function<void(Player&)> updateCallback;
+	std::function<void(const Player&)> updateCallback;
+	std::function<void(const Player&)> inventoryUpdateCallback;
 	glm::vec3 cameraOffset;
+	unsigned	selectedSlot; //later use an inventory and an index to the selected slot
+	inventory_t inventory;
 
 public:
 	RayCastInfo selectedCube;
 	Camera		camera;
-	char		selectedItem; //later use an inventory and an index to the selected slot
+
 
 	Player() {
 		look = glm::vec3(0, 0, -1);
@@ -27,8 +34,14 @@ public:
 		position = glm::vec3(0, 60, 0);
 		cameraOffset = glm::vec3(0.2f, 1.5f, 0.2f);
 		hasCollision = false;
-		selectedItem = 4;
-		updateCallback = [](Player&) {};
+		selectedSlot = 0;
+		inventory.fill(0);
+		inventory[0] = 1;
+		inventory[1] = 2;
+		inventory[2] = 3;
+		inventory[3] = 4;
+		updateCallback = [](const Player&) {};
+		inventoryUpdateCallback = [](const Player&) {};
 	}
 
 	void Init(glm::vec2 windowSize) {
@@ -55,12 +68,42 @@ public:
 		updateCallback(*this);
 	}
 
-	void SetUpdateCallback(std::function<void(Player&)> callback) {
+	int SelectedItem() {
+		return inventory[selectedSlot];
+	}
+
+	void SetSelectedSlot(unsigned selectedSlot) {
+		this->selectedSlot = selectedSlot;
+		inventoryUpdateCallback(*this);
+	}
+
+	unsigned GetSelectedSlot() const {
+		return selectedSlot;
+	}
+
+	void SetInventoryItem(unsigned selectedSlot, char itemId) {
+		inventory[selectedSlot] = itemId;
+		inventoryUpdateCallback(*this);
+	}
+
+	const inventory_t& GetInventory() const {
+		return inventory;
+	}
+
+	void SetUpdateCallback(std::function<void(const Player&)> callback) {
 		updateCallback = callback;
+	}
+
+	void SetInventoryUpdateCallback(std::function<void(const Player&)> callback) {
+		inventoryUpdateCallback = callback;
 	}
 
 	void UpdateCallback() {
 		updateCallback(*this);
+	}
+
+	void InventoryUpdateCallback() {
+		inventoryUpdateCallback(*this);
 	}
 };
 
