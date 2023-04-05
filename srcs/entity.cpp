@@ -95,15 +95,22 @@ float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3
 
 glm::vec3 MoveBox(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
     glm::vec3 result;
+    char moveOrder[3] = {1, 0, 2}; // y x z
     AABB current = box;
+    
+    if (movement.x > movement.z) {
+        moveOrder[1] = 2;
+        moveOrder[2] = 0;
+    }
 
     for (int n = 0; n < 3; n++) {
+        int axisId = moveOrder[n];
         glm::vec3 axis(0);
-        axis[n] = 1.0f;
+        axis[axisId] = 1.0f;
 
-        float movement_axis = MoveAxis(box, movement[n], colliders, axis);
+        float movement_axis = MoveAxis(current, movement[axisId], colliders, axis);
         current = current.translate(axis * movement_axis);
-        result[n] = movement_axis;
+        result[axisId] = movement_axis;
     }
 
     return result;
@@ -111,16 +118,25 @@ glm::vec3 MoveBox(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
 
 void Entity::Move(glm::vec3 &movement) {
 	if (hasCollision) {
-		ApplyCollision(movement);
+        float length = glm::length(movement);
+        if (length < 0.4f)
+		    ApplyCollision(movement);
+        else {
+            length /= 0.4f;
+            glm::vec3 step = movement / length;
+            for (int n = 0; n < length; n++)
+                ApplyCollision(step);
+        }
 		return;
 	}
 	position += movement;
 }
 
 void Entity::ApplyCollision(glm::vec3& movement) {
-	std::vector<AABB> colliders;
+	static std::vector<AABB> colliders;
     AABB entityAABB;
 
+    colliders.clear();
     entityAABB = this->aabb();
 	if (GetColliders(entityAABB.translate(movement), colliders) >= 0) {
         OccludeColliders(entityAABB, colliders);
