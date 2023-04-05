@@ -118,13 +118,12 @@ glm::vec3 MoveBox(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
 
 void Entity::Move(glm::vec3 &movement) {
 	if (hasCollision) {
-        float length = glm::length(movement);
-        if (length < 0.4f)
+        float nbStep = glm::length(movement) / 0.4f;
+        if (nbStep < 1.0f)
 		    ApplyCollision(movement);
         else {
-            length /= 0.4f;
-            glm::vec3 step = movement / length;
-            for (int n = 0; n < length; n++)
+            glm::vec3 step = movement / nbStep;
+            for (int n = 0; n < nbStep; n++)
                 ApplyCollision(step);
         }
 		return;
