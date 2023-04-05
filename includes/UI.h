@@ -77,7 +77,7 @@ public:
         quadShader.Activate();
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
         glViewport(0, 0, INVENTORY_BARRE_X * 4, INVENTORY_BARRE_Y * 4);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         texture.Bind();
         quadShader.setMat4("MVP", P * glm::scale(glm::translate(glm::vec3(1.0f, 1.0f, 0.0f)), glm::vec3(INVENTORY_BARRE_X - 2.0f, INVENTORY_BARRE_Y - 2.0f, 0.0f)));
         quad.Render();
