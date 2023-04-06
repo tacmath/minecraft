@@ -55,19 +55,6 @@ void Menu::Link(Player *player, Window *window, WorldArea* worldArea, Shadow* sh
     FOV = player->camera.GetFOV();
     SetupImgui();
 }
-/*
-void Menu::toggleView() {
-    if (status & DEBUG_VIEW) {
-        status ^= DEBUG_VIEW;
-        quad.Delete();
-        quadShader.Delete();
-        return;
-    }
-
-    status |= DEBUG_VIEW;
-    quad.Init(glm::vec3(0.0f), glm::vec3(0.8f));
-    quadShader.Load("shaders/debugTextureVS.glsl", "shaders/debugTextureFS.glsl");
-}*/
 
 bool Menu::IsOpen() {
     return menuIsOpen;
@@ -111,11 +98,11 @@ void Menu::fpsTitle(float time, float latence) {
 }
 
 void Menu::DrawInfo() {
-    ImGui::Begin("Minecraft Info", &showInfo, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+    ImGui::Begin("Minecraft Info", &showInfo, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize);
     
     ImGui::SeparatorText("Player");
     ImGui::Text("Posision    x %5.2f, y %5.2f, z %5.2f", player->position.x, player->position.y, player->position.z);
-    ImGui::Text("Target      x %5d, y %5d, z %5d  type %d", player->selectedCube.position.x, player->selectedCube.position.y, player->selectedCube.position.z, player->selectedCube.id);
+    ImGui::Text("Target      x %5d, y %5d, z %5d  type %d   ", player->selectedCube.position.x, player->selectedCube.position.y, player->selectedCube.position.z, player->selectedCube.id);
 
     ImGui::NewLine();
     ImGui::SeparatorText("Chunk");
