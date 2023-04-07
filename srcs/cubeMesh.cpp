@@ -40,20 +40,16 @@ inline int getVertexAO(int side1, int side2, int corner) {
 
 void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
 	char visibleCubes[3][3];
-	int* val1;
-	int* val2;
+	volatile int* val1;
+	volatile int* val2;
 
-	val1 = &x;
-	val2 = &z;
-	if (pivot == 0) // the pivot is x
-		val1 = &y;
-	else if (pivot == 2) // the pivot is z
-		val2 = &y;
+	val1 = (pivot == 0) ? &y : &x; // the pivot is x
+	val2 = (pivot == 2) ? &y : &z; // the pivot is z
 	*val1 -= 1;
 	*val2 -= 1;
 	for (int n = 0; n < 3; n++) {
 		for (int m = 0; m < 3; m++) {	
-			visibleCubes[n][m] = (GetCube(x, y, z) != AIR);
+			visibleCubes[n][m] = (char)(GetCube(x, y, z) != AIR);
 			*val2 += 1;
 		}
 		*val1 += 1;
