@@ -22,9 +22,11 @@ private:
 	GLuint textureID;
     GLuint frameBufferID;
     Shader shadowShader;
+    Frustum frustum;
     glm::mat4 biasMatrix;
     glm::mat4 projection[SHADOW_CASCADE_NB];
     glm::mat4 view[SHADOW_CASCADE_NB];
+    glm::mat4 lightSpaceMatrices[SHADOW_CASCADE_NB];
     GLFWwindow* window;
     Camera *playerCam;
     WorldArea* worldArea;
@@ -63,7 +65,6 @@ public:
 
         glGenFramebuffers(1, &frameBufferID);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureID, 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -75,7 +76,7 @@ public:
             0.5, 0.5, 0.5, 1.0
         };
 
-        shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl", "shaders/shadowGS.glsl");
+        shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
     }
 
     void Delete() {
@@ -90,12 +91,21 @@ public:
             return ;
         glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
         glViewport(0, 0, SHADOW_TEXTURE_SIZE, SHADOW_TEXTURE_SIZE);
-        glClear(GL_DEPTH_BUFFER_BIT);
         
-        setLightViewProjectionMatrix(lightDir);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(3.0f, 1.0f);
 
         shadowShader.Activate();
-        renderChunks();
+        setLightViewProjectionMatrix(lightDir);
+        for (unsigned n = 0; n < SHADOW_CASCADE_NB; n++) {
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureID, 0, n);
+            glClear(GL_DEPTH_BUFFER_BIT);
+
+            shadowShader.setMat4("MVP", lightSpaceMatrices[n]);
+            renderChunks(lightSpaceMatrices[n]);
+        }
+
+        glDisable(GL_POLYGON_OFFSET_FILL);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
@@ -182,33 +192,28 @@ private:
 
     void setLightViewProjectionMatrix(glm::vec3 &lightDir) {
         Shader& chunkShader = worldArea->GetShader();
-        glm::mat4 lightSpaceMatrices[SHADOW_CASCADE_NB];
+        glm::mat4 biasLightSpaceMatrices[SHADOW_CASCADE_NB];
 
         createLightViewProjectionMatrices(lightDir);
 
-        for (int n = 0; n < SHADOW_CASCADE_NB; n++)
+        for (int n = 0; n < SHADOW_CASCADE_NB; n++) {
             lightSpaceMatrices[n] = projection[n] * view[n];
+            biasLightSpaceMatrices[n] = biasMatrix * lightSpaceMatrices[n];
+        }
 
-        shadowShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
-
-        for (int n = 0; n < SHADOW_CASCADE_NB; n++)
-            lightSpaceMatrices[n] = biasMatrix * lightSpaceMatrices[n];
-
-        chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, lightSpaceMatrices);
+        chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, biasLightSpaceMatrices);
     }
 
-    void renderChunks() {
+    void renderChunks(glm::mat4 &mvp) {
         std::vector<Chunk*>& chunks = worldArea->GetChunks();
         Chunk* chunk;
 
-        glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(3.0f, 1.0f);
+        frustum.calculate(mvp);
         for (size_t n = 0; n < chunks.size(); n++) {
             chunk = chunks[n];
-            if (playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 48))
+            if (frustum.chunkIsVisible(chunk->posx, chunk->posz)) //upgrade the frustum culling speed with a quad tree or just less chunk to prosess 
                 chunk->Draw(shadowShader);
         }
-        glDisable(GL_POLYGON_OFFSET_FILL);
     }
 };
 

@@ -6,7 +6,7 @@
 #include<glm/gtx/rotate_vector.hpp>
 #include <iostream>
 
-#define ABS(x) ((x < 0) ? -x : x)
+#define ABS(x) (((x) < 0) ? -(x) : (x))
 
 class Frustum
 {
@@ -22,7 +22,7 @@ public:
 	Frustum(){};
     ~Frustum(){};
 
-    void calculate(glm::mat4 mat) {
+    void calculate(const glm::mat4 &mat) {
         for (int i = 4; i--; ) {
             left[i]   = mat[i][3] + mat[i][0];
             right[i]  = mat[i][3] - mat[i][0];
@@ -31,14 +31,6 @@ public:
             near[i]   = mat[i][3] + mat[i][2];
             far[i]    = mat[i][3] - mat[i][2];
         }
-        
-        /*std::cout << "Left:" << left[0] << " " << left[1] << " " << left[2] << " " << left[3] << std::endl;
-        std::cout << "right:" << right[0] << " " << right[1] << " " << right[2] << " " << right[3] << std::endl;*/
-    /*    std::cout << "bottom:" << bottom[0] << " " << bottom[1] << " " << bottom[2] << " " << bottom[3] << std::endl;
-        std::cout << "top:" << top[0] << " " << top[1] << " " << top[2] << " " << top[3] << std::endl;
-        std::cout << "near:" << near[0] << " " << near[1] << " " << near[2] << " " << near[3] << std::endl;
-        std::cout << "far:" << far[0] << " " << far[1] << " " << far[2] << " " << far[3] << std::endl; */
-        
     }
 
     inline bool isOnOrForwardPlan(const glm::vec4 &plan, const glm::vec3 &point, int radius) const
