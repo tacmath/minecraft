@@ -124,6 +124,13 @@ void WorldArea::LoadChunks(const glm::vec3 &position, const Camera& camera) {
     thread.CreateMesh(chunks, chunksLoading);
 }
 
+/*
+* to make it faster split the area in 4 parts 
+* 
+* if all the area in frustum then all chunks of the area are visible
+* if the area is on no plane of the frustum then all chunks of the area are not visible
+* if not the above then split the area in 4 and try again until an area is a chunk wide
+*/
 void WorldArea::setChunksVisibility(const Camera &camera) {
     Chunk* chunk;
 
