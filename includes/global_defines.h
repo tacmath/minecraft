@@ -50,8 +50,11 @@ extern global_render_info mc_info;
     float startTime = (float)glfwGetTime(); \
     code; \
     float stopTime = (float)glfwGetTime(); \
+    printf("Compute: %f ms\n", (float)(stopTime - startTime) * 1000); \
+    startTime = stopTime; \
     glFinish(); \
-    printf("Elapsed: %f ms\n", (float)(stopTime - startTime) * 1000); \
+    stopTime = (float)glfwGetTime(); \
+    printf("Render left: %f ms\n", (float)(stopTime - startTime) * 1000); \
     } while(0)
 */
 #endif
