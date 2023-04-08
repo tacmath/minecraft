@@ -2,6 +2,9 @@
 #include "application.h"
 #include "global_defines.h"
 
+#if RENDERING_INFO == 1
+    global_render_info mc_info;
+#endif
 std::string glStringEnum(GLenum glenum)
 {
     std::string enumString = "NONE";

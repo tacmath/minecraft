@@ -2,26 +2,37 @@
 #define GLOBAL_DEFINES_H
 
 #define DEBUG_MODE 1
-#define RENDERING_INFO 1
 
 #if DEBUG_MODE == 1
 #define ON_DEBUG(x) x
+#define RENDERING_INFO 0
 #else
 #define ON_DEBUG(x)
 #endif // DEBUG_MODE == 1
 
-/*
+
 #if RENDERING_INFO == 1
-extern int nb_drawcall;
-extern int polygon_count;
-#define MCDrawArrays(type, offset, verticesNumber) glDrawArrays(type, offset, verticesNumber); \
-        nb_drawcall++; \
-        polygon_count += verticesNumber / 3
+
+struct global_render_info {
+    int nb_drawcall;
+    int polygon_count;
+
+    global_render_info() {
+        nb_drawcall = 0;
+        polygon_count = 0;
+    }
+};
+
+extern global_render_info mc_info;
+
+#define McDrawArrays(type, offset, verticesNumber) glDrawArrays(type, offset, verticesNumber); \
+        mc_info.nb_drawcall++; \
+        mc_info.polygon_count += (verticesNumber - offset) / 3
 #else
-#define MCDrawArrays(type, offset, verticesNumber) glDrawArrays(type, offset, verticesNumber)
+#define McDrawArrays(type, offset, verticesNumber) glDrawArrays(type, offset, verticesNumber)
 #endif
 
-
+/*
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 

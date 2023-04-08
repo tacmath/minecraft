@@ -90,7 +90,7 @@ public:
         quadShaderArray.Activate();
         for (unsigned n = 0; n < INVENTORY_SIZE; n++) {
             if (inventory[n]) {
-                quadShaderArray.setInt("texIndex",Chunk::blocks[inventory[n]].top);
+                quadShaderArray.setInt("texIndex",(int)(Chunk::blocks[(int)inventory[n]].top));
                 quadShaderArray.setMat4("MVP", P * glm::translate(glm::vec3(IB_SLOT_SIZE * n + 5.0f, 5.0f, 0.0f)) * S);
                 quad.Render();
             }

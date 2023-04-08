@@ -8,6 +8,7 @@
 #include "shader.h"
 #include "blocks.h"
 #include "generation.h"
+#include "global_defines.h"
 
 // id of air
 #define AIR 0
@@ -140,7 +141,7 @@ public:
 		if (isVisible && vao.ID != 0) {
 			vao.Bind();
 			shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
-			glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+			McDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 		}
 	}
 

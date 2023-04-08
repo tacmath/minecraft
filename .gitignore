@@ -371,7 +371,7 @@ libraries/lib
 libraries/include/freetype
 libraries/include/GLFW
 libraries/include/glm
-libraries/include/*.h
+libraries/include/*.h*
 libraries/include/AL
 
 vox

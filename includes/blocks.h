@@ -7,13 +7,11 @@ struct Block {
 	char top;
 	char side;
 	char bottom;
-	SoundBuffer soundBuffer; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour éviter plusieurs mème buffer
+	SoundBuffer soundBuffer; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour ï¿½viter plusieurs mï¿½me buffer
 	SoundSource sound;
 	
 	Block() {
-		top = 0;
-		side = 0;
-		bottom = 0;
+		Clean();
 	};
 
 	void Delete() {
@@ -40,6 +38,14 @@ struct Block {
 			sound.SetPosition(x, y, z);
 			sound.Play(soundBuffer);
 		}
+	}
+
+	void Clean() {
+		top = 0;
+		side = 0;
+		bottom = 0;
+		soundBuffer.ID = 0;
+		sound.ID = 0;
 	}
 };
 

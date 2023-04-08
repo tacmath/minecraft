@@ -37,7 +37,7 @@ void parseBlockData(std::vector<std::string>& textures) {
         if (line.substr(0, 4) == "Name") {
             Chunk::blocks[blockID] = block;
             blockID = 0;
-            memset(&block, 0, sizeof(block));
+            block.Clean();
         }
         else if (line.substr(1, 2) == "ID")
             blockID = std::stoi(line.substr(3, line.size() - 3));

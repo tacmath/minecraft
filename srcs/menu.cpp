@@ -111,6 +111,13 @@ void Menu::DrawInfo() {
     ImGui::NewLine();
     ImGui::SeparatorText("Render");
     ImGui::Text("Minecraft average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+    #if RENDERING_INFO == 1
+        ImGui::Text("Nb Draw call  %d", mc_info.nb_drawcall);
+        ImGui::Text("Polygon count %d", mc_info.polygon_count);
+        mc_info.nb_drawcall = 0;
+        mc_info.polygon_count = 0;
+    #endif
     
     ImGui::End();
 }
