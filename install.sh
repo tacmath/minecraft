@@ -77,7 +77,6 @@ install_lib()
 
 install_libs()
 {
-    uptade_lib=false
     for lib_name in "$@"
     do
         path=$LIB_FOLDER/$lib_name.so
@@ -87,9 +86,7 @@ install_libs()
         fi
 
     done
-    if [ $uptade_lib = true ]; then
         cp -rf $DEPENDENCY_FOLDER/usr/include libraries/
-    fi
 }
 
 if [  ! -e $DEPENDENCY_FOLDER ]
