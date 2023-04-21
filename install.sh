@@ -9,12 +9,12 @@ git submodule update
 
 #sudo apt-get install libimgui-dev libglfw3-dev libopenal-dev libsndfile1-dev
 
-path=./libraries/include/glad/khrplatform.h
+path=./libraries/include/KHR/khrplatform.h
 if [  ! -e $path ]
 then
     printf '\ninstalling khrplatform\n'
-    mkdir -p ./libraries/include/glad
-    curl -k https://raw.githubusercontent.com/matheme42/glad/master/khrplatform.h > ./libraries/include/glad/khrplatform.h
+    mkdir -p ./libraries/include/KHR
+    curl -k https://raw.githubusercontent.com/matheme42/glad/master/khrplatform.h > ./libraries/include/KHR/khrplatform.h
 
 fi
 
@@ -86,7 +86,15 @@ install_libs()
         fi
 
     done
-        cp -rf $DEPENDENCY_FOLDER/usr/include libraries/
+}
+
+
+cpy_libs_include()
+{
+    for include_name in "$@"
+    do
+        cp -rf $DEPENDENCY_FOLDER/usr/include/$include_name ./libraries/include
+    done
 }
 
 if [  ! -e $DEPENDENCY_FOLDER ]
@@ -99,3 +107,5 @@ fi
 
 
 install_libs libglfw libsndfile libopenal
+
+cpy_libs_include AL GLFW sndfile.h
