@@ -6,7 +6,7 @@
 #    By: matheme <matheme@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/03 11:06:26 by yalabidi          #+#    #+#              #
-#    Updated: 2023/01/26 19:10:34 by matheme          ###   ########.fr        #
+#    Updated: 2023/10/09 16:29:31 by mtaquet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ INC_PATH= includes/
 HEADER= $(INC_PATH)/*
 
 #framework
-FRAMEWORK= -ldl -lpthread `pkg-config --static --libs gl glfw3` -L ~/.dep/usr/lib/x86_64-linux-gnu/ -lopenal -lsndfile
+FRAMEWORK= -ldl -lpthread `pkg-config --static --libs glfw3` -lGL -L ~/.dep/usr/lib/x86_64-linux-gnu/ -lopenal -lsndfile
 FRAMEWORK_INC = -I libraries/include -I libraries/imgui/ -I libraries/imgui/backends
 
 NAME_SRC=	camera.cpp\
