@@ -28,6 +28,12 @@
     <Filter Include="Fichiers sources\utils">
       <UniqueIdentifier>{51df9030-987e-420e-aaf3-2def72d95a39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\openal">
+      <UniqueIdentifier>{938c594a-3527-4c14-9dd8-b926fd6a2d73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\openal">
+      <UniqueIdentifier>{c7990991-afc4-422e-9ae7-9d101d1a9518}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="srcs\main.cpp">
@@ -121,7 +127,16 @@
       <Filter>Fichiers sources\utils</Filter>
     </ClCompile>
     <ClCompile Include="srcs\sound.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\listener.cpp">
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\soundSource.cpp">
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\soundBuffer.cpp">
+      <Filter>Fichiers sources\openal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,8 +230,20 @@
     <ClInclude Include="includes\global_defines.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\parseConfig.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
     <ClInclude Include="includes\sound.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\listener.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\soundBuffer.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\soundSource.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +305,9 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="README.md">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="sounds_settings">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

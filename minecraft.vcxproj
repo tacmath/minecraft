@@ -154,6 +154,7 @@
     <ClCompile Include="srcs\application.cpp" />
     <ClCompile Include="srcs\background.cpp" />
     <ClCompile Include="srcs\generation.cpp" />
+    <ClCompile Include="srcs\listener.cpp" />
     <ClCompile Include="srcs\parseConfig.cpp" />
     <ClCompile Include="srcs\perlin_noise.cpp" />
     <ClCompile Include="srcs\camera.cpp" />
@@ -169,6 +170,8 @@
     <ClCompile Include="srcs\cubeMesh.cpp" />
     <ClCompile Include="srcs\shader.cpp" />
     <ClCompile Include="srcs\sound.cpp" />
+    <ClCompile Include="srcs\soundBuffer.cpp" />
+    <ClCompile Include="srcs\soundSource.cpp" />
     <ClCompile Include="srcs\texture.cpp" />
     <ClCompile Include="srcs\thread.cpp" />
     <ClCompile Include="srcs\VAO.cpp" />
@@ -187,12 +190,16 @@
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
     <ClInclude Include="includes\global_defines.h" />
+    <ClInclude Include="includes\listener.h" />
     <ClInclude Include="includes\menu.h" />
     <ClInclude Include="includes\generation.h" />
+    <ClInclude Include="includes\parseConfig.h" />
     <ClInclude Include="includes\quad.h" />
     <ClInclude Include="includes\raycast.h" />
     <ClInclude Include="includes\shadow.h" />
     <ClInclude Include="includes\sound.h" />
+    <ClInclude Include="includes\soundBuffer.h" />
+    <ClInclude Include="includes\soundSource.h" />
     <ClInclude Include="includes\sun.h" />
     <ClInclude Include="includes\simplex_noise.h" />
     <ClInclude Include="includes\event.h" />
@@ -229,6 +236,7 @@
     <None Include="shaders\sunVS.glsl" />
     <None Include="shaders\wireFrameFS.glsl" />
     <None Include="shaders\wireFrameGS.glsl" />
+    <None Include="sounds_settings" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

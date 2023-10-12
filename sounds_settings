@@ -1,0 +1,11 @@
+Name Grass
+	Files dig/grass1.ogg, dig/grass2.ogg, dig/grass3.ogg, dig/grass4.ogg
+
+Name Gravel
+	Files dig/gravel1.ogg, dig/gravel2.ogg, dig/gravel3.ogg, dig/gravel4.ogg
+
+Name Stone
+	Files dig/stone1.ogg, dig/stone2.ogg, dig/stone3.ogg, dig/stone4.ogg
+
+Name Wood
+	Files dig/wood1.ogg, dig/wood2.ogg, dig/wood3.ogg, dig/wood4.ogg

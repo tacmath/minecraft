@@ -1,7 +1,5 @@
 #include "world_area.h"
 
-void parseBlockData(std::vector<std::string>& textures);
-
 WorldArea::WorldArea(void) {
     std::vector<std::string> shaderOption;
     shaderOption.push_back("SHADOW");
@@ -9,7 +7,7 @@ WorldArea::WorldArea(void) {
     chunkShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
 
     std::vector<std::string> textureNames;
-    parseBlockData(textureNames);
+    parseConfigs(textureNames);
     for (auto& name : textureNames)
         name = "texture/" + name;
     texAtlas.LoadArray(textureNames, 0);

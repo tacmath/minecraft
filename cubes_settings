@@ -3,35 +3,35 @@ Name Grass
 	Top		grass/grass_top.png
 	Side	grass/grass_side.png
 	Bottom	grass/dirt.png
-	Break	sound/break/grass2.ogg
+	Break	Grass
 
 Name Dirt
 	ID		2
 	Top		dirt/dirt.png
 	Side	dirt/dirt.png
 	Bottom	dirt/dirt.png
-	Break	sound/break/gravel.ogg
+	Break	Gravel
 
 Name Stone
 	ID		3
 	Top		stone/stone.png
 	Side	stone/stone.png
 	Bottom	stone/stone.png
-	Break	sound/break/stone.ogg
+	Break	Stone
 
 Name OakPlanck
 	ID		4
 	Top		oak/planks_oak.png
 	Side	oak/planks_oak.png
 	Bottom	oak/planks_oak.png
-	Break	sound/break/wood.ogg
+	Break	Wood
 
 Name BedRock
 	ID		5
 	Top		bedrock/bedrock.png
 	Side	bedrock/bedrock.png
 	Bottom	bedrock/bedrock.png
-	Break	sound/break/stone.ogg
+	Break	Stone
 
 Name OakLeaves
 	ID		6
@@ -45,7 +45,7 @@ Name OakLog
 	Top		oak/log_oak_top.png
 	Side	oak/log_oak.png
 	Bottom	oak/log_oak_top.png
-	Break	sound/break/wood.ogg
+	Break	Grass
 
 Name PackedIce
 	ID		8

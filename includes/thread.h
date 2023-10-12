@@ -21,7 +21,7 @@ void MeshThreadRoutine(Thread& meshThread);
 
 class Thread {
 private:
-	void *memPtr;
+	void *memPtr; //maybe replace by unique_ptr
 public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;

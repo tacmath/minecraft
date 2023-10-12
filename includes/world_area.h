@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "chunk.h"
 #include "thread.h"
+#include "parseConfig.h"
 #include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>

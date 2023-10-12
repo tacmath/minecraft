@@ -51,7 +51,7 @@ void Application::Run() {
 
 void Application::Stop() {
     worldArea.thread.StopThreads();
-    for (int n = 0; n < 256; n++)
+    for (int n = 0; n < MAX_BLOCK_NB; n++)
         Chunk::blocks[n].Delete();
     music.Delete();
 }
