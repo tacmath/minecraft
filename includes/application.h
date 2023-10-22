@@ -31,7 +31,6 @@ private:
 
 	// modules
 	Window			window;
-	Listener		listener;
 	WorldArea		worldArea;
 	Background		background;
 	Player          player;
@@ -40,7 +39,7 @@ private:
 	Event           event;
 	Cooldowns		cooldowns;
 	Shadow			shadow;
-	Music			music;
+	Sound			sound;
 
 public:
 	//default constructor

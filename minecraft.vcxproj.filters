@@ -138,6 +138,9 @@
     <ClCompile Include="srcs\soundBuffer.cpp">
       <Filter>Fichiers sources\openal</Filter>
     </ClCompile>
+    <ClCompile Include="srcs\music.cpp">
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\camera.h">
@@ -243,6 +246,9 @@
       <Filter>Fichiers d%27en-tête\openal</Filter>
     </ClInclude>
     <ClInclude Include="includes\soundSource.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\music.h">
       <Filter>Fichiers d%27en-tête\openal</Filter>
     </ClInclude>
   </ItemGroup>

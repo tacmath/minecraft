@@ -155,6 +155,7 @@
     <ClCompile Include="srcs\background.cpp" />
     <ClCompile Include="srcs\generation.cpp" />
     <ClCompile Include="srcs\listener.cpp" />
+    <ClCompile Include="srcs\music.cpp" />
     <ClCompile Include="srcs\parseConfig.cpp" />
     <ClCompile Include="srcs\perlin_noise.cpp" />
     <ClCompile Include="srcs\camera.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="includes\listener.h" />
     <ClInclude Include="includes\menu.h" />
     <ClInclude Include="includes\generation.h" />
+    <ClInclude Include="includes\music.h" />
     <ClInclude Include="includes\parseConfig.h" />
     <ClInclude Include="includes\quad.h" />
     <ClInclude Include="includes\raycast.h" />

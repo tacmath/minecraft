@@ -4,6 +4,8 @@
 #include <AL/al.h>
 #include "soundBuffer.h"
 
+#define MAX_SOUND_SOURCES 10
+
 class SoundSource
 {
 public:
@@ -43,3 +45,8 @@ class SoundSources : std::array<SoundSource, _size> {
     ~SoundSources();
     SoundSource GetSoundSource();
 };
+
+/*
+namespace sound {
+    SoundSources<MAX_SOUND_SOURCES> sources;
+}*/

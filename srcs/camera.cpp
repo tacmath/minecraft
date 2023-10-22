@@ -71,3 +71,11 @@ float Camera::GetFOV() {
 float Camera::GetScreenRatio() {
 	return width / height;
 }
+
+inline const glm::mat4 Camera::GetView() {
+	return view;
+}
+
+inline const glm::mat4 Camera::GetProjection() {
+	return projection;
+}
