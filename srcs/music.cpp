@@ -88,7 +88,7 @@ void Music::LoadPlayList(const std::vector<std::string>& Filenames) { // try to 
 
     std::vector<std::thread> threads;
 
-    buffers.Reserve(Filenames.size());
+    buffers.resize(Filenames.size());
     threads.resize(Filenames.size());
     for (unsigned n = 0; n < threads.size(); ++n)
         threads[n] = std::thread(loadMusicFile, Filenames[n], this);

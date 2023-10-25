@@ -12,8 +12,20 @@ private:
 	SoundBuffers	sounds;
 
 public:
-	void AddSounds(std::vector<std::string> soundFiles) {
+	static SoundSources<MAX_SOUND_SOURCES> sources;
 
+	~Sound() {
+		DeleteSounds();
+	}
+
+	void AddSounds(const std::vector<std::string>& soundFiles) {
+		for (std::string soundFile : soundFiles)
+			sounds.Add(soundFile.c_str());
+	}
+
+	void AddSounds(const SoundBuffers& soundBuffers) {
+		for (SoundBuffer sound : soundBuffers)
+			sounds.Add(sound);
 	}
 
 	void DeleteSounds() {

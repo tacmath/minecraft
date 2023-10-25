@@ -29,7 +29,7 @@ void WorldArea::initChunks(unsigned radius) {
 void WorldArea::Init(const Camera& camera/*, std::vector<SoundBuffers>& sounds*/) {
     std::vector<std::string> textureNames;
 
-    parseConfigs(textureNames);
+    parseBlockData(textureNames);
     for (auto& name : textureNames)
         name = "texture/" + name;
     texAtlas.LoadArray(textureNames, 0);

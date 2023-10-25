@@ -39,7 +39,7 @@ static std::vector<SoundData> parseSoundData() {
         if (splitLine.size() <= 1)
             continue;
         if (splitLine[0] == "Name") {
-            if (!soundData.name.empty() && !soundData.soundFiles.empty()) {
+            if (!soundData.name.empty() && !soundData.sounds.empty()) {
                 soundsData.push_back(soundData);
                 soundData.clear();
             }
@@ -48,8 +48,9 @@ static std::vector<SoundData> parseSoundData() {
         else if (splitLine[0] == "Files") {
             splitLine = split(line, " \t,");
             for (unsigned n = 1; n < splitLine.size(); n++) {
-                if (file_exists(SOUND_FOLDER + splitLine[n]))
-                    soundData.soundFiles.push_back(splitLine[n]);
+                std::string file = SOUND_FOLDER + splitLine[n];
+                if (file_exists(file))
+                    soundData.sounds.Add(file.c_str());
             }
         }
         else {
@@ -57,7 +58,7 @@ static std::vector<SoundData> parseSoundData() {
                 << " : The keyWord '" << splitLine[0] << "' is not valid" << std::endl;
         }
     }
-    if (!soundData.name.empty() && !soundData.soundFiles.empty())
+    if (!soundData.name.empty() && !soundData.sounds.empty())
         soundsData.push_back(soundData);
     return soundsData;
 }
@@ -80,7 +81,7 @@ static void updateTextureList(const std::string &textureFile, const std::string&
         blockData.bottomTexID = index;
 }
 
-static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures) {
+std::vector<BlockData> parseBlockData(std::vector<std::string>& textures) {
     std::ifstream               settingsFile(CUBES_SETTING_FILE); //change to relatif path
     std::vector<std::string>    splitLine;
     std::vector<BlockData>      blocksData;
@@ -116,14 +117,16 @@ static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures)
     return blocksData;
 }
 
-Block blockDataMapper(const BlockData& blockData) {
+Block blockDataMapper(const BlockData& blockData, const  std::vector<SoundData>& soundsData) {
     Block block;
 
     block.SetTextures(blockData.topTexID, blockData.sideTexID, blockData.bottomTexID);
+    block.soundBuffers = soundsData[0].sounds; // to change
     return block;
 }
 
-void parseConfigs(std::vector<std::string>& textures) {
+void parseConfigs(Sound& sound) {
+    std::vector<std::string>    textures;
     std::vector<BlockData>      blocksData;
     std::vector<SoundData>      soundsData;
 
@@ -132,7 +135,10 @@ void parseConfigs(std::vector<std::string>& textures) {
 
     for (const BlockData& blockData : blocksData)
         if (blockData.id > 0 && blockData.id < MAX_BLOCK_NB)
-            Chunk::blocks[blockData.id] = blockDataMapper(blockData);
+            Chunk::blocks[blockData.id] = blockDataMapper(blockData, soundsData);
+
+    for (const SoundData& soundData : soundsData)
+        sound.AddSounds(soundData.sounds);
 }
 
 

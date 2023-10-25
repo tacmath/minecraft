@@ -5,9 +5,12 @@ Application::Application() {
 }
 
 void Application::Start() {
+    //parse config
+    parseConfigs(sound);
+
     // link all the modules dependencies 
     player.Init(window.size);
-    worldArea.Init(player.camera);
+    worldArea.Init(player.camera); //maybe pass sound to do all config parsing in worldArea
     menu.Link(&player, &window, &worldArea, &shadow, &event.mouseSensitivity);
     event.Link(&window, &menu, &player, &cooldowns);
     shadow.Link(window.context, &player.camera, &worldArea);

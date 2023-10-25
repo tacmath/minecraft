@@ -41,6 +41,7 @@ public:
 
 template <size_t _size>
 class SoundSources : std::array<SoundSource, _size> {
+public:
     SoundSources();
     ~SoundSources();
     SoundSource GetSoundSource();

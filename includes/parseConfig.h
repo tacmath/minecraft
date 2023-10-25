@@ -5,19 +5,21 @@
 #include <vector>
 #include <string>
 #include "chunk.h"
+#include "sound.h"
 
 #define CUBES_SETTING_FILE	"cubes_settings"
 #define SOUND_SETTING_FILE	"sounds_settings"
 #define SOUND_FOLDER		"sound/"
 
+// maybe have a configData that contains all configs data and then distribute the data to eatch modules that need the data
 
 struct SoundData {
 	std::string					name;
-	std::vector<std::string>	soundFiles;
+	SoundBuffers				sounds;
 
 	void clear() {
 		name.clear();
-		soundFiles.clear();
+		sounds.clear();
 	}
 };
 
@@ -43,6 +45,7 @@ struct BlockData {
 	}
 };
 
-void parseConfigs(std::vector<std::string>& textures);
+void parseConfigs(Sound& sound);
+std::vector<BlockData> parseBlockData(std::vector<std::string>& textures);
 
 #endif

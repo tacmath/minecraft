@@ -9,7 +9,8 @@ struct Block {
 	uint8_t top;
 	uint8_t side;
 	uint8_t bottom;
-//	SoundBuffer soundBuffer; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour �viter plusieurs m�me buffer
+	SoundSource sound;
+	SoundBuffers soundBuffers; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour �viter plusieurs m�me buffer ou un pointeur
 	
 	Block() {
 		Clean();
@@ -30,10 +31,18 @@ struct Block {
 	}
 
 	void PlaySound(float x, float y, float z) {
-	//	if (soundBuffer.ID) {
-	//		sound.SetPosition(x, y, z);
-	//		sound.Play(soundBuffer);
-	//	}
+		ALuint buffer = soundBuffers.GetRandom();
+
+		if (buffer != -1) {
+			//SoundSource source = Sound::sources.GetSoundSource();
+			SoundSource source;
+			if (!source.ID)
+				source.Gen();
+			
+
+			source.SetPosition(x, y, z);
+			source.Play(buffer);
+		}
 	}
 
 	void Clean() {
