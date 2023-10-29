@@ -12,9 +12,10 @@ private:
 	SoundBuffers	sounds;
 
 public:
-	static SoundSources<MAX_SOUND_SOURCES> sources;
+	SoundSources<MAX_SOUND_SOURCES> sources; // maybe set as static to be called as Sound::sources.GetSoundSource()
 
 	~Sound() {
+		sources.Delete();
 		DeleteSounds();
 	}
 

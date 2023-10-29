@@ -36,7 +36,7 @@ void SoundSource::Loop(bool loop) {
     alSourcei(ID, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
 }
 
-bool SoundSource::IsPlaying() {
+bool SoundSource::IsPlaying() const {
     ALint status;
     alGetSourcei(ID, AL_SOURCE_STATE, &status);
     return status == AL_PLAYING;
@@ -73,27 +73,4 @@ void SoundSource::SetDirection(float x, float y, float z)
 {
     ALfloat Orientation[] = { x, y, z, 0.f, 1.f, 0.f };
     alSourcefv(ID, AL_ORIENTATION, Orientation);
-}
-
-template<size_t _size>
-SoundSources<_size>::SoundSources() {
-    for (size_t n = 0; n < _size; n++) {
-        (*this)[n].Gen();
-        //  (*this)[n].SetRolloffFactor(0.5f);
-    }
-}
-
-template<size_t _size>
-SoundSources<_size>::~SoundSources() {
-    for (size_t n = 0; n < _size; n++)
-        (*this)[n].Delete();
-}
-
-template<size_t _size>
-SoundSource SoundSources<_size>::GetSoundSource() {
-    size_t n = 0;
-
-    while (n < (_size - 1) && this->at(n).IsPlaying())
-        n++;
-    return (*this)[n];
 }

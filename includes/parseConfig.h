@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include "chunk.h"
 #include "sound.h"
 
@@ -13,6 +14,8 @@
 
 // maybe have a configData that contains all configs data and then distribute the data to eatch modules that need the data
 
+typedef std::unordered_map<std::string, SoundBuffers> SoundsData;
+/*
 struct SoundData {
 	std::string					name;
 	SoundBuffers				sounds;
@@ -21,7 +24,7 @@ struct SoundData {
 		name.clear();
 		sounds.clear();
 	}
-};
+};*/
 
 struct BlockData {
 	std::string					name;
@@ -33,6 +36,9 @@ struct BlockData {
 
 	BlockData() {
 		id = 0;
+		topTexID = 0;
+		sideTexID = 0;
+		bottomTexID = 0;
 	}
 
 	void clear() {

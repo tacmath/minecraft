@@ -1,6 +1,7 @@
-#define STB_IMAGE_IMPLEMENTATION
 #include "application.h"
 #include "global_defines.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #if RENDERING_INFO == 1
     global_render_info mc_info;

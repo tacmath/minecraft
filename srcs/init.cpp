@@ -1,6 +1,7 @@
 #include "world_area.h"
+#include <algorithm>
 
-void WorldArea::initChunks(unsigned radius) {
+void WorldArea::initChunks(unsigned radius) { // maybe remake the function to use some multithreading
     unsigned long diameter = (radius + 1) * 2;
 
     chunksLoading.resize(diameter * diameter);
@@ -12,6 +13,7 @@ void WorldArea::initChunks(unsigned radius) {
             newChunk->Generate();
             chunksLoading[x * diameter + z] = newChunk;
         }
+    chunks.reserve((diameter - 2) * (diameter - 2));
     for (unsigned x = 1; x < diameter - 2; x++)
         for (unsigned z = 1; z < diameter - 2; z++) {
             Chunk* chunk = chunksLoading[x * diameter + z];
@@ -19,9 +21,12 @@ void WorldArea::initChunks(unsigned radius) {
             chunk->Bind();
             chunk->isVisible = true;
             chunks.push_back(chunk);
-            chunksLoading.erase(chunksLoading.begin() + x * diameter + z);
+            chunksLoading[x * diameter + z] = 0;
         }
-    unsigned test = 0;
+
+    // remove all chunks that have been loaded
+    auto iterator = std::remove_if(chunksLoading.begin(), chunksLoading.end(), [](Chunk* chunk) { return chunk == 0; });
+    chunksLoading.erase(iterator, chunksLoading.end());
 }
 
 // initialize the texure atlas, uniform and chunks

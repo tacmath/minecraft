@@ -1,16 +1,17 @@
 #ifndef BLOCKS_CLASS_H
 #define BLOCKS_CLASS_H
 
-#include "sound.h"
+#include "soundBuffer.h"
+#include "soundSource.h"
 
 #define MAX_BLOCK_NB 255
 
 struct Block {
-	uint8_t top;
-	uint8_t side;
-	uint8_t bottom;
-	SoundSource sound;
-	SoundBuffers soundBuffers; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour �viter plusieurs m�me buffer ou un pointeur
+	uint8_t			top;
+	uint8_t			side;
+	uint8_t			bottom;
+	SoundBuffers	soundBuffers; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour �viter plusieurs m�me buffer ou un pointeur
+	const SoundSources<MAX_SOUND_SOURCES> *soundSources; //maybe use a shared_ptr or shared_ptr and weak_ptr or set it as static in Sound class
 	
 	Block() {
 		Clean();
@@ -21,6 +22,7 @@ struct Block {
 		this->side = side;
 		this->bottom = bottom;
 	}
+
 	void SetTexture(std::string& type, uint8_t textureIndex) {
 		if (type == "Top")
 			this->top = textureIndex;
@@ -34,12 +36,7 @@ struct Block {
 		ALuint buffer = soundBuffers.GetRandom();
 
 		if (buffer != -1) {
-			//SoundSource source = Sound::sources.GetSoundSource();
-			SoundSource source;
-			if (!source.ID)
-				source.Gen();
-			
-
+			SoundSource source = soundSources->GetSoundSource();
 			source.SetPosition(x, y, z);
 			source.Play(buffer);
 		}
@@ -49,6 +46,7 @@ struct Block {
 		top = 0;
 		side = 0;
 		bottom = 0;
+		soundSources = 0;
 	}
 
 	void Delete() {

@@ -3,6 +3,7 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include "soundBuffer.h"
+#include <array>
 
 #define MAX_SOUND_SOURCES 10
 
@@ -28,7 +29,7 @@ public:
     void Resume();
     void Loop(bool loop);
 
-    bool IsPlaying();
+    bool IsPlaying() const;
 
     void SetVolume(float volume);
     void SetPitch(float pitch);
@@ -40,14 +41,25 @@ public:
 
 
 template <size_t _size>
-class SoundSources : std::array<SoundSource, _size> {
+class SoundSources : private std::array<SoundSource, _size> {
 public:
-    SoundSources();
-    ~SoundSources();
-    SoundSource GetSoundSource();
-};
+    SoundSources() {
+        for (size_t n = 0; n < _size; n++) {
+            (*this)[n].Gen();
+            //  (*this)[n].SetRolloffFactor(0.5f);
+        }
+    }
 
-/*
-namespace sound {
-    SoundSources<MAX_SOUND_SOURCES> sources;
-}*/
+    void Delete() {
+        for (size_t n = 0; n < _size; n++)
+            (*this)[n].Delete();
+    }
+
+    SoundSource GetSoundSource() const {
+        size_t n = 0;
+
+        while (n < (_size - 1) && (*this)[n].IsPlaying())
+            n++;
+        return (*this)[n];
+    }
+};

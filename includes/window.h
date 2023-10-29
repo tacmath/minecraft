@@ -18,6 +18,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <glm/vec2.hpp>
+#include <stb_image.h>
 
 # define DEFAULT_WINDOW_WIDTH  1700
 # define DEFAULT_WINDOW_HEIGHT  1080
@@ -58,6 +59,14 @@ public:
         glfwSetCursorPos(context, DEFAULT_WINDOW_WIDTH / 2.0, DEFAULT_WINDOW_HEIGHT / 2.0);
         size = glm::vec2((float)DEFAULT_WINDOW_WIDTH, (float)DEFAULT_WINDOW_HEIGHT);
         enableGlParam();
+
+        // load game icon in the window
+        GLFWimage icons;
+        icons.pixels = stbi_load("texture/icon.png", &icons.width, &icons.height, 0, 4);
+        if (icons.pixels)
+            glfwSetWindowIcon(context, 1, &icons);
+        stbi_image_free(icons.pixels);
+
 
         monitor = glfwGetPrimaryMonitor();
 	}

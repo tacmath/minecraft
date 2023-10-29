@@ -216,6 +216,7 @@
     <ClInclude Include="includes\perlinNoise.h" />
     <ClInclude Include="includes\window.h" />
     <ClInclude Include="includes\world_area.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
@@ -239,6 +240,12 @@
     <None Include="shaders\wireFrameFS.glsl" />
     <None Include="shaders\wireFrameGS.glsl" />
     <None Include="sounds_settings" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="minecraft.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="texture\window_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

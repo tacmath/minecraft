@@ -38,14 +38,14 @@ Name OakLeaves
 	Top		oak/leaves_oak.png
 	Side	oak/leaves_oak.png
 	Bottom	oak/leaves_oak.png
-	Break	sound/break/grass1.ogg
+	Break	Grass
 
 Name OakLog
 	ID		7
 	Top		oak/log_oak_top.png
 	Side	oak/log_oak.png
 	Bottom	oak/log_oak_top.png
-	Break	Grass
+	Break	Wood
 
 Name PackedIce
 	ID		8

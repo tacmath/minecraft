@@ -1,7 +1,7 @@
 #include "chunk.h"
 #include "generation.h"
 
-Block Chunk::blocks[256];
+Block Chunk::blocks[MAX_BLOCK_NB];
 
 std::unordered_map<int64_t, Chunk*> Chunk::chunksMap;
 
@@ -146,10 +146,8 @@ void Chunk::UpdateCube(int x, int z) { // maybe use a switch case
 // return a pointer to a chunk if it exist based on its coordonate and return 0 if it is not found
 Chunk* GetChunk(int x, int z) {
 	auto search = Chunk::chunksMap.find(GET_CHUNK_ID(x, z));
-	if (search != Chunk::chunksMap.end())
-		return (search->second);
-	else
-		return (0);
+
+	return (search != Chunk::chunksMap.end()) ? search->second : 0;
 }
 
 void Chunk::SetPlayerProximity(const glm::vec3 &playerPos) {

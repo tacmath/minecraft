@@ -25,11 +25,11 @@ static inline bool file_exists(const std::string& name) {
     return (stat(name.c_str(), &buffer) == 0);
 }
 
-static std::vector<SoundData> parseSoundData() {
+static SoundsData parseSoundData() {
     std::ifstream               settingsFile(SOUND_SETTING_FILE);
     std::vector<std::string>    splitLine;
-    std::vector<SoundData>      soundsData;
-    SoundData                   soundData;
+    SoundsData                  soundsData;
+    std::string                 currentName;
     unsigned                    lineNb;
 
     lineNb = 0;
@@ -38,19 +38,14 @@ static std::vector<SoundData> parseSoundData() {
         lineNb++;
         if (splitLine.size() <= 1)
             continue;
-        if (splitLine[0] == "Name") {
-            if (!soundData.name.empty() && !soundData.sounds.empty()) {
-                soundsData.push_back(soundData);
-                soundData.clear();
-            }
-            soundData.name = splitLine[1];
-        }
-        else if (splitLine[0] == "Files") {
+        if (splitLine[0] == "Name")
+            currentName = splitLine[1];
+        else if (splitLine[0] == "Files" && !currentName.empty()) {
             splitLine = split(line, " \t,");
             for (unsigned n = 1; n < splitLine.size(); n++) {
                 std::string file = SOUND_FOLDER + splitLine[n];
                 if (file_exists(file))
-                    soundData.sounds.Add(file.c_str());
+                    soundsData[currentName].Add(file.c_str());
             }
         }
         else {
@@ -58,8 +53,6 @@ static std::vector<SoundData> parseSoundData() {
                 << " : The keyWord '" << splitLine[0] << "' is not valid" << std::endl;
         }
     }
-    if (!soundData.name.empty() && !soundData.sounds.empty())
-        soundsData.push_back(soundData);
     return soundsData;
 }
 
@@ -117,28 +110,32 @@ std::vector<BlockData> parseBlockData(std::vector<std::string>& textures) {
     return blocksData;
 }
 
-Block blockDataMapper(const BlockData& blockData, const  std::vector<SoundData>& soundsData) {
+Block blockDataMapper(const BlockData& blockData, const  SoundsData& soundsData, const Sound& sound) {
     Block block;
 
     block.SetTextures(blockData.topTexID, blockData.sideTexID, blockData.bottomTexID);
-    block.soundBuffers = soundsData[0].sounds; // to change
+    auto soundData = soundsData.find(blockData.breakSound);
+    if (soundData != soundsData.end()) {
+        block.soundBuffers = soundData->second;
+        block.soundSources = &sound.sources;
+    }
     return block;
 }
 
 void parseConfigs(Sound& sound) {
     std::vector<std::string>    textures;
     std::vector<BlockData>      blocksData;
-    std::vector<SoundData>      soundsData;
+    SoundsData                  soundsData;
 
     blocksData = parseBlockData(textures);
     soundsData = parseSoundData();
 
     for (const BlockData& blockData : blocksData)
         if (blockData.id > 0 && blockData.id < MAX_BLOCK_NB)
-            Chunk::blocks[blockData.id] = blockDataMapper(blockData, soundsData);
-
-    for (const SoundData& soundData : soundsData)
-        sound.AddSounds(soundData.sounds);
+            Chunk::blocks[blockData.id] = blockDataMapper(blockData, soundsData, sound);
+    soundsData["ok"] = SoundBuffers();
+    for (const auto& soundData : soundsData)
+        sound.AddSounds(soundData.second);
 }
 
 

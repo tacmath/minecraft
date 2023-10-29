@@ -34,6 +34,9 @@
     <Filter Include="Fichiers d%27en-tête\openal">
       <UniqueIdentifier>{c7990991-afc4-422e-9ae7-9d101d1a9518}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers de ressources\shaders">
+      <UniqueIdentifier>{22cb778b-e3da-4034-9893-a668f99ca9b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="srcs\main.cpp">
@@ -251,63 +254,12 @@
     <ClInclude Include="includes\music.h">
       <Filter>Fichiers d%27en-tête\openal</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\cubeVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\cubeFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\skyBoxFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\skyBoxVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\highlightVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\highlightFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="cubes_settings">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\wireFrameGS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\wireFrameFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\sunFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\sunVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\shadowFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\shadowGS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\shadowVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\debugTextureFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\debugTextureVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
     <None Include="imgui.ini">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\quadFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\quadVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="README.md">
@@ -316,5 +268,69 @@
     <None Include="sounds_settings">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="shaders\cubeFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\cubeVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\debugTextureFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\highlightFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\debugTextureVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\highlightVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\quadFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\quadVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\shadowFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\shadowGS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\shadowVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\skyBoxFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\skyBoxVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\sunFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\sunVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\wireFrameFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\wireFrameGS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="cubes_settings">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="minecraft.rc">
+      <Filter>Fichiers de ressources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="texture\window_icon.ico">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
   </ItemGroup>
 </Project>
