@@ -5,7 +5,7 @@
 #include "soundBuffer.h"
 #include <array>
 
-#define MAX_SOUND_SOURCES 10
+#define MAX_SOUND_SOURCES 10 //the true maximum number of sound sources is 256
 
 class SoundSource
 {

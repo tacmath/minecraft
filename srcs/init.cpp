@@ -31,10 +31,10 @@ void WorldArea::initChunks(unsigned radius) { // maybe remake the function to us
 
 // initialize the texure atlas, uniform and chunks
 
-void WorldArea::Init(const Camera& camera/*, std::vector<SoundBuffers>& sounds*/) {
+void WorldArea::Init(const Camera& camera, Sound& sound) {
     std::vector<std::string> textureNames;
 
-    parseBlockData(textureNames);
+    parseConfigs(textureNames, sound);
     for (auto& name : textureNames)
         name = "texture/" + name;
     texAtlas.LoadArray(textureNames, 0);

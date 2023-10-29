@@ -56,7 +56,7 @@ public:
     ~WorldArea(void);
 
     // initialize the texure atlas, uniform and chunks
-    void Init(const Camera& camera/*, std::vector<SoundBuffers>& sounds*/);
+    void Init(const Camera& camera, Sound& sound);
 
     // draw the chunks and the skybox
     void Draw(void);

@@ -51,7 +51,7 @@ struct BlockData {
 	}
 };
 
-void parseConfigs(Sound& sound);
-std::vector<BlockData> parseBlockData(std::vector<std::string>& textures);
+void parseConfigs(std::vector<std::string>& textures, Sound& sound);
+//std::vector<BlockData> parseBlockData(std::vector<std::string>& textures);
 
 #endif

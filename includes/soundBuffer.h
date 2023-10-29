@@ -23,47 +23,18 @@ class SoundBuffers : public std::vector<SoundBuffer> {
 
 public:
 
-    void Add(const char* file) {
-        SoundBuffer buffer;
-
-        buffer.Load(file);
-        if (buffer.ID > 0)
-            this->push_back(buffer);
-    }
-
-    void Add(const SoundBuffer buffer) {
-        this->push_back(buffer);
-    }
-
-    void Add(ALuint ID) {
-        SoundBuffer buffer;
-
-        buffer.ID = ID;
-        this->push_back(buffer);
-    }
+    void Add(const char* file);
+    void Add(const SoundBuffer buffer);
+    void Add(ALuint ID);
 
     // create a sub SoundBuffers that copy of all SoundBuffer id
     // ! do not do a Clear on the copy they it share the same buffer ids of the original
-    SoundBuffers Sub(size_t offset, size_t size) const {
-        if (offset >= this->size() || !size)
-            return SoundBuffers();
-        if (offset + size >= this->size())
-            size = this->size() - offset - 1;
-        return SoundBuffers(this->begin() + offset, this->begin() + offset + size);
-    }
+    SoundBuffers Sub(size_t offset, size_t size) const;
 
     // get a random sound buffer or return -1 if no valid buffer is found
-    ALuint GetRandom() const {
-        if (this->size() < 1)
-            return -1;
-        return (*this)[0].ID;
-    }
+    ALuint GetRandom() const;
 
     // clear the list and delete all soundBuffer
-    void Clear() {
-        for (SoundBuffer buffer : *this)
-            buffer.Delete();
-        this->clear();
-    }
+    void Clear();
 };
 //typedef std::vector<SoundBuffer> SoundBuffers;

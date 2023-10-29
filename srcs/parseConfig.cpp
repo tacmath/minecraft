@@ -26,7 +26,7 @@ static inline bool file_exists(const std::string& name) {
 }
 
 static SoundsData parseSoundData() {
-    std::ifstream               settingsFile(SOUND_SETTING_FILE);
+    std::ifstream               settingsFile(SOUND_SETTING_FILE); //TODO change to relatif path
     std::vector<std::string>    splitLine;
     SoundsData                  soundsData;
     std::string                 currentName;
@@ -74,8 +74,8 @@ static void updateTextureList(const std::string &textureFile, const std::string&
         blockData.bottomTexID = index;
 }
 
-std::vector<BlockData> parseBlockData(std::vector<std::string>& textures) {
-    std::ifstream               settingsFile(CUBES_SETTING_FILE); //change to relatif path
+static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures) {
+    std::ifstream               settingsFile(CUBES_SETTING_FILE); //TODO change to relatif path
     std::vector<std::string>    splitLine;
     std::vector<BlockData>      blocksData;
     BlockData                   blockData;
@@ -96,7 +96,7 @@ std::vector<BlockData> parseBlockData(std::vector<std::string>& textures) {
         }
         else if (splitLine[0] == "ID" && std::isdigit(splitLine[1][0]))
             blockData.id = std::stoi(splitLine[1]);
-        else if (splitLine[0] == "Top" || splitLine[0] == "Side" || splitLine[0] == "Bottom") // maybe do it outside of parseBlockData
+        else if (splitLine[0] == "Top" || splitLine[0] == "Side" || splitLine[0] == "Bottom")
             updateTextureList(splitLine[1], splitLine[0], blockData, textures);
         else if (splitLine[0] == "Break")
             blockData.breakSound = splitLine[1];
@@ -110,7 +110,7 @@ std::vector<BlockData> parseBlockData(std::vector<std::string>& textures) {
     return blocksData;
 }
 
-Block blockDataMapper(const BlockData& blockData, const  SoundsData& soundsData, const Sound& sound) {
+static Block blockDataMapper(const BlockData& blockData, const  SoundsData& soundsData, const Sound& sound) {
     Block block;
 
     block.SetTextures(blockData.topTexID, blockData.sideTexID, blockData.bottomTexID);
@@ -122,8 +122,7 @@ Block blockDataMapper(const BlockData& blockData, const  SoundsData& soundsData,
     return block;
 }
 
-void parseConfigs(Sound& sound) {
-    std::vector<std::string>    textures;
+void parseConfigs(std::vector<std::string>& textures, Sound& sound) {
     std::vector<BlockData>      blocksData;
     SoundsData                  soundsData;
 
@@ -133,7 +132,6 @@ void parseConfigs(Sound& sound) {
     for (const BlockData& blockData : blocksData)
         if (blockData.id > 0 && blockData.id < MAX_BLOCK_NB)
             Chunk::blocks[blockData.id] = blockDataMapper(blockData, soundsData, sound);
-    soundsData["ok"] = SoundBuffers();
     for (const auto& soundData : soundsData)
         sound.AddSounds(soundData.second);
 }

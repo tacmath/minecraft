@@ -12,7 +12,9 @@ private:
 	SoundBuffers	sounds;
 
 public:
-	SoundSources<MAX_SOUND_SOURCES> sources; // maybe set as static to be called as Sound::sources.GetSoundSource()
+	// maybe set as static to be called as Sound::sources.GetSoundSource()
+	// and maybe make SoundSources dynamic with vector
+	SoundSources<MAX_SOUND_SOURCES> sources;
 
 	~Sound() {
 		sources.Delete();
