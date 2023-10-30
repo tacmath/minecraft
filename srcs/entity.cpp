@@ -4,6 +4,9 @@
 
 Entity::Entity() {
 	ID = 0;
+    lastStep = 0;
+    hasCollision = true;
+    isGrounded = true;
 	position = glm::vec3(0);
 	size = glm::vec3(0);
 	look = glm::vec3(0);
@@ -30,6 +33,10 @@ void Entity::SetLook(float x, float y, float z) {
 
 AABB Entity::aabb() {
 	return AABB(position, position + size);
+}
+
+bool Entity::Grounded() {
+    return isGrounded;
 }
 
 
@@ -116,6 +123,12 @@ glm::vec3 MoveBox(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
     return result;
 }
 
+static inline void playStepSound(glm::vec3 soundPos) {
+    // TODO if no solid block is found get a block by using GetColliders(this->aabb().translate(glm::vec3(0, -0.1f, 0)), colliders)
+    unsigned char cubeID = GetCubeAt((int)floor(soundPos.x), (int)floor(soundPos.y - 0.1f), (int)floor(soundPos.z));
+    Chunk::blocks[cubeID].PlayStepSound(soundPos.x, soundPos.y, soundPos.z);
+}
+
 void Entity::Move(glm::vec3 &movement) {
 	if (hasCollision) {
         float nbStep = glm::length(movement) / 0.4f;
@@ -125,6 +138,10 @@ void Entity::Move(glm::vec3 &movement) {
             glm::vec3 step = movement / nbStep;
             for (int n = 0; n < nbStep; n++)
                 ApplyCollision(step);
+        }
+        if (isGrounded && lastStep >= 2.0f) { // for later some entity may have unique step sound and others mais not have any
+            lastStep -= 2.0f;
+            playStepSound(glm::vec3(position.x + size.x * 0.5f, position.y, position.z + size.z * 0.5f));
         }
 		return;
 	}
@@ -138,8 +155,11 @@ void Entity::ApplyCollision(glm::vec3& movement) {
     colliders.clear();
     entityAABB = this->aabb();
 	if (GetColliders(entityAABB.translate(movement), colliders) >= 0) {
+        float oldVerticalMove = movement.y;
         OccludeColliders(entityAABB, colliders);
         movement = MoveBox(entityAABB, movement, colliders);
+        isGrounded = (oldVerticalMove < 0 && oldVerticalMove != movement.y) ? true : false;
+        lastStep += glm::length(glm::vec2(movement.x, movement.z));
     }
 	position += movement;
 }

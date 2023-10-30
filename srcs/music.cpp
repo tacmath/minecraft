@@ -52,7 +52,7 @@ void Music::Add(ALuint buffer) {
 }
 
 
-void Music::LoadPlayList(std::vector<std::string>& Filenames) { // try to use std::async, std::future pour charger des gros assest et utiliser std::for_eatch a des endrois repetitif
+void Music::LoadPlayList(const std::vector<std::string>& Filenames) { // try to use std::async, std::future pour charger des gros assest et utiliser std::for_eatch a des endrois repetitif
     std::vector<std::thread> threads;
     std::random_device random;
     std::mt19937 engine(random());

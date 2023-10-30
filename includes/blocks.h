@@ -10,7 +10,8 @@ struct Block {
 	uint8_t			top;
 	uint8_t			side;
 	uint8_t			bottom;
-	SoundBuffers	soundBuffers; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour �viter plusieurs m�me buffer ou un pointeur
+	SoundBuffers	breakSounds; // a la place faire un shared_ptr<SoundBuffers> partager entre tout les block qui en on besoin
+	SoundBuffers	stepSounds;
 	const SoundSources<MAX_SOUND_SOURCES> *soundSources; //maybe use a shared_ptr or shared_ptr and weak_ptr or set it as static in Sound class
 	
 	Block() {
@@ -32,12 +33,24 @@ struct Block {
 			this->bottom = textureIndex;
 	}
 
-	void PlaySound(float x, float y, float z) {
-		ALuint buffer = soundBuffers.GetRandom();
+	void PlayBreakSound(float x, float y, float z) {
+		ALuint buffer = breakSounds.GetRandom();
 
 		if (buffer != -1) {
 			SoundSource source = soundSources->GetSoundSource();
 			source.SetPosition(x, y, z);
+			source.SetVolume(1.0f);
+			source.Play(buffer);
+		}
+	}
+
+	void PlayStepSound(float x, float y, float z) {
+		ALuint buffer = stepSounds.GetRandom();
+
+		if (buffer != -1) {
+			SoundSource source = soundSources->GetSoundSource();
+			source.SetPosition(x, y, z);
+			source.SetVolume(0.5f);
 			source.Play(buffer);
 		}
 	}

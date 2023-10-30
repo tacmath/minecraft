@@ -100,6 +100,8 @@ static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures)
             updateTextureList(splitLine[1], splitLine[0], blockData, textures);
         else if (splitLine[0] == "Break")
             blockData.breakSound = splitLine[1];
+        else if (splitLine[0] == "Step")
+            blockData.stepSound = splitLine[1];
         else {
             std::cerr << CUBES_SETTING_FILE << " : Line " << lineNb
                 << " : The keyWord '" << splitLine[0] << "' is not valid" << std::endl;
@@ -116,7 +118,12 @@ static Block blockDataMapper(const BlockData& blockData, const  SoundsData& soun
     block.SetTextures(blockData.topTexID, blockData.sideTexID, blockData.bottomTexID);
     auto soundData = soundsData.find(blockData.breakSound);
     if (soundData != soundsData.end()) {
-        block.soundBuffers = soundData->second;
+        block.breakSounds = soundData->second;
+        block.soundSources = &sound.sources;
+    }
+    soundData = soundsData.find(blockData.stepSound);
+    if (soundData != soundsData.end()) {
+        block.stepSounds = soundData->second;
         block.soundSources = &sound.sources;
     }
     return block;
@@ -135,10 +142,3 @@ void parseConfigs(std::vector<std::string>& textures, Sound& sound) {
     for (const auto& soundData : soundsData)
         sound.AddSounds(soundData.second);
 }
-
-
-
-// use a sound id based on the sound order and combine the sound data and cube data into one 
-// maybe rename parseSoundData by soundDataMapper or stay with parseSoundData
-// have intermedary class ex soundData and blockData for parsing before combining them into coherent class
-// and ex class Block can have a function called blockDataMapper to convert data into the finalised block

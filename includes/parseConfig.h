@@ -33,6 +33,7 @@ struct BlockData {
 	unsigned					sideTexID;
 	unsigned					bottomTexID;
 	std::string					breakSound;
+	std::string					stepSound;
 
 	BlockData() {
 		id = 0;
@@ -48,6 +49,7 @@ struct BlockData {
 		bottomTexID = 0;
 		name.clear();
 		breakSound.clear();
+		stepSound.clear();
 	}
 };
 

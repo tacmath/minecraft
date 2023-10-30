@@ -4,6 +4,7 @@ Name Grass
 	Side	grass/grass_side.png
 	Bottom	grass/dirt.png
 	Break	Grass
+	Step	GrassStep
 
 Name Dirt
 	ID		2
@@ -11,6 +12,7 @@ Name Dirt
 	Side	dirt/dirt.png
 	Bottom	dirt/dirt.png
 	Break	Gravel
+	Step	GravelStep
 
 Name Stone
 	ID		3
@@ -18,6 +20,7 @@ Name Stone
 	Side	stone/stone.png
 	Bottom	stone/stone.png
 	Break	Stone
+	Step	StoneStep
 
 Name OakPlanck
 	ID		4
@@ -25,6 +28,7 @@ Name OakPlanck
 	Side	oak/planks_oak.png
 	Bottom	oak/planks_oak.png
 	Break	Wood
+	Step	WoodStep
 
 Name BedRock
 	ID		5
@@ -32,6 +36,7 @@ Name BedRock
 	Side	bedrock/bedrock.png
 	Bottom	bedrock/bedrock.png
 	Break	Stone
+	Step	StoneStep
 
 Name OakLeaves
 	ID		6
@@ -39,6 +44,7 @@ Name OakLeaves
 	Side	oak/leaves_oak.png
 	Bottom	oak/leaves_oak.png
 	Break	Grass
+	Step	GrassStep
 
 Name OakLog
 	ID		7
@@ -46,6 +52,7 @@ Name OakLog
 	Side	oak/log_oak.png
 	Bottom	oak/log_oak_top.png
 	Break	Wood
+	Step	WoodStep
 
 Name PackedIce
 	ID		8

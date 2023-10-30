@@ -42,8 +42,6 @@ void SoundBuffer::Delete()
     ID = 0;
 }
 
-// get a random sound buffer or return -1 if no valid buffer is found
-
 void SoundBuffers::Add(const char* file) {
     SoundBuffer buffer;
 
@@ -73,11 +71,12 @@ SoundBuffers SoundBuffers::Sub(size_t offset, size_t size) const {
         size = this->size() - offset - 1;
     return SoundBuffers(this->begin() + offset, this->begin() + offset + size);
 }
-#include <iostream>
+
+// return the ID of a random sound buffer in the buffer list or return -1 on error
 ALuint SoundBuffers::GetRandom() const {
     if (this->size() < 1)
         return -1;
-    std::random_device random; //maybe set as private var of SoundBuffers or static
+    std::random_device random;
     return (*this)[random() % this->size()].ID;
 }
 
