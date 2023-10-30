@@ -5,8 +5,10 @@ Application::Application() {
 }
 
 void Application::Start() {
+
     // link all the modules dependencies 
     player.Init(window.size);
+    worldArea.Init(player.camera, sound);
     menu.Link(&player, &window, &worldArea, &shadow, &event.mouseSensitivity);
     event.Link(&window, &menu, &player, &cooldowns);
     shadow.Link(window.context, &player.camera, &worldArea);
@@ -14,7 +16,6 @@ void Application::Start() {
 
     UI.InitUniforms(player.camera.projection);
     UI.SetViewMatrix(player.camera.view);
-    worldArea.initUniforms(player.camera);
     background.initUniforms(player.camera);
 
     
@@ -51,9 +52,8 @@ void Application::Run() {
 
 void Application::Stop() {
     worldArea.thread.StopThreads();
-    for (int n = 0; n < 256; n++)
+    for (int n = 0; n < MAX_BLOCK_NB; n++)
         Chunk::blocks[n].Delete();
-    music.Delete();
 }
 
 void Application::EveryFrames(float time, float latency) {

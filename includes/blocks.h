@@ -1,30 +1,30 @@
 #ifndef BLOCKS_CLASS_H
 #define BLOCKS_CLASS_H
 
-#include "sound.h"
+#include "soundBuffer.h"
+#include "soundSource.h"
+
+#define MAX_BLOCK_NB 255
 
 struct Block {
-	char top;
-	char side;
-	char bottom;
-	SoundBuffer soundBuffer; // a la place besoin de stocker l'id du buffer ou l'id de la ou est le buffer pour �viter plusieurs m�me buffer
-	SoundSource sound;
+	uint8_t			top;
+	uint8_t			side;
+	uint8_t			bottom;
+	SoundBuffers	breakSounds; // a la place faire un shared_ptr<SoundBuffers> partager entre tout les block qui en on besoin
+	SoundBuffers	stepSounds;
+	const SoundSources<MAX_SOUND_SOURCES> *soundSources; //maybe use a shared_ptr or shared_ptr and weak_ptr or set it as static in Sound class
 	
 	Block() {
 		Clean();
 	};
 
-	void Delete() {
-		sound.Delete();
-		soundBuffer.Delete();
-	};
-
-	void SetTextures(char top, char side, char bottom) {
+	void SetTextures(uint8_t top, uint8_t side, uint8_t bottom) {
 		this->top = top;
 		this->side = side;
 		this->bottom = bottom;
 	}
-	void SetTexture(std::string& type, char textureIndex) {
+
+	void SetTexture(std::string& type, uint8_t textureIndex) {
 		if (type == "Top")
 			this->top = textureIndex;
 		else if (type == "Side")
@@ -33,10 +33,25 @@ struct Block {
 			this->bottom = textureIndex;
 	}
 
-	void PlaySound(float x, float y, float z) {
-		if (soundBuffer.ID) {
-			sound.SetPosition(x, y, z);
-			sound.Play(soundBuffer);
+	void PlayBreakSound(float x, float y, float z) {
+		ALuint buffer = breakSounds.GetRandom();
+
+		if (buffer != -1) {
+			SoundSource source = soundSources->GetSoundSource();
+			source.SetPosition(x, y, z);
+			source.SetVolume(1.0f);
+			source.Play(buffer);
+		}
+	}
+
+	void PlayStepSound(float x, float y, float z) {
+		ALuint buffer = stepSounds.GetRandom();
+
+		if (buffer != -1) {
+			SoundSource source = soundSources->GetSoundSource();
+			source.SetPosition(x, y, z);
+			source.SetVolume(0.5f);
+			source.Play(buffer);
 		}
 	}
 
@@ -44,8 +59,11 @@ struct Block {
 		top = 0;
 		side = 0;
 		bottom = 0;
-		soundBuffer.ID = 0;
-		sound.ID = 0;
+		soundSources = 0;
+	}
+
+	void Delete() {
+
 	}
 };
 

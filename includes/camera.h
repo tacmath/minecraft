@@ -66,6 +66,10 @@ public:
 	float GetFOV();
 
 	float GetScreenRatio();
+
+	const glm::mat4 GetView();
+
+	const glm::mat4 GetProjection();
 };
 
 #endif

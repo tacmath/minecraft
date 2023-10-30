@@ -28,6 +28,15 @@
     <Filter Include="Fichiers sources\utils">
       <UniqueIdentifier>{51df9030-987e-420e-aaf3-2def72d95a39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\openal">
+      <UniqueIdentifier>{938c594a-3527-4c14-9dd8-b926fd6a2d73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\openal">
+      <UniqueIdentifier>{c7990991-afc4-422e-9ae7-9d101d1a9518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers de ressources\shaders">
+      <UniqueIdentifier>{22cb778b-e3da-4034-9893-a668f99ca9b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="srcs\main.cpp">
@@ -121,7 +130,19 @@
       <Filter>Fichiers sources\utils</Filter>
     </ClCompile>
     <ClCompile Include="srcs\sound.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\listener.cpp">
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\soundSource.cpp">
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\soundBuffer.cpp">
+      <Filter>Fichiers sources\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="srcs\music.cpp">
+      <Filter>Fichiers sources\openal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,70 +236,101 @@
     <ClInclude Include="includes\global_defines.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="includes\parseConfig.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
     <ClInclude Include="includes\sound.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\listener.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\soundBuffer.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\soundSource.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\music.h">
+      <Filter>Fichiers d%27en-tête\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\cubeVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\cubeFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\skyBoxFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\skyBoxVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\highlightVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\highlightFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="cubes_settings">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\wireFrameGS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\wireFrameFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\sunFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\sunVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\shadowFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\shadowGS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\shadowVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\debugTextureFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\debugTextureVS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
     <None Include="imgui.ini">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\quadFS.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\quadVS.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="README.md">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="sounds_settings">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\cubeFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\cubeVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\debugTextureFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\highlightFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\debugTextureVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\highlightVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\quadFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\quadVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\shadowFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\shadowGS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\shadowVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\skyBoxFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\skyBoxVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\sunFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\sunVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\wireFrameFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\wireFrameGS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="cubes_settings">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="minecraft.rc">
+      <Filter>Fichiers de ressources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="texture\window_icon.ico">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

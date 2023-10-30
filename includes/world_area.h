@@ -8,6 +8,8 @@
 #include "camera.h"
 #include "chunk.h"
 #include "thread.h"
+#include "parseConfig.h"
+#include "soundBuffer.h"
 #include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
@@ -33,7 +35,7 @@ private:
     std::vector<Chunk*> chunksLoading;
 
     //list of all the chunks in the render distance
-    Chunk** loadedChunks;
+    Chunk** loadedChunks; //maybe use unique_ptr
 
     //LOAD_DISTANCE of the data
     unsigned dataLoadDistance;
@@ -53,6 +55,9 @@ public:
     // destructor
     ~WorldArea(void);
 
+    // initialize the texure atlas, uniform and chunks
+    void Init(const Camera& camera, Sound& sound);
+
     // draw the chunks and the skybox
     void Draw(void);
 
@@ -71,14 +76,14 @@ public:
     // use options to reload the chunk shader
     void ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption);
 
-    void initUniforms(Camera& camera);
+    void initUniforms(const Camera& camera);
 
     std::vector<Chunk*>& GetChunks();
 
     Shader& GetShader();
 
 private:
-    void initChunks(int radius);
+    void initChunks(unsigned radius);
     void fillLoadedChunks(std::vector<Chunk*>& chunks, const glm::vec3 &position);
     void sortChunksLoading(const glm::vec3& position, const Camera &camera);
     void loadNewChunks(const glm::vec3& position);

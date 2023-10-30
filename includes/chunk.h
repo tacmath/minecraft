@@ -71,7 +71,7 @@ private:
 	GLuint VBO;
 
 public:
-	static Block blocks[256];
+	static Block blocks[MAX_BLOCK_NB];
 
 	static std::unordered_map<int64_t, Chunk*> chunksMap;
 

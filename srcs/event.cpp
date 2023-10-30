@@ -10,7 +10,7 @@ void removePointedCube(Player &player, Cooldowns &cooldowns) {
     if (player.selectedCube.id == AIR || !cooldowns.Use(ACTION))
         return;
     pos = player.selectedCube.position;
-    Chunk::blocks[player.selectedCube.id].PlaySound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
+    Chunk::blocks[player.selectedCube.id].PlayBreakSound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(AIR, pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
@@ -25,7 +25,7 @@ void placeCube(Player &player, Cooldowns &cooldowns) { // maybe place the functi
         player.aabb().collide(AABB::unit().translate(player.selectedCube.side)) || !cooldowns.Use(ACTION))
         return;
     pos = player.selectedCube.side;
-    Chunk::blocks[(int)player.SelectedItem()].PlaySound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
+    Chunk::blocks[(int)player.SelectedItem()].PlayBreakSound((float)pos.x + 0.5f, (float)pos.y + 0.5f, (float)pos.z + 0.5f);
     chunk = GetChunk(pos.x >> 4, pos.z >> 4);
     chunk->SetCube(player.SelectedItem(), pos.x & 0xF, pos.y & 0xFF, pos.z & 0xF);
     chunk->UpdateCube(pos.x & 0xF, pos.z & 0xF);
@@ -139,7 +139,6 @@ void Event::MovementEvent(float latency) {
 
     static float startTime = 0;
     static int jumping = 0;
-    static std::vector<AABB> colliders;
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 160.0f;
@@ -159,8 +158,7 @@ void Event::MovementEvent(float latency) {
         newPos.y = 0;
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             if (oldPos.y > 1 && (float)glfwGetTime() - startTime > JUMP_TIME
-                && GetColliders(player->aabb().translate(glm::vec3(0, -0.1f, 0)), colliders)) {
-                colliders.clear();
+                && player->Grounded()) {
                 jumping = 1;
                 startTime = (float)glfwGetTime();
             }

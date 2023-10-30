@@ -1,25 +1,26 @@
 #include "world_area.h"
 
-void parseBlockData(std::vector<std::string>& textures);
-
 WorldArea::WorldArea(void) {
     std::vector<std::string> shaderOption;
     shaderOption.push_back("SHADOW");
 
     chunkShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
 
-    std::vector<std::string> textureNames;
-    parseBlockData(textureNames);
-    for (auto& name : textureNames)
-        name = "texture/" + name;
-    texAtlas.LoadArray(textureNames, 0);
-    
-    initChunks(STARTING_RENDER_DISTANCE);
-
     dataLoadDistance = DATA_LOAD_DISTANCE(RENDER_DISTANCE);
     loadedChunks = (Chunk**)calloc((dataLoadDistance << 1) * (dataLoadDistance << 1), sizeof(Chunk*));
     if (!loadedChunks)
         exit(1);
+}
+
+//destructor
+WorldArea::~WorldArea(void) {
+    //std::cout << "WorldArea destructor has been called" << std::endl;
+    for (size_t n = 0; n < chunks.size(); n++)
+        delete chunks[n];
+    for (size_t n = 0; n < chunksLoading.size(); n++)
+        delete chunksLoading[n];
+    free(loadedChunks);
+    chunkShader.Delete();
 }
 
 void WorldArea::Draw(void) {
@@ -36,16 +37,6 @@ void WorldArea::LoadViewMatrix(const Camera& camera) {
     chunkShader.setMat4("view", camera.view);
 }
 
-//destructor
-WorldArea::~WorldArea(void) {
-    //std::cout << "WorldArea destructor has been called" << std::endl;
-    for (size_t n = 0; n < chunks.size(); n++)
-        delete chunks[n];
-    for (size_t n = 0; n < chunksLoading.size(); n++)
-        delete chunksLoading[n];
-    free(loadedChunks);
-    chunkShader.Delete();
-}
 
 void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, const glm::vec3& position) {
     int playerPosx, playerPosz, maxChunk;
@@ -72,6 +63,7 @@ void WorldArea::fillLoadedChunks(std::vector<Chunk*>& chunks, const glm::vec3& p
         chunks.erase(it, chunks.end());
 }
 
+
 void WorldArea::sortChunksLoading(const glm::vec3& position, const Camera& camera) {
     for (size_t n = 0; n < chunksLoading.size(); n++) {
         Chunk* chunk;
@@ -86,7 +78,6 @@ void WorldArea::sortChunksLoading(const glm::vec3& position, const Camera& camer
         return ((a->playerProximity + (!a->isVisible << 10)) < (b->playerProximity + (!b->isVisible << 10)));
      });
 }
-
 
 
 void WorldArea::loadNewChunks(const glm::vec3 &position) {
