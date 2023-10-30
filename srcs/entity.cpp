@@ -140,7 +140,7 @@ void Entity::Move(glm::vec3 &movement) {
                 ApplyCollision(step);
         }
         if (isGrounded && lastStep >= 2.0f) { // for later some entity may have unique step sound and others mais not have any
-            lastStep -= 2.0f;
+            lastStep = 0.0f;
             playStepSound(glm::vec3(position.x + size.x * 0.5f, position.y, position.z + size.z * 0.5f));
         }
 		return;

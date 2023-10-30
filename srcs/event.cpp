@@ -163,7 +163,7 @@ void Event::MovementEvent(float latency) {
                 startTime = (float)glfwGetTime();
             }
         }
-        if (jumping) {
+        if (jumping) { // TODO change how the jump is made and where, it should be on the entity side not event
             float time = (float)glfwGetTime() - startTime;
             newPos.y += 0.5f * JUMP_GRAVITY * time * time + JUMP_V0 * time;
             if (time > 0.35f)
