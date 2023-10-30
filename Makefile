@@ -90,7 +90,7 @@ DEBUG_FLAG = -Wall -Wextra #-fsanitize=address
 OPTIMISATION_FLAG = -ofast #-fsanitize=address#-o3 #-ofast  pas d'interet pour l'instant
 
 CC			= gcc $(OPTIMISATION_FLAG)
-GPP			= g++ -std=c++11 $(OPTIMISATION_FLAG) $(DEBUG_FLAG)
+GPP			= g++ -std=c++20 $(OPTIMISATION_FLAG) $(DEBUG_FLAG)
 
 
 

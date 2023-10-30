@@ -4,6 +4,7 @@
 #include <AL/al.h>
 #include <vector>
 #include <sndfile.h>
+#include <random>
 
 class SoundBuffer
 {

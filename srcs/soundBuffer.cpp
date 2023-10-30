@@ -1,5 +1,4 @@
 #include "soundBuffer.h"
-#include <chrono>
 
 SoundBuffer::SoundBuffer()
 {
@@ -74,13 +73,12 @@ SoundBuffers SoundBuffers::Sub(size_t offset, size_t size) const {
         size = this->size() - offset - 1;
     return SoundBuffers(this->begin() + offset, this->begin() + offset + size);
 }
-
-ALuint SoundBuffers::GetRandom() const { //TODO change how to get random
+#include <iostream>
+ALuint SoundBuffers::GetRandom() const {
     if (this->size() < 1)
         return -1;
-    uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count();
-    return (*this)[now % this->size()].ID;
+    std::random_device random; //maybe set as private var of SoundBuffers or static
+    return (*this)[random() % this->size()].ID;
 }
 
 // clear the list and delete all soundBuffer

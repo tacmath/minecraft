@@ -1,46 +1,36 @@
 #include "music.h"
-#include <mutex>
+/*#include <mutex>
 
-static std::mutex music_mtx;
+static std::mutex music_mtx;*/
 
 
-static void loadMusicFile(const std::string& Filename, Music* music) {
-    SF_INFO FileInfos;
-    SNDFILE* File = sf_open(Filename.c_str(), SFM_READ, &FileInfos);
-    if (!File)
-        return;
-    ALsizei NbSamples = static_cast<ALsizei>(FileInfos.channels * FileInfos.frames);
-    ALsizei SampleRate = static_cast<ALsizei>(FileInfos.samplerate);
-    // Lecture des echantillons audio au format entier 16 bits signe (le plus commun)
-    std::vector<ALshort> Samples(NbSamples);
-    if (sf_read_short(File, &Samples[0], NbSamples) < NbSamples)
-        return;
-    // Fermeture du fichier
-    sf_close(File);
-    ALenum Format;
-    switch (FileInfos.channels)
-    {
-    case 1:  Format = AL_FORMAT_MONO16; break;
-    case 2:  Format = AL_FORMAT_STEREO16; break;
-    default: return;
-    }
-
-    // Creation du tampon OpenAL
-    ALuint buffer = 0;
-    alGenBuffers(1, &buffer);
-    // Remplissage avec les echantillons lus
-    alBufferData(buffer, Format, &Samples[0], NbSamples * sizeof(ALushort), SampleRate);
-
-    music_mtx.lock();
-    music->Add(buffer);
-    music_mtx.unlock();
+static void loadMusicFile(const std::string& Filename, SoundBuffer* buffer) {
+    buffer->Load(Filename.c_str());
 }
 
+static inline bool file_exists(const char* name) {
+    struct stat buffer;
+    return (stat(name, &buffer) == 0);
+}
 
+std::vector<std::string> Music::GetMusicFiles() {
+    std::vector<std::string> musicFiles;
+
+    if (!file_exists(MUSIC_PATH)) {
+        std::cerr << "The music folder '" << MUSIC_PATH << "' does not exist" << std::endl;
+        return musicFiles;
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(MUSIC_PATH))
+        musicFiles.push_back(entry.path().string());
+    return musicFiles;
+}
 
 Music::Music() {
+    std::vector<std::string> musicFiles = GetMusicFiles();
+    
     alGenSources(1, &source);
-    LoadPlayList({ "sound/hall14", "sound/piano2", "sound/hall13", "sound/piano3" });
+    LoadPlayList(musicFiles);
     Play();
 }
 
@@ -49,34 +39,11 @@ Music::~Music() {
 }
 
 void Music::Add(const std::string& Filename) {
-    SF_INFO FileInfos;
-    SNDFILE* File = sf_open(Filename.c_str(), SFM_READ, &FileInfos);
-    if (!File)
-        return;
-    ALsizei NbSamples = static_cast<ALsizei>(FileInfos.channels * FileInfos.frames);
-    ALsizei SampleRate = static_cast<ALsizei>(FileInfos.samplerate);
-    // Lecture des echantillons audio au format entier 16 bits signe (le plus commun)
-    std::vector<ALshort> Samples(NbSamples);
-    if (sf_read_short(File, &Samples[0], NbSamples) < NbSamples)
-        return;
-    // Fermeture du fichier
-    sf_close(File);
-    ALenum Format;
-    switch (FileInfos.channels)
-    {
-    case 1:  Format = AL_FORMAT_MONO16; break;
-    case 2:  Format = AL_FORMAT_STEREO16; break;
-    default: return;
-    }
+    SoundBuffer buffer;
 
-    // Creation du tampon OpenAL
-    ALuint buffer = 0;
-    alGenBuffers(1, &buffer);
-    // Remplissage avec les echantillons lus
-    alBufferData(buffer, Format, &Samples[0], NbSamples * sizeof(ALushort), SampleRate);
-
+    buffer.Load(Filename.c_str());
     buffers.Add(buffer);
-    alSourceQueueBuffers(source, 1, &buffer);
+    alSourceQueueBuffers(source, 1, &buffer.ID);
 }
 
 void Music::Add(ALuint buffer) {
@@ -84,16 +51,23 @@ void Music::Add(ALuint buffer) {
     alSourceQueueBuffers(source, 1, &buffer);
 }
 
-void Music::LoadPlayList(const std::vector<std::string>& Filenames) { // try to use std::async, std::future pour charger des gros assest et utiliser std::for_eatch a des endrois repetitif
 
+void Music::LoadPlayList(std::vector<std::string>& Filenames) { // try to use std::async, std::future pour charger des gros assest et utiliser std::for_eatch a des endrois repetitif
     std::vector<std::thread> threads;
+    std::random_device random;
+    std::mt19937 engine(random());
 
     buffers.resize(Filenames.size());
     threads.resize(Filenames.size());
     for (unsigned n = 0; n < threads.size(); ++n)
-        threads[n] = std::thread(loadMusicFile, Filenames[n], this);
+        threads[n] = std::thread(loadMusicFile, Filenames[n], &buffers[n]);
 
-    for (auto& th : threads) th.join();
+    for (auto& thread : threads) thread.join();
+
+    std::shuffle(std::begin(buffers), std::end(buffers), engine);
+
+    for (const SoundBuffer buffer : buffers)
+        alSourceQueueBuffers(source, 1, &buffer.ID);
 }
 
 void Music::Play() {
