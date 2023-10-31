@@ -123,6 +123,7 @@ glm::vec3 MoveBox(AABB box, glm::vec3 movement, std::vector<AABB>& colliders) {
     return result;
 }
 
+// TODO not call playStepSound if entity is too far away
 static inline void playStepSound(glm::vec3 soundPos) {
     // TODO if no solid block is found get a block by using GetColliders(this->aabb().translate(glm::vec3(0, -0.1f, 0)), colliders)
     unsigned char cubeID = GetCubeAt((int)floor(soundPos.x), (int)floor(soundPos.y - 0.1f), (int)floor(soundPos.z));
