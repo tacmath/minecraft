@@ -53,7 +53,7 @@ public:
         glfwMakeContextCurrent(context);
 
         gladLoadGL();
-        glViewport(0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+        SetWiewPort();
         glfwSetInputMode(context, GLFW_STICKY_KEYS, GL_TRUE);
         glfwSetInputMode(context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPos(context, DEFAULT_WINDOW_WIDTH / 2.0, DEFAULT_WINDOW_HEIGHT / 2.0);
@@ -81,8 +81,13 @@ public:
         glfwSetWindowMonitor(context, nullptr, 0, 0, (int)size.x, (int)size.y, mode->refreshRate);
     }
 
+    void SetWiewPort(void) {
+        int width, height;
+        glfwGetFramebufferSize(context, &width, &height);
+        glViewport(0, 0, width, height);
+    }
+
     void enableGlParam(void) {
-    //    glDisable(GL_MULTISAMPLE);      // deactivate multisample to avoid weird texture problem with the atlas
         glEnable(GL_DEPTH_TEST);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);

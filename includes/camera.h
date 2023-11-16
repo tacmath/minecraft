@@ -67,9 +67,13 @@ public:
 
 	float GetScreenRatio();
 
-	const glm::mat4 GetView();
+	glm::mat4 GetView() const {
+		return view;
+	}
 
-	const glm::mat4 GetProjection();
+	glm::mat4 GetProjection() const {
+		return projection;
+	}
 };
 
 #endif

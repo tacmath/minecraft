@@ -28,7 +28,7 @@ void Application::Start() {
 }
 
 void Application::Run() {
-    float previousFrameTime = 0;
+    float previousFrameTime = 0; // TODO need to remake for low FPS
     float previousTickTime  = 0;
     float diff = 0;
     float time = 0;

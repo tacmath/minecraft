@@ -5,6 +5,7 @@
 Camera::Camera() {
 	width = 1;
 	height = 1;
+	far = 24.0f * RENDER_DISTANCE;
 	fov = 80;
 	position = glm::vec3(0.0f);
 	direction = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -17,7 +18,7 @@ Camera::Camera() {
 void Camera::Init(float windowWidth, float windowHeight, glm::vec3 pos) {
 	position = pos;
 	view = glm::lookAt(position, position + direction, up);
-	ChangePerspective(fov, windowWidth, windowHeight, 0.1f, 24.0f * RENDER_DISTANCE);
+	ChangePerspective(fov, windowWidth, windowHeight, 0.1f, far);
 	frustum.calculate(projection * view);
 }
 
@@ -70,12 +71,4 @@ float Camera::GetFOV() {
 
 float Camera::GetScreenRatio() {
 	return width / height;
-}
-
-inline const glm::mat4 Camera::GetView() {
-	return view;
-}
-
-inline const glm::mat4 Camera::GetProjection() {
-	return projection;
 }

@@ -73,6 +73,9 @@ Event::Event() {
     mouseSensitivity = 0.5f;
     Yaw = -90.0f;
     Pitch = 0.0f;
+    cooldowns = NULL;
+    menu = NULL;
+    player = NULL;
 }
 
 Event::~Event() {
@@ -178,7 +181,7 @@ void Event::MovementEvent(float latency) {
         playerUpdated = true;
 }
 
-void Event::MouseEvent() {
+void Event::MouseEvent() { // TODO rework and use Pitch and Yaw in camera
     int mouseState;
     double posx, posy;
 

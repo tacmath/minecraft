@@ -22,7 +22,8 @@ char* Shader::getShaderSource(const char* fileName) {
     file.seekg(0, std::ios::end);
     size = file.tellg();
     file.seekg(0);
-    source = (char*)malloc(size + 1);
+    if (!(source = (char*)malloc(size + 1)))
+        return (0);
     source[size] = 0;
     file.read(source, size);
     for (size_t i = size - 1; i > 0; i--) {
