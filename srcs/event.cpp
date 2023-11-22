@@ -130,53 +130,31 @@ glm::vec3  Event::spectatorMovement() {
     return newPos;
 }
 
-#define JUMP_TIME       0.15f
-#define JUMP_HEIGHT     1.2f
-#define JUMP_GRAVITY    -2 * JUMP_HEIGHT / (JUMP_TIME * JUMP_TIME)
-#define JUMP_V0         2 * JUMP_HEIGHT / JUMP_TIME
-
 void Event::MovementEvent(float latency) {
-    glm::vec3 newPos = glm::vec3(0);
+    glm::vec3 velocity = glm::vec3(0);
     glm::vec3 oldPos = player->position;
     glm::vec3 look = glm::normalize(glm::vec3(player->look.x, 0, player->look.z));
-
-    static float startTime = 0;
-    static int jumping = 0;
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 160.0f;
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
         speed = 10.0f;
     if (!player->hasCollision)
-        newPos = spectatorMovement();
+        velocity = spectatorMovement();
     else {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            newPos += look;
+            velocity += look;
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            newPos += -glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
+            velocity += -glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            newPos += -look;
+            velocity += -look;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            newPos += glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
-        newPos.y = 0;
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            if (oldPos.y > 1 && (float)glfwGetTime() - startTime > JUMP_TIME
-                && player->Grounded()) {
-                jumping = 1;
-                startTime = (float)glfwGetTime();
-            }
-        }
-        if (jumping) { // TODO change how the jump is made and where, it should be on the entity side not event
-            float time = (float)glfwGetTime() - startTime;
-            newPos.y += 0.5f * JUMP_GRAVITY * time * time + JUMP_V0 * time;
-            if (time > 0.35f)
-               jumping = 0;
-        }
-        else if (!newPos.y)
-            newPos.y -= 1.0f; // a remplacer par la vrai formule de graviter pour une persone de 75 kg
+            velocity += glm::normalize(glm::cross(look, glm::vec3(0.0f, 1.0f, 0.0f)));
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            player->Jump();
     }
-    newPos *= speed * latency;
-    player->Move(newPos); // impl�menter la graviter et le jump dans move ou cr�e une fonction apply gavity 
+    velocity *= speed;
+    player->Move(velocity, latency);
     if (player->position != oldPos)
         playerUpdated = true;
 }

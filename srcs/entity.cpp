@@ -6,10 +6,11 @@ Entity::Entity() {
 	ID = 0;
     lastStep = 0;
     hasCollision = true;
-    isGrounded = true;
+    isGrounded = false;
 	position = glm::vec3(0);
 	size = glm::vec3(0);
 	look = glm::vec3(0);
+    velocity = glm::vec3(0);
 }
 
 void Entity::SetPosition(glm::vec3 pos) {
@@ -130,8 +131,10 @@ static inline void playStepSound(glm::vec3 soundPos) {
     Chunk::blocks[cubeID].PlayStepSound(soundPos.x, soundPos.y, soundPos.z);
 }
 
-void Entity::Move(glm::vec3 &movement) {
+void Entity::Move(const glm::vec3 &velocity, float latency) {
 	if (hasCollision) {
+        this->velocity += velocity;
+        glm::vec3 movement = ComputeMovement(latency);
         float nbStep = glm::length(movement) / 0.4f;
         if (nbStep < 1.0f)
 		    ApplyCollision(movement);
@@ -146,7 +149,7 @@ void Entity::Move(glm::vec3 &movement) {
         }
 		return;
 	}
-	position += movement;
+	position += velocity * latency;
 }
 
 void Entity::ApplyCollision(glm::vec3& movement) {
@@ -155,12 +158,31 @@ void Entity::ApplyCollision(glm::vec3& movement) {
 
     colliders.clear();
     entityAABB = this->aabb();
-	if (GetColliders(entityAABB.translate(movement), colliders) >= 0) {
+    if (movement.y > -0.001f && movement.y < 0.001f) // TODO trouver pourquoi il ne marche pas bien avec des mouvement trop faibe et trouver une solution
+        movement.y = 0;
+	if (GetColliders(entityAABB.translate(movement), colliders) > 0) {
         float oldVerticalMove = movement.y;
         OccludeColliders(entityAABB, colliders);
         movement = MoveBox(entityAABB, movement, colliders);
-        isGrounded = (oldVerticalMove < 0 && oldVerticalMove != movement.y) ? true : false;
+        isGrounded = (oldVerticalMove <= 0 && (oldVerticalMove != movement.y || oldVerticalMove == 0)) ? true : false;
+        velocity.y = (oldVerticalMove != movement.y) ? 0.0f : velocity.y;
         lastStep += glm::length(glm::vec2(movement.x, movement.z));
     }
 	position += movement;
+}
+
+void Entity::Jump() {
+    if (isGrounded) {
+        velocity.y += JUMP_VELOCITY;
+        isGrounded = false;
+    }
+}
+
+glm::vec3 Entity::ComputeMovement(float latency) { //TODO add air friction for a terminal velocity and conserve x, z velocity when in air water or on ice
+    velocity.y -= GRAVITY * latency; //add gravitational Velocity
+    glm::vec3 movement = velocity * latency;
+    velocity.x = 0;//-= movement.x; //need to add ground or water friction
+    velocity.z = 0;//-= movement.z;
+  //  velocity.y -= movement.y * AIR_FRICTION;
+    return movement;
 }
