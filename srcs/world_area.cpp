@@ -147,8 +147,7 @@ void WorldArea::ReloadShader(bool wireframeMode, std::vector<std::string> shader
         newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
     else
         newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
-    chunkShader.Delete();
-    chunkShader = newShader;
+    chunkShader = std::move(newShader);
 }
 
 std::vector<Chunk*>& WorldArea::GetChunks() {

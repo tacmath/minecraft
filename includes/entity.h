@@ -11,8 +11,8 @@ unsigned char GetCubeAt(int x, int y, int z);
 int GetColliders(AABB area, std::vector<AABB>& colliders);
 
 #define AIR_FRICTION  0.1f
-#define GRAVITY       20.0f//9.1f
-#define JUMP_VELOCITY 10.0f
+#define GRAVITY       40.0f//9.1f
+#define JUMP_VELOCITY 12.0f
 
 class Entity {		//maybe add the chunk the entity is in and update the chunk when x >> 4 != chunk.posx && z >> 4 != chunk.posz
 private:

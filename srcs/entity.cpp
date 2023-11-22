@@ -158,13 +158,12 @@ void Entity::ApplyCollision(glm::vec3& movement) {
 
     colliders.clear();
     entityAABB = this->aabb();
-    if (movement.y > -0.001f && movement.y < 0.001f) // TODO trouver pourquoi il ne marche pas bien avec des mouvement trop faibe et trouver une solution
-        movement.y = 0;
+    movement.y = (glm::abs(movement.y) <= 0.0005f) ? 0.0f : movement.y; // TODO changer ou blocker les fps car il n'arrive pas a trouver les collision quand les nombre sont trop petit
 	if (GetColliders(entityAABB.translate(movement), colliders) > 0) {
         float oldVerticalMove = movement.y;
         OccludeColliders(entityAABB, colliders);
         movement = MoveBox(entityAABB, movement, colliders);
-        isGrounded = (oldVerticalMove <= 0 && (oldVerticalMove != movement.y || oldVerticalMove == 0)) ? true : false;
+        isGrounded = (oldVerticalMove <= 0 && (oldVerticalMove != movement.y /* || oldVerticalMove == 0*/)) ? true : false; //TODO fix or change it does not work when oldVerticalMove is close or equal 0
         velocity.y = (oldVerticalMove != movement.y) ? 0.0f : velocity.y;
         lastStep += glm::length(glm::vec2(movement.x, movement.z));
     }
@@ -179,7 +178,7 @@ void Entity::Jump() {
 }
 
 glm::vec3 Entity::ComputeMovement(float latency) { //TODO add air friction for a terminal velocity and conserve x, z velocity when in air water or on ice
-    velocity.y -= GRAVITY * latency; //add gravitational Velocity
+    velocity.y -= GRAVITY * latency; //(velocity.y > -100) ? GRAVITY * latency : 0;
     glm::vec3 movement = velocity * latency;
     velocity.x = 0;//-= movement.x; //need to add ground or water friction
     velocity.z = 0;//-= movement.z;
