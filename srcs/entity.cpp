@@ -74,7 +74,7 @@ void OccludeColliders(AABB area, std::vector<AABB> &colliders) {
     }
 }
 
-float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3 axis) {
+float MoveAxis(AABB box, float movement, const std::vector<AABB>& colliders, glm::vec3 axis) {
 	float depth;
     glm::vec3 d_v = axis * movement;
     float sign = movement < 0.0f ? -1.0f : 1.0f;
@@ -82,7 +82,7 @@ float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3
 
     AABB moved = box.translate(d_v);
 
-    for (const auto& c : colliders) {
+    for (auto& c : colliders) {
         if (!moved.collide(c)) {
             continue;
         }
@@ -177,7 +177,7 @@ void Entity::Jump() {
     }
 }
 
-glm::vec3 Entity::ComputeMovement(float latency) { //TODO add air friction for a terminal velocity and conserve x, z velocity when in air water or on ice
+glm::vec3 Entity::ComputeMovement(float latency) { //TODO conserve x, z velocity when in air water or on ice and set it to 0 when toutching wall or no ice ground
     velocity.y -= GRAVITY * latency; //(velocity.y > -100) ? GRAVITY * latency : 0;
     glm::vec3 movement = velocity * latency;
     velocity.x = 0;//-= movement.x; //need to add ground or water friction
