@@ -7,6 +7,10 @@ make install
 make
 ./vox
 
+Pour lancer sur Visual studio installer vcpkg et lancer la commande :
+./vcpkg install opengl openal-soft glm libsndfile glfw3 imgui imgui[glfw-binding] imgui[opengl3-binding]
+et cloner le ficher https://github.com/nothings/stb/blob/master/stb_image.h dans libraries\include
+
 # Dependency
 OpenGl 4.6
 Glfw3.3

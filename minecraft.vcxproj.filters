@@ -81,27 +81,6 @@
     <ClCompile Include="glad.c">
       <Filter>Fichiers sources\lib sources</Filter>
     </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_tables.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_widgets.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_demo.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_draw.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\backends\imgui_impl_opengl3.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\backends\imgui_impl_glfw.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\cubeMap.cpp">
       <Filter>Fichiers sources\opengl utils</Filter>
     </ClCompile>

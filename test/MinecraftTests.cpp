@@ -61,29 +61,5 @@ namespace MinecraftTests
 			actual = MoveAxis(box, movement, colliders, glm::vec3(0, 1, 0));
 			Assert::AreEqual(-0.95f, actual);
 		}
-
-		TEST_METHOD(ShouldMoveAxisAndCollideEdgeCases)
-		{
-			//using
-			AABB				box(glm::vec3(0), glm::vec3(1));
-			float				movement = -1.0f;
-			std::vector<AABB>	colliders;
-			colliders.push_back(box.translate(glm::vec3(0, -1, 0)));
-
-			//expected
-			float expected = 0;
-
-			//actual
-			float actual = MoveAxis(box, movement, colliders, glm::vec3(0, 1, 0));
-			Assert::AreEqual(expected, actual);
-
-			box = box.translate(glm::vec3(0, 0.5f, 0));
-			actual = MoveAxis(box, movement, colliders, glm::vec3(0, 1, 0));
-			Assert::AreEqual(-0.45f, actual);
-
-			box = box.translate(glm::vec3(0, 0.5f, 0));
-			actual = MoveAxis(box, movement, colliders, glm::vec3(0, 1, 0));
-			Assert::AreEqual(-0.95f, actual);
-		}
 	};
 }

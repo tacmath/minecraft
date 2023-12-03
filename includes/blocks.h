@@ -6,6 +6,17 @@
 
 #define MAX_BLOCK_NB 255
 
+enum BLOCK {
+	AIR,
+	GRASS,
+	DIRT,
+	STONE,
+	LEAVE,
+	OAK,
+	OAK_PLANK,
+	BEDROCK
+};
+
 struct Block {
 	uint8_t			top;
 	uint8_t			side;

@@ -47,8 +47,8 @@ int GetColliders(AABB area, std::vector<AABB> &colliders) { // changer pour qu'i
     glm::ivec3 start, size;
 
 	n = 0;
-    area.min = floor(area.min);
-    area.max = ceil(area.max);
+    area.min = floor(area.min); //maybe add - 0.005f or add to player aabb before calling the func
+    area.max = ceil(area.max); //maybe add + 0.005f
     size = glm::ivec3(area.size());
     start = glm::ivec3(area.min);
      if (!(chunk = GetChunk(start.x >> 4, start.z >> 4)))
@@ -158,6 +158,7 @@ void Entity::ApplyCollision(glm::vec3& movement) {
 
     colliders.clear();
     entityAABB = this->aabb();
+    // a la place on peux cumuler le movement j'usqua ce qu'il ateigne  0.0005f ou plus ou férifier que si position = floor(pos) ou GetColliders(this->aabb(), colliders) > 0 après mouvement sur élever le player
     movement.y = (glm::abs(movement.y) <= 0.0005f) ? 0.0f : movement.y; // TODO changer ou blocker les fps car il n'arrive pas a trouver les collision quand les nombre sont trop petit
 	if (GetColliders(entityAABB.translate(movement), colliders) > 0) {
         float oldVerticalMove = movement.y;

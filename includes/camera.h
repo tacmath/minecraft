@@ -10,6 +10,11 @@
 #include<glad/glad.h>
 #include <GLFW/glfw3.h>
 
+/*
+   pitch = asin(direction.y);
+   yaw = atan2(direction.z, direction.x);
+*/
+
 class Camera
 {
 private:
