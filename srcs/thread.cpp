@@ -1,5 +1,7 @@
 #include "thread.h"
 
+std::shared_mutex mutex;
+
 ThreadControleur::ThreadControleur(void) {
 //	std::cout << "cores = " << std::thread::hardware_concurrency() << std::endl;
 	dataThreads = new Thread[DATA_THREAD_NUMBER];
@@ -11,10 +13,14 @@ ThreadControleur::ThreadControleur(void) {
 }
 
 void ThreadControleur::StopThreads(void) {
-	for (int n = 0; n < DATA_THREAD_NUMBER; n++)
+	for (int n = 0; n < DATA_THREAD_NUMBER; n++) {
 		dataThreads[n].status = THREAD_DYING;
-	for (int n = 0; n < MESH_THREAD_NUMBER; n++)
+		dataThreads[n].condVar.notify_one();
+	}
+	for (int n = 0; n < MESH_THREAD_NUMBER; n++) {
 		meshThreads[n].status = THREAD_DYING;
+		meshThreads[n].condVar.notify_one();
+	}
 
 	for (int n = 0; n < DATA_THREAD_NUMBER; n++)
 		while (dataThreads[n].status != THREAD_DEAD)
@@ -43,8 +49,11 @@ void ThreadControleur::CreateMesh(std::vector<Chunk*> &chunks, std::vector<Chunk
 		for (int t = 0; t < MESH_THREAD_NUMBER - 1; t++)
 			if (meshThreads[t].chunkLeft > meshThreads[t + 1].chunkLeft)
 				thread = t + 1;
-		if (meshThreads[thread].chunkLeft == MAX_CHUNK_PER_THREAD)
+		if (meshThreads[thread].chunkLeft == MAX_CHUNK_PER_THREAD) {
+			for (thread = 0; thread < MESH_THREAD_NUMBER; thread++)
+				meshThreads[thread].condVar.notify_one();
 			return;
+		}
 		if (!chunk->HasAllNeighbours())
 			continue;
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
@@ -60,6 +69,8 @@ void ThreadControleur::CreateMesh(std::vector<Chunk*> &chunks, std::vector<Chunk
 			}
 		}
 	}
+	for (thread = 0; thread < MESH_THREAD_NUMBER; thread++)
+		meshThreads[thread].condVar.notify_one();
 }
 
 // assing the mesh creation of a chunk to a thread
@@ -79,6 +90,7 @@ void ThreadControleur::CreateMesh(Chunk* chunk) {
 			chunk->LockNeighbours();
 			meshThreads[thread].chunkListLeft[n] = chunk;
 			meshThreads[thread].chunkLeft += 1;
+			meshThreads[thread].condVar.notify_one();
 			return;
 		}
 	}
@@ -111,8 +123,11 @@ void ThreadControleur::LoadChunk(std::vector<Chunk*> &chunks) {
 		for (int t = 0; t < DATA_THREAD_NUMBER - 1; t++)
 			if (dataThreads[t].chunkLeft > dataThreads[t + 1].chunkLeft)
 				thread = t + 1;
-		if (dataThreads[thread].chunkLeft == MAX_CHUNK_PER_THREAD)
+		if (dataThreads[thread].chunkLeft == MAX_CHUNK_PER_THREAD) {
+			for (thread = 0; thread < DATA_THREAD_NUMBER; thread++)
+				dataThreads[thread].condVar.notify_one();
 			return;
+		}
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
 			if (!dataThreads[thread].chunkListLeft[n]) {
 				chunk->threadStatus |= CHUNK_PROCESSING;
@@ -122,6 +137,8 @@ void ThreadControleur::LoadChunk(std::vector<Chunk*> &chunks) {
 			}
 		}
 	}
+	for (thread = 0; thread < DATA_THREAD_NUMBER; thread++)
+		dataThreads[thread].condVar.notify_one();
 }
 
 void ThreadControleur::LoadChunk(Chunk* chunk) {
@@ -140,6 +157,7 @@ void ThreadControleur::LoadChunk(Chunk* chunk) {
 			return;
 		}
 	}
+	dataThreads[thread].condVar.notify_all();
 }
 
 void ThreadControleur::UnlockLoadedChunks(void) {
@@ -156,16 +174,17 @@ void ThreadControleur::UnlockLoadedChunks(void) {
 	}
 }
 
-void DataThreadRoutine(Thread& dataThread) {		// maybe do a single thread instead of 2 specialized ones
+void DataThreadRoutine(Thread& dataThread) {
 	int n, m;
 
 	while (dataThread.status) {
 		if (!dataThread.chunkLeft) {
-			std::this_thread::sleep_for(std::chrono::microseconds(3000));
-			continue;
+			std::shared_lock lock(mutex);
+			dataThread.condVar.wait(lock, [&] {return dataThread.chunkLeft > 0 || dataThread.status == THREAD_DYING; });
+			lock.unlock();
 		}
-		for (n = 0; n < MAX_CHUNK_PER_THREAD; n++) {			// maybe use one loop and 2 condition 
-			if (dataThread.chunkListLeft[n]) {
+		for (n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
+			if (dataThread.chunkListLeft[n]) { //a lot of time is spent to syncronise the cache 
 				for (m = 0; m < MAX_CHUNK_PER_THREAD; m++) {
 					if (!dataThread.chunkListDone[m]) {
 						dataThread.chunkListLeft[n]->Generate();
@@ -186,11 +205,12 @@ void MeshThreadRoutine(Thread& meshThread) {
 
 	while (meshThread.status) {
 		if (!meshThread.chunkLeft) {
-			std::this_thread::sleep_for(std::chrono::microseconds(3000));
-			continue;
+			std::shared_lock lock(mutex);
+			meshThread.condVar.wait(lock, [&] {return meshThread.chunkLeft > 0 || meshThread.status == THREAD_DYING; });
+			lock.unlock();
 		}
 		for (n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
-			if (meshThread.chunkListLeft[n]) {
+			if (meshThread.chunkListLeft[n]) { //a lot of time is spent to syncronise the cache 
 				for (m = 0; m < MAX_CHUNK_PER_THREAD; m++) {
 					if (!meshThread.chunkListDone[m]) {
 						meshThread.chunkListLeft[n]->createMeshData();

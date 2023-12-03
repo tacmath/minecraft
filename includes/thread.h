@@ -5,6 +5,9 @@
 #include <vector>
 #include "chunk.h"
 #include <chrono>
+#include <mutex>
+#include <shared_mutex>
+#include <condition_variable>
 
 #define MAX_CHUNK_PER_THREAD 200
 
@@ -23,15 +26,17 @@ class Thread {
 private:
 	void *memPtr; //maybe replace by unique_ptr
 public:
+	std::condition_variable_any condVar;
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
+	
 	int chunkLeft;
 	char status;
 
 	Thread() {
 		chunkLeft = 0;
 		status = THREAD_ALIVE;
-		memPtr = calloc(MAX_CHUNK_PER_THREAD * 2, sizeof(Chunk*));
+		memPtr = calloc(MAX_CHUNK_PER_THREAD * 2, sizeof(Chunk*)); //maybe use atomic_intptr_t and cast them when acquired
 		chunkListLeft = (Chunk**)memPtr;
 		chunkListDone = ((Chunk**)memPtr) + MAX_CHUNK_PER_THREAD;
 	}
@@ -47,7 +52,8 @@ public:
 /*
 	for now the thread routine :
 
-	main assing chunk ---> dataThread find a place for the result and generate data ---> meshThread find a place for the result and create mesh ---> main bind result
+	main assing chunk ---> dataThread find a place for the result and generate data ---> main
+	main assing chunk ---> meshThread find a place for the result and create mesh ---> main bind result
 
 
 	and later maybe use a list of char to lock places in the array
