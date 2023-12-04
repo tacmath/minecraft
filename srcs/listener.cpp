@@ -1,5 +1,7 @@
 #include "listener.h"
 
+#define NULL 0
+
 Listener::Listener() {
     ALCdevice* Device = alcOpenDevice(NULL);
     if (!Device)

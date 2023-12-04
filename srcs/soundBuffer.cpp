@@ -72,10 +72,10 @@ SoundBuffers SoundBuffers::Sub(size_t offset, size_t size) const {
     return SoundBuffers(this->begin() + offset, this->begin() + offset + size);
 }
 
-// return the ID of a random sound buffer in the buffer list or return -1 on error
+// return the ID of a random sound buffer in the buffer list or return 0 if no valids found
 ALuint SoundBuffers::GetRandom() const {
     if (this->size() < 1)
-        return -1;
+        return 0;
     std::random_device random;
     return (*this)[random() % this->size()].ID;
 }

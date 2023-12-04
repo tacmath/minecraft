@@ -3,8 +3,6 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 
-#define NULL 0
-
 class Listener
 {
 public:
