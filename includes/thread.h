@@ -26,7 +26,6 @@ class Thread {
 private:
 	void *memPtr; //maybe replace by unique_ptr
 public:
-	std::condition_variable_any condVar;
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
 	
