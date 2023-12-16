@@ -127,7 +127,7 @@ void Menu::DrawInfo() {
 void Menu::DrawMenu() {
     ImVec2 buttonSize;
     static float  volume = 30.0f;
-    static bool vsync = false;
+    static bool vsync = true;
     static bool shadowActive = true;
     static bool fullScreen = false;
     static bool wireFrameMode = false;

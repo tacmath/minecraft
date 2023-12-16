@@ -23,7 +23,7 @@ void Application::Start() {
     SetCallbacks();
     player.InventoryUpdateCallback();
     ImGui_ImplGlfw_InstallCallbacks(window.context); //maybe add imgui callbacks directly in my callbacks
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
     status = APPLICATION_RUNNING;
 }
 
