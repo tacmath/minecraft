@@ -1,7 +1,7 @@
 #include "thread.h"
 
-std::shared_mutex mutex;
-std::condition_variable_any condVar;
+static std::shared_mutex mutex;
+static std::condition_variable_any condVar;
 
 ThreadControleur::ThreadControleur(void) {
 //	std::cout << "cores = " << std::thread::hardware_concurrency() << std::endl;
