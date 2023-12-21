@@ -94,13 +94,13 @@ void ThreadControleur::CreateMesh(Chunk* chunk) {
 void ThreadControleur::BindAllChunks() {
 	for (int thread = 0; thread < MESH_THREAD_NUMBER; thread++) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
-			if (!meshThreads[thread].chunkLeft)
+			if (!meshThreads[thread].chunkDone)
 				break;
 			if (meshThreads[thread].chunkListDone[n]) {
 				meshThreads[thread].chunkListDone[n]->Bind();
 				meshThreads[thread].chunkListDone[n]->UnlockNeighbours();
 				meshThreads[thread].chunkListDone[n] = 0;
-				meshThreads[thread].chunkLeft -= 1;
+				meshThreads[thread].chunkDone -= 1;
 			}
 		}
 	}
@@ -156,13 +156,13 @@ void ThreadControleur::LoadChunk(Chunk* chunk) {
 void ThreadControleur::UnlockLoadedChunks(void) {
 	for (int thread = 0; thread < DATA_THREAD_NUMBER; thread++) {
 		for (int n = 0; n < MAX_CHUNK_PER_THREAD; n++) {
+			if (!dataThreads[thread].chunkDone)
+				break;
 			if (dataThreads[thread].chunkListDone[n]) {
 				dataThreads[thread].chunkListDone[n]->threadStatus &= 15;
 				dataThreads[thread].chunkListDone[n] = 0;
-				dataThreads[thread].chunkLeft -= 1;
+				dataThreads[thread].chunkDone -= 1;
 			}
-			if (!dataThreads[thread].chunkLeft)
-				break;
 		}
 	}
 }
@@ -183,6 +183,8 @@ void DataThreadRoutine(Thread& dataThread) {
 						dataThread.chunkListLeft[n]->Generate();
 						dataThread.chunkListDone[m] = dataThread.chunkListLeft[n];
 						dataThread.chunkListLeft[n] = 0;
+						dataThread.chunkDone++;
+						dataThread.chunkLeft--;
 						break;
 					}
 				}
@@ -209,6 +211,8 @@ void MeshThreadRoutine(Thread& meshThread) {
 						meshThread.chunkListLeft[n]->createMeshData();
 						meshThread.chunkListDone[m] = meshThread.chunkListLeft[n];
 						meshThread.chunkListLeft[n] = 0;
+						meshThread.chunkDone++;
+						meshThread.chunkLeft--;
 						break;
 					}
 				}

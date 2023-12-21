@@ -29,13 +29,15 @@ public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
 	
-	int chunkLeft;
+	std::atomic<unsigned> chunkLeft;
+	std::atomic<unsigned> chunkDone;
 	char status;
 
 	Thread() {
 		chunkLeft = 0;
+		chunkDone = 0;
 		status = THREAD_ALIVE;
-		memPtr = calloc(MAX_CHUNK_PER_THREAD * 2, sizeof(Chunk*)); //maybe use atomic_intptr_t and cast them when acquired
+		memPtr = calloc(MAX_CHUNK_PER_THREAD * 2, sizeof(Chunk*));
 		chunkListLeft = (Chunk**)memPtr;
 		chunkListDone = ((Chunk**)memPtr) + MAX_CHUNK_PER_THREAD;
 	}
