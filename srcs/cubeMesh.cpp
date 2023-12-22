@@ -38,11 +38,12 @@ inline int getVertexAO(int side1, int side2, int corner) {
 	return ((side1 + side2 + corner));
 }
 
+#pragma optimize("g", off) // to prevent the compiler to change the for loop to val1 += 3
 void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
 	char visibleCubes[3][3];
-	volatile int* val1;
-	volatile int* val2;
-
+	int* val1;
+	int* val2;
+	
 	val1 = (pivot == 0) ? &y : &x; // the pivot is x
 	val2 = (pivot == 2) ? &y : &z; // the pivot is z
 	*val1 -= 1;
@@ -60,6 +61,7 @@ void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
 	result[2] = getVertexAO(visibleCubes[2][1], visibleCubes[1][0], visibleCubes[2][0]);
 	result[3] = getVertexAO(visibleCubes[2][1], visibleCubes[1][2], visibleCubes[2][2]);
 }
+#pragma optimize("", on)
 
 inline void fillQuad(int64_t *vertices, int64_t *result) {
 	//first triangle
