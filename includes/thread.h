@@ -6,7 +6,6 @@
 #include "chunk.h"
 #include <chrono>
 #include <mutex>
-#include <shared_mutex>
 #include <condition_variable>
 
 #define MAX_CHUNK_PER_THREAD 200
@@ -24,7 +23,8 @@ void MeshThreadRoutine(Thread& meshThread);
 
 class Thread {
 private:
-	void *memPtr; //maybe replace by unique_ptr
+	void *memPtr;
+	std::jthread thread;
 public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
@@ -47,7 +47,7 @@ public:
 	}
 
 	void Launch(void (*routine)(Thread&)) {
-		std::thread(routine, std::ref(*this)).detach(); //test std::async avec std::future
+		thread = std::jthread(routine, std::ref(*this));
 	}
 };
 /*
