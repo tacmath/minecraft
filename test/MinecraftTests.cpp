@@ -1,20 +1,67 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 
+#include <glm/gtx/string_cast.hpp>
+
+namespace Microsoft
+{
+	namespace VisualStudio
+	{
+		namespace CppUnitTestFramework
+		{
+			template<> static std::wstring ToString<glm::vec3>(const glm::vec3& vec) {
+				std::string string = glm::to_string(vec);
+				return std::wstring(string.begin(), string.end());
+			}
+		}
+	}
+}
+
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MinecraftTests
 {
 	TEST_CLASS(EntityTest)
 	{
+	private:
+		Chunk *createFlatChunkData(glm::ivec2 pos, unsigned char height, unsigned char blockID) {
+			Chunk *chunk;
+
+			chunk = new Chunk;
+			chunk->SetPosistion(pos.x, pos.y);
+			Chunk::chunksMap[GET_CHUNK_ID(pos.x, pos.y)] = chunk;
+			if (!(chunk->cubes = (unsigned char*)calloc(1, sizeof(unsigned char) * 256 * CHUNK_SIZE * CHUNK_SIZE)))
+				return chunk;
+			memset(chunk->cubes, blockID, height * CHUNK_SIZE * CHUNK_SIZE);
+			chunk->status = CHUNK_DATA_LOADED;
+			return chunk;
+		}
+
+		void initTest() {
+			for (auto chunk : Chunk::chunksMap)
+				delete chunk.second;
+			Chunk::chunksMap.clear();
+			createFlatChunkData(glm::ivec2(0), 1, 1);
+		}
+
 	public:
 
-		TEST_METHOD(TestMethod1)
+		TEST_METHOD(ShouldMoveAndCollide)
 		{
+			// GIVEN
 			Entity entity;
+			glm::vec3 velocity;
 
-			std::cout << entity.aabb().to_string() << std::endl;
-			//Assert::AreEqual(entity.look, entity.look);
+			initTest();
+			entity.size = glm::vec3(1);
+			entity.position = glm::vec3(1, 1.5f, 1);
+			velocity = glm::vec3(0);
+			
+
+			entity.Move(velocity, 0.5f);
+			Assert::IsTrue(entity.Grounded());
+			Assert::AreEqual(glm::vec3(1.0f, 1.05f, 1.0f), entity.position);
 		}
 	};
 
