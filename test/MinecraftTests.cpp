@@ -17,7 +17,6 @@ namespace Microsoft
 	}
 }
 
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MinecraftTests
@@ -39,15 +38,17 @@ namespace MinecraftTests
 		}
 
 		void initTest() {
-			for (auto chunk : Chunk::chunksMap)
-				delete chunk.second;
+			for (auto chunk : Chunk::chunksMap) {
+				free(chunk.second->cubes); //free to not call destructor because glad is not initialized
+				free(chunk.second);
+			}
 			Chunk::chunksMap.clear();
 			createFlatChunkData(glm::ivec2(0), 1, 1);
 		}
 
 	public:
 
-		TEST_METHOD(ShouldMoveAndCollide)
+		TEST_METHOD(ShouldFallAndCollideWithGravity)
 		{
 			// GIVEN
 			Entity entity;
@@ -62,6 +63,22 @@ namespace MinecraftTests
 			entity.Move(velocity, 0.5f);
 			Assert::IsTrue(entity.Grounded());
 			Assert::AreEqual(glm::vec3(1.0f, 1.05f, 1.0f), entity.position);
+		}
+
+		TEST_METHOD(ShouldFallAndCollideWithSmallGravity)
+		{
+			// GIVEN
+			Entity entity;
+			glm::vec3 velocity;
+
+			initTest();
+			entity.size = glm::vec3(1);
+			entity.position = glm::vec3(1, 1.05f, 1);
+			velocity = glm::vec3(0);
+
+			entity.Move(velocity, 0.01f);
+			Assert::AreEqual(glm::vec3(1.0f, 1.05f, 1.0f), entity.position);
+			Assert::IsTrue(entity.Grounded());
 		}
 	};
 

@@ -9,6 +9,7 @@ class VBO
 public:
     GLuint ID;
 
+    VBO() { ID = 0; };
     VBO(const void* data, size_t size);
     void Gen(const void* data, size_t size);
     void Delete();

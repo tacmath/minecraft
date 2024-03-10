@@ -155,7 +155,6 @@
     <ClCompile Include="srcs\perlin_noise.cpp" />
     <ClCompile Include="srcs\camera.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
-    <ClCompile Include="srcs\cubeMap.cpp" />
     <ClCompile Include="srcs\entity.cpp" />
     <ClCompile Include="srcs\event.cpp" />
     <ClCompile Include="srcs\init.cpp" />
@@ -181,7 +180,6 @@
     <ClInclude Include="includes\camera.h" />
     <ClInclude Include="includes\chunk.h" />
     <ClInclude Include="includes\cooldown.h" />
-    <ClInclude Include="includes\cubeMap.h" />
     <ClInclude Include="includes\blocks.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
@@ -212,6 +210,7 @@
     <ClInclude Include="includes\window.h" />
     <ClInclude Include="includes\world_area.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="srcs\Stars.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
@@ -226,10 +225,12 @@
     <None Include="shaders\shadowFS.glsl" />
     <None Include="shaders\shadowGS.glsl" />
     <None Include="shaders\shadowVS.glsl" />
-    <None Include="shaders\skyBoxFS.glsl" />
-    <None Include="shaders\skyBoxVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />
     <None Include="shaders\cubeFS.glsl" />
+    <None Include="shaders\skyFS.glsl" />
+    <None Include="shaders\skyVS.glsl" />
+    <None Include="shaders\starFS.glsl" />
+    <None Include="shaders\starVS.glsl" />
     <None Include="shaders\sunFS.glsl" />
     <None Include="shaders\sunVS.glsl" />
     <None Include="shaders\wireFrameFS.glsl" />

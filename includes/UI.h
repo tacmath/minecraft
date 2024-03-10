@@ -151,7 +151,6 @@ public:
 private:
 
     void InitUI() {
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         quad.Init(glm::vec2(-0.015f), glm::vec2(0.03f));
         quadShader.Load("shaders/quadVS.glsl", "shaders/quadFS.glsl");
         cursorTex.Load("texture/ui/cursor.png", 1);

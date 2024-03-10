@@ -1,11 +1,11 @@
 #ifndef BACKGROUND_H
 # define BACKGROUND_H
 
+#include "stars.h"
 #include "shader.h"
 #include "VAO.h"
 #include "EBO.h"
 #include "texture.h"
-#include "cubeMap.h"
 #include "camera.h"
 #include "sun.h"
 #include <glad/glad.h>
@@ -14,12 +14,14 @@
 
 class Background {
 private:
-    // skybox vexter array object
+    // sky vexter buffer object
+    VBO     vbo;
+    // sky vexter array object
 	VAO     vao;
-    // skybox shader
+    // sky shader
     Shader  shader;
-    // skybox cubemap
-    CubeMap cubemap;
+    // sky stars
+    Stars stars;
 public:
     // the sun
     Sun     sun;
@@ -33,13 +35,13 @@ public:
     // draw the skybox
     void Draw(void);
 
+    void LoadSunPos(const glm::vec3& sunPos);
+
     //load the view matrix in all the shaders
     void LoadViewMatrix(const Camera& camera);
 
     void initUniforms(const Camera& camera);
 
-private:
-    void initSkybox(void);
 };
 
 #endif
