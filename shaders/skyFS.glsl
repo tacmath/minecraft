@@ -35,7 +35,7 @@ void main()
     vec3 extinctionColor = mix(daySkyColor, SunColor, pow(1.0f - sunPos.y * sunPos.y, 2) * (0.4f + 0.8f * sunMu * sunMu)); // sunMu * sunMu + pow(1.0f - sunPos.y * sunPos.y, 2)
     vec3 skyColor = mix(extinctionColor, NightColor, -sunPos.y * 0.5f + 0.5f);
     vec3 rayLight = sunMu * sunMu * 0.5f * extinctionColor; //+ 1.0f;
-    float sun = pow(sunMu, 30);
+    float sun = pow(sunMu, 10) * 0.5f;
     vec3 color = skyColor + sun;
 
 
