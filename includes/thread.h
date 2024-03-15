@@ -5,6 +5,8 @@
 #include <vector>
 #include "chunk.h"
 #include <chrono>
+#include <mutex>
+#include <condition_variable>
 
 #define MAX_CHUNK_PER_THREAD 200
 
@@ -21,15 +23,19 @@ void MeshThreadRoutine(Thread& meshThread);
 
 class Thread {
 private:
-	void *memPtr; //maybe replace by unique_ptr
+	void *memPtr;
+	std::jthread thread;
 public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
-	int chunkLeft;
+	
+	std::atomic<unsigned> chunkLeft;
+	std::atomic<unsigned> chunkDone;
 	char status;
 
 	Thread() {
 		chunkLeft = 0;
+		chunkDone = 0;
 		status = THREAD_ALIVE;
 		memPtr = calloc(MAX_CHUNK_PER_THREAD * 2, sizeof(Chunk*));
 		chunkListLeft = (Chunk**)memPtr;
@@ -41,13 +47,14 @@ public:
 	}
 
 	void Launch(void (*routine)(Thread&)) {
-		std::thread(routine, std::ref(*this)).detach(); //test std::async avec std::future
+		thread = std::jthread(routine, std::ref(*this));
 	}
 };
 /*
 	for now the thread routine :
 
-	main assing chunk ---> dataThread find a place for the result and generate data ---> meshThread find a place for the result and create mesh ---> main bind result
+	main assing chunk ---> dataThread find a place for the result and generate data ---> main
+	main assing chunk ---> meshThread find a place for the result and create mesh ---> main bind result
 
 
 	and later maybe use a list of char to lock places in the array

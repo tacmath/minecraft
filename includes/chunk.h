@@ -41,7 +41,7 @@
 	luminosity	|	 		 	|	posZ	|	posX	|	  posY
 
 	vertex data :
-	0000000000000	|	0000	|	0000	|	0000	|	00000000
+	000000000000	|	0000	|	0000	|	0000	|	00000000
 			 		|  normal	|	textY	|	textX	|	 textID
 */
 #define PACK_VERTEX_POS(x, y, z) ((y) | ((x) << 8) | ((z) << 13))
@@ -55,6 +55,12 @@
 #define GET_CHUNK_ID(x, z) ((int64_t)(x) << 32 | ((z) & UINT32_MAX))
 
 #define VEC2_LEN(x, y) (sqrt((x) * (x) + (y) * (y)))
+
+/*
+struct cubeVertex {
+		uint32_t pos;
+		uint32_t data;
+};*/
 
 class Chunk
 {
