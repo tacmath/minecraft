@@ -6,6 +6,17 @@
 
 #define MAX_BLOCK_NB 255
 
+enum BLOCK {
+	AIR,
+	GRASS,
+	DIRT,
+	STONE,
+	LEAVE,
+	OAK,
+	OAK_PLANK,
+	BEDROCK
+};
+
 struct Block {
 	uint8_t			top;
 	uint8_t			side;
@@ -36,7 +47,7 @@ struct Block {
 	void PlayBreakSound(float x, float y, float z) {
 		ALuint buffer = breakSounds.GetRandom();
 
-		if (buffer != -1) {
+		if (buffer) {
 			SoundSource source = soundSources->GetSoundSource();
 			source.SetPosition(x, y, z);
 			source.SetVolume(1.0f);
@@ -47,7 +58,7 @@ struct Block {
 	void PlayStepSound(float x, float y, float z) {
 		ALuint buffer = stepSounds.GetRandom();
 
-		if (buffer != -1) {
+		if (buffer) {
 			SoundSource source = soundSources->GetSoundSource();
 			source.SetPosition(x, y, z);
 			source.SetVolume(0.5f);

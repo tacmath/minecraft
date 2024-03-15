@@ -23,12 +23,12 @@ void Application::Start() {
     SetCallbacks();
     player.InventoryUpdateCallback();
     ImGui_ImplGlfw_InstallCallbacks(window.context); //maybe add imgui callbacks directly in my callbacks
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
     status = APPLICATION_RUNNING;
 }
 
 void Application::Run() {
-    float previousFrameTime = 0;
+    float previousFrameTime = 0; // TODO need to remake for low FPS
     float previousTickTime  = 0;
     float diff = 0;
     float time = 0;
@@ -119,6 +119,8 @@ void Application::SetCallbacks() {
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
         Shader& chunkShader = worldArea.GetShader();
         chunkShader.setFloat("dayLightLevel", (1.0f - (1.0f - glm::smoothstep(0.0f, 0.5f, sunPosition.y)) * 0.7f));
+        
+        background.LoadSunPos(sunPosition);
 
         glm::vec3 position = sunPosition;
         if (sunPosition.y < 0)

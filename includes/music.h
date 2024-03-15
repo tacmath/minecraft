@@ -4,6 +4,7 @@
 #include "soundSource.h"
 #include <AL/alc.h>
 #include <AL/al.h>
+#include <sys/stat.h>
 #include <iomanip>
 #include <thread>
 #include <filesystem>

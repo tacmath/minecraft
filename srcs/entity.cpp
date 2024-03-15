@@ -6,10 +6,11 @@ Entity::Entity() {
 	ID = 0;
     lastStep = 0;
     hasCollision = true;
-    isGrounded = true;
+    isGrounded = false;
 	position = glm::vec3(0);
 	size = glm::vec3(0);
 	look = glm::vec3(0);
+    velocity = glm::vec3(0);
 }
 
 void Entity::SetPosition(glm::vec3 pos) {
@@ -46,8 +47,8 @@ int GetColliders(AABB area, std::vector<AABB> &colliders) { // changer pour qu'i
     glm::ivec3 start, size;
 
 	n = 0;
-    area.min = floor(area.min);
-    area.max = ceil(area.max);
+    area.min = floor(area.min); //maybe add - 0.005f or add to player aabb before calling the func
+    area.max = ceil(area.max); //maybe add + 0.005f
     size = glm::ivec3(area.size());
     start = glm::ivec3(area.min);
      if (!(chunk = GetChunk(start.x >> 4, start.z >> 4)))
@@ -73,7 +74,7 @@ void OccludeColliders(AABB area, std::vector<AABB> &colliders) {
     }
 }
 
-float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3 axis) {
+float MoveAxis(AABB box, float movement, const std::vector<AABB>& colliders, glm::vec3 axis) {
 	float depth;
     glm::vec3 d_v = axis * movement;
     float sign = movement < 0.0f ? -1.0f : 1.0f;
@@ -81,7 +82,7 @@ float MoveAxis(AABB box, float movement, std::vector<AABB>& colliders, glm::vec3
 
     AABB moved = box.translate(d_v);
 
-    for (const auto& c : colliders) {
+    for (auto& c : colliders) {
         if (!moved.collide(c)) {
             continue;
         }
@@ -130,8 +131,10 @@ static inline void playStepSound(glm::vec3 soundPos) {
     Chunk::blocks[cubeID].PlayStepSound(soundPos.x, soundPos.y, soundPos.z);
 }
 
-void Entity::Move(glm::vec3 &movement) {
+void Entity::Move(const glm::vec3 &velocity, float latency) {
 	if (hasCollision) {
+        this->velocity += velocity;
+        glm::vec3 movement = ComputeMovement(latency);
         float nbStep = glm::length(movement) / 0.4f;
         if (nbStep < 1.0f)
 		    ApplyCollision(movement);
@@ -146,7 +149,7 @@ void Entity::Move(glm::vec3 &movement) {
         }
 		return;
 	}
-	position += movement;
+	position += velocity * latency;
 }
 
 void Entity::ApplyCollision(glm::vec3& movement) {
@@ -155,12 +158,31 @@ void Entity::ApplyCollision(glm::vec3& movement) {
 
     colliders.clear();
     entityAABB = this->aabb();
-	if (GetColliders(entityAABB.translate(movement), colliders) >= 0) {
+    // a la place on peux cumuler le movement j'usqua ce qu'il ateigne  0.0005f ou plus ou férifier que si position = floor(pos) ou GetColliders(this->aabb(), colliders) > 0 après mouvement sur élever le player
+    movement.y = (glm::abs(movement.y) <= 0.0005f) ? 0.0f : movement.y; // TODO changer ou blocker les fps car il n'arrive pas a trouver les collision quand les nombre sont trop petit
+	if (GetColliders(entityAABB.translate(movement), colliders) > 0) {
         float oldVerticalMove = movement.y;
         OccludeColliders(entityAABB, colliders);
         movement = MoveBox(entityAABB, movement, colliders);
-        isGrounded = (oldVerticalMove < 0 && oldVerticalMove != movement.y) ? true : false;
+        isGrounded = (oldVerticalMove <= 0 && (oldVerticalMove != movement.y /* || oldVerticalMove == 0*/)) ? true : false; //TODO fix or change it does not work when oldVerticalMove is close or equal 0
+        velocity.y = (oldVerticalMove != movement.y) ? 0.0f : velocity.y;
         lastStep += glm::length(glm::vec2(movement.x, movement.z));
     }
 	position += movement;
+}
+
+void Entity::Jump() {
+    if (isGrounded) {
+        velocity.y += JUMP_VELOCITY;
+        isGrounded = false;
+    }
+}
+
+glm::vec3 Entity::ComputeMovement(float latency) { //TODO conserve x, z velocity when in air water or on ice and set it to 0 when toutching wall or no ice ground
+    velocity.y -= GRAVITY * latency; //(velocity.y > -100) ? GRAVITY * latency : 0;
+    glm::vec3 movement = velocity * latency;
+    velocity.x = 0;//-= movement.x; //need to add ground or water friction
+    velocity.z = 0;//-= movement.z;
+  //  velocity.y -= movement.y * AIR_FRICTION;
+    return movement;
 }

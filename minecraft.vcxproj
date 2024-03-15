@@ -76,12 +76,12 @@
     <LibraryPath>$(ProjectDir)\libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\libraries\imgui\backends;$(ProjectDir)\libraries\imgui;$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LibraryPath>$(ProjectDir)\libraries\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <IncludePath>$(ProjectDir)\libraries\imgui\backends;$(ProjectDir)\libraries\imgui;$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(ProjectDir)\libraries\include;$(ProjectDir)\includes;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -123,7 +123,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,18 +141,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
-    <ClCompile Include="libraries\imgui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="libraries\imgui\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="libraries\imgui\imgui.cpp" />
-    <ClCompile Include="libraries\imgui\imgui_demo.cpp" />
-    <ClCompile Include="libraries\imgui\imgui_draw.cpp" />
-    <ClCompile Include="libraries\imgui\imgui_tables.cpp" />
-    <ClCompile Include="libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="srcs\application.cpp" />
     <ClCompile Include="srcs\background.cpp" />
     <ClCompile Include="srcs\generation.cpp" />
@@ -162,7 +155,6 @@
     <ClCompile Include="srcs\perlin_noise.cpp" />
     <ClCompile Include="srcs\camera.cpp" />
     <ClCompile Include="srcs\chunk.cpp" />
-    <ClCompile Include="srcs\cubeMap.cpp" />
     <ClCompile Include="srcs\entity.cpp" />
     <ClCompile Include="srcs\event.cpp" />
     <ClCompile Include="srcs\init.cpp" />
@@ -188,7 +180,6 @@
     <ClInclude Include="includes\camera.h" />
     <ClInclude Include="includes\chunk.h" />
     <ClInclude Include="includes\cooldown.h" />
-    <ClInclude Include="includes\cubeMap.h" />
     <ClInclude Include="includes\blocks.h" />
     <ClInclude Include="includes\EBO.h" />
     <ClInclude Include="includes\entity.h" />
@@ -219,6 +210,7 @@
     <ClInclude Include="includes\window.h" />
     <ClInclude Include="includes\world_area.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="srcs\Stars.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cubes_settings" />
@@ -233,10 +225,12 @@
     <None Include="shaders\shadowFS.glsl" />
     <None Include="shaders\shadowGS.glsl" />
     <None Include="shaders\shadowVS.glsl" />
-    <None Include="shaders\skyBoxFS.glsl" />
-    <None Include="shaders\skyBoxVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />
     <None Include="shaders\cubeFS.glsl" />
+    <None Include="shaders\skyFS.glsl" />
+    <None Include="shaders\skyVS.glsl" />
+    <None Include="shaders\starFS.glsl" />
+    <None Include="shaders\starVS.glsl" />
     <None Include="shaders\sunFS.glsl" />
     <None Include="shaders\sunVS.glsl" />
     <None Include="shaders\wireFrameFS.glsl" />

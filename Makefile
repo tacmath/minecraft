@@ -45,11 +45,15 @@ NAME_SRC=	camera.cpp\
 			cubeMesh.cpp\
 			menu.cpp\
 			sound.cpp\
+			listener.cpp\
+			music.cpp\
+			soundBuffer.cpp\
+			soundSource.cpp\
 			entity.cpp\
 			event.cpp\
 			init.cpp \
 			main.cpp \
-			generation.cpp \
+			generation.cpp\
 			world_area.cpp\
 			perlin_noise.cpp\
 			shader.cpp\

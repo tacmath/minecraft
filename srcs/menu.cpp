@@ -102,7 +102,9 @@ void Menu::DrawInfo() {
     
     ImGui::SeparatorText("Player");
     ImGui::Text("Posision    x %5.2f, y %5.2f, z %5.2f", player->position.x, player->position.y, player->position.z);
+    ImGui::Text("Velocity    x %5.2f, y %5.2f, z %5.2f", player->velocity.x, player->velocity.y, player->velocity.z);
     ImGui::Text("Target      x %5d, y %5d, z %5d  type %d   ", player->selectedCube.position.x, player->selectedCube.position.y, player->selectedCube.position.z, player->selectedCube.id);
+    ImGui::Text("Grounded    %s", player->Grounded() ? "true" : "false");
 
     ImGui::NewLine();
     ImGui::SeparatorText("Chunk");
@@ -125,7 +127,7 @@ void Menu::DrawInfo() {
 void Menu::DrawMenu() {
     ImVec2 buttonSize;
     static float  volume = 30.0f;
-    static bool vsync = false;
+    static bool vsync = true;
     static bool shadowActive = true;
     static bool fullScreen = false;
     static bool wireFrameMode = false;

@@ -31,6 +31,21 @@ public:
         glDeleteProgram(ID);
         ID = 0;
     }
+
+    bool isCompiled() {
+        GLint hasCompiled = 0;
+        glGetProgramiv(ID, GL_LINK_STATUS, &hasCompiled);
+        return hasCompiled;
+    }
+
+    Shader& operator=(Shader&& shader) noexcept {
+        if (this != &shader) {
+            Delete();
+            ID = shader.ID;
+            shader.ID = 0;
+        }
+        return (*this);
+    }
     
     void setMat4(const char* name, const glm::mat4& matrix) {
         glProgramUniformMatrix4fv(ID, glGetUniformLocation(ID, name), 1, GL_FALSE, &matrix[0][0]);

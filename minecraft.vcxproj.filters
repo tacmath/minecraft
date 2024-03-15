@@ -81,30 +81,6 @@
     <ClCompile Include="glad.c">
       <Filter>Fichiers sources\lib sources</Filter>
     </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_tables.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_widgets.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_demo.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui_draw.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\imgui.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\backends\imgui_impl_opengl3.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="libraries\imgui\backends\imgui_impl_glfw.cpp">
-      <Filter>Fichiers sources\lib sources</Filter>
-    </ClCompile>
-    <ClCompile Include="srcs\cubeMap.cpp">
-      <Filter>Fichiers sources\opengl utils</Filter>
-    </ClCompile>
     <ClCompile Include="srcs\VAO.cpp">
       <Filter>Fichiers sources\opengl utils</Filter>
     </ClCompile>
@@ -194,9 +170,6 @@
     <ClInclude Include="includes\generation.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="includes\cubeMap.h">
-      <Filter>Fichiers d%27en-tête\opengl utils</Filter>
-    </ClInclude>
     <ClInclude Include="includes\EBO.h">
       <Filter>Fichiers d%27en-tête\opengl utils</Filter>
     </ClInclude>
@@ -257,6 +230,9 @@
     <ClInclude Include="resource.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="srcs\Stars.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini">
@@ -301,12 +277,6 @@
     <None Include="shaders\shadowVS.glsl">
       <Filter>Fichiers de ressources\shaders</Filter>
     </None>
-    <None Include="shaders\skyBoxFS.glsl">
-      <Filter>Fichiers de ressources\shaders</Filter>
-    </None>
-    <None Include="shaders\skyBoxVS.glsl">
-      <Filter>Fichiers de ressources\shaders</Filter>
-    </None>
     <None Include="shaders\sunFS.glsl">
       <Filter>Fichiers de ressources\shaders</Filter>
     </None>
@@ -321,6 +291,18 @@
     </None>
     <None Include="cubes_settings">
       <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\skyVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\starFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\starVS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
+    </None>
+    <None Include="shaders\skyFS.glsl">
+      <Filter>Fichiers de ressources\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

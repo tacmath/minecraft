@@ -1,13 +1,19 @@
 #include "background.h"
 
 Background::Background(void) {
-    initSkybox();
-    shader.Load("shaders/skyBoxVS.glsl", "shaders/skyBoxFS.glsl");
+    float   vertices[] = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f };
+
+    vbo.Gen(vertices, sizeof(vertices));
+    vao.Gen();
+    vao.LinkAttrib(vbo, 0, 2, GL_FLOAT, sizeof(float), 0);
+    shader.Load("shaders/skyVS.glsl", "shaders/skyFS.glsl");
 }
 
 // destructor
 Background::~Background(void) {
     shader.Delete();
+    vao.Delete();
+    vbo.Delete();
 }
 
 // draw the skybox
@@ -16,10 +22,16 @@ void Background::Draw(void) {
     glDepthFunc(GL_LEQUAL);
     shader.Activate();
     vao.Bind();
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    stars.Draw();
     sun.Draw();
     glDepthFunc(GL_LESS);
     glDepthMask(true);
+}
+
+void Background::LoadSunPos(const glm::vec3& sunPos) {
+    shader.setVec3("sunPos", sunPos);
+    stars.LoadSunPos(sunPos);
 }
 
 //load the view matrix in all the shaders
@@ -27,7 +39,11 @@ void Background::LoadViewMatrix(const Camera& camera) {
     glm::mat4 view = glm::mat4(glm::mat3(camera.view));
 
     shader.setMat4("view", view);
+    stars.SetVP(camera);
     sun.SetView(view);
+
+    glm::mat4 IVP = glm::inverse(camera.GetProjection() * view);
+    shader.setMat4("IVP", IVP);
 }
 
 void Background::initUniforms(const Camera& camera) {
@@ -36,43 +52,10 @@ void Background::initUniforms(const Camera& camera) {
     shader.setInt("skybox", 0);
     shader.setMat4("projection", camera.projection);
     shader.setMat4("view", view);
+    stars.SetVP(camera);
     sun.SetView(view);
     sun.SetProjection(camera.projection);
-}
 
-
-void Background::initSkybox(void) {
-    std::array<std::string, 6> texturesName;
-
-    float skyboxVertices[] =
-    {
-        //   Coordinates
-        -1.f, 1.f, 1.f,     // Front-top-left
-        1.f, 1.f, 1.f,      // Front-top-right
-        -1.f, -1.f, 1.f,    // Front-bottom-left
-        1.f, -1.f, 1.f,     // Front-bottom-right
-        1.f, -1.f, -1.f,    // Back-bottom-right
-        1.f, 1.f, 1.f,      // Front-top-right
-        1.f, 1.f, -1.f,     // Back-top-right
-        -1.f, 1.f, 1.f,     // Front-top-left
-        -1.f, 1.f, -1.f,    // Back-top-left
-        -1.f, -1.f, 1.f,    // Front-bottom-left
-        -1.f, -1.f, -1.f,   // Back-bottom-left
-        1.f, -1.f, -1.f,    // Back-bottom-right
-        -1.f, 1.f, -1.f,    // Back-top-left
-        1.f, 1.f, -1.f      // Back-top-right
-    };
-
-    texturesName[0] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_2_Left+X.png";
-    texturesName[1] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_3_Right-X.png";
-    texturesName[2] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_4_Up+Y.png";
-    texturesName[3] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_5_Down-Y.png";
-    texturesName[4] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_0_Front+Z.png";
-    texturesName[5] = "texture/TXR_ENV_Skybox_Cloud Layers__Cam_1_Back-Z.png";
-    
-
-    cubemap.Gen(0).Load(texturesName);
-
-    vao.Gen();
-    vao.LinkAttrib((void*)skyboxVertices, 14, 0, 3, GL_FLOAT, sizeof(float), 0);
+    glm::mat4 IVP = glm::inverse(camera.GetProjection() * view);
+    shader.setMat4("IVP", IVP);
 }

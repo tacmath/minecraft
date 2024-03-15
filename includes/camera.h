@@ -10,6 +10,11 @@
 #include<glad/glad.h>
 #include <GLFW/glfw3.h>
 
+/*
+   pitch = asin(direction.y);
+   yaw = atan2(direction.z, direction.x);
+*/
+
 class Camera
 {
 private:
@@ -67,9 +72,13 @@ public:
 
 	float GetScreenRatio();
 
-	const glm::mat4 GetView();
+	glm::mat4 GetView() const {
+		return view;
+	}
 
-	const glm::mat4 GetProjection();
+	glm::mat4 GetProjection() const {
+		return projection;
+	}
 };
 
 #endif

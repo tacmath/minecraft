@@ -19,14 +19,14 @@ void Chunk::addVisibleVertices(int x, int y, int z) {
 
 void Chunk::addVisibleBorderVertices() {
 	for (int y = 0; y < 255; y++)
-		for (int x = 0; x < CHUNK_SIZE; x++) { // change neighbour from vector to chunk** because [] operator take time
-			if (cubes[GET_CUBE(0, y, x)] && neighbour[CHUNK_FRONT_SIDE] && neighbour[CHUNK_FRONT_SIDE]->cubes[GET_CUBE(15, y, x)] == AIR) 
+		for (int x = 0; x < CHUNK_SIZE; x++) {
+			if (cubes[GET_CUBE(0, y, x)] && frontNeighbour && frontNeighbour->cubes[GET_CUBE(15, y, x)] == AIR)
 				addFrontVertices(0, y, x);
-			if (cubes[GET_CUBE(15, y, x)] && neighbour[CHUNK_BACK_SIDE] && neighbour[CHUNK_BACK_SIDE]->cubes[GET_CUBE(0, y, x)] == AIR)
+			if (cubes[GET_CUBE(15, y, x)] && backNeighbour && backNeighbour->cubes[GET_CUBE(0, y, x)] == AIR)
 				addBackVertices(15, y, x);
-			if (cubes[GET_CUBE(x, y, 15)] && neighbour[CHUNK_RIGHT_SIDE] && neighbour[CHUNK_RIGHT_SIDE]->cubes[GET_CUBE(x, y, 0)] == AIR)
+			if (cubes[GET_CUBE(x, y, 15)] && rightNeighbour && rightNeighbour->cubes[GET_CUBE(x, y, 0)] == AIR)
 				addRightVertices(x, y, 15);
-			if (cubes[GET_CUBE(x, y, 0)] && neighbour[CHUNK_LEFT_SIDE] && neighbour[CHUNK_LEFT_SIDE]->cubes[GET_CUBE(x, y, 15)] == AIR)
+			if (cubes[GET_CUBE(x, y, 0)] && leftNeighbour && leftNeighbour->cubes[GET_CUBE(x, y, 15)] == AIR)
 				addLeftVertices(x, y, 0);
 		}
 	verticesNumber = (unsigned int)mesh.size();
@@ -38,11 +38,12 @@ inline int getVertexAO(int side1, int side2, int corner) {
 	return ((side1 + side2 + corner));
 }
 
+#pragma optimize("g", off) // to prevent the compiler to change the for loop to val1 += 3
 void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
 	char visibleCubes[3][3];
-	volatile int* val1;
-	volatile int* val2;
-
+	int* val1;
+	int* val2;
+	
 	val1 = (pivot == 0) ? &y : &x; // the pivot is x
 	val2 = (pivot == 2) ? &y : &z; // the pivot is z
 	*val1 -= 1;
@@ -60,6 +61,7 @@ void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
 	result[2] = getVertexAO(visibleCubes[2][1], visibleCubes[1][0], visibleCubes[2][0]);
 	result[3] = getVertexAO(visibleCubes[2][1], visibleCubes[1][2], visibleCubes[2][2]);
 }
+#pragma optimize("", on)
 
 inline void fillQuad(int64_t *vertices, int64_t *result) {
 	//first triangle

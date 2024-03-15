@@ -28,14 +28,14 @@ Chunk::~Chunk() {
 	//	std::cout << "chunk has been destroyed" << std::endl;
 	//	std::cout << "destructor called  and addr = " << cubes << "  x = " << posx << "  z = " << posz << std::endl;
 	chunksMap.erase(GET_CHUNK_ID(posx, posz));
-	if (neighbour[CHUNK_FRONT_SIDE])
-		neighbour[CHUNK_FRONT_SIDE]->neighbour[CHUNK_BACK_SIDE] = 0;
-	if (neighbour[CHUNK_BACK_SIDE])
-		neighbour[CHUNK_BACK_SIDE]->neighbour[CHUNK_FRONT_SIDE] = 0;
-	if (neighbour[CHUNK_RIGHT_SIDE])
-		neighbour[CHUNK_RIGHT_SIDE]->neighbour[CHUNK_LEFT_SIDE] = 0;
-	if (neighbour[CHUNK_LEFT_SIDE])
-		neighbour[CHUNK_LEFT_SIDE]->neighbour[CHUNK_RIGHT_SIDE] = 0;
+	if (frontNeighbour)
+		frontNeighbour->backNeighbour = 0;
+	if (backNeighbour)
+		backNeighbour->frontNeighbour = 0;
+	if (rightNeighbour)
+		rightNeighbour->leftNeighbour = 0;
+	if (leftNeighbour)
+		leftNeighbour->rightNeighbour = 0;
 	free(cubes);
 	glDeleteBuffers(1, &VBO);
 }

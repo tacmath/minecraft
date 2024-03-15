@@ -93,7 +93,7 @@ void WorldArea::loadNewChunks(const glm::vec3 &position) {
             if (!loadedChunks[x * maxChunk + z] /*&& VEC2_LEN((x - dataLoadDistance), (z - dataLoadDistance)) <= dataLoadDistance*/) {
                 Chunk* newChunk = new Chunk;
                 newChunk->SetPosistion(playerPosx + x, playerPosz + z);
-                Chunk::chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk;
+                Chunk::chunksMap[GET_CHUNK_ID(newChunk->posx, newChunk->posz)] = newChunk; //maybe add it to SetPosistion
                 chunksLoading.push_back(newChunk);
                 loadedChunks[x * maxChunk + z] = newChunk;
             }
@@ -147,8 +147,7 @@ void WorldArea::ReloadShader(bool wireframeMode, std::vector<std::string> shader
         newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
     else
         newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
-    chunkShader.Delete();
-    chunkShader = newShader;
+    chunkShader = std::move(newShader);
 }
 
 std::vector<Chunk*>& WorldArea::GetChunks() {

@@ -47,6 +47,8 @@ std::string glStringEnum(GLenum glenum)
 
 static void debug(void) {
     std::cout << glGetString(GL_VERSION) << std::endl;
+    std::cout << std::thread::hardware_concurrency() << " concurrent threads are supported" << std::endl;
+    std::cout << "curently using " << DATA_THREAD_NUMBER + MESH_THREAD_NUMBER + 1 << " threads" << std::endl;
     glfwSetErrorCallback([](int error, const char* description)
     {
         fprintf(stderr, "GLFW Error %d: %s\n", error, description);
