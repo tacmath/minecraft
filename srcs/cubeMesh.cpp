@@ -3,30 +3,30 @@
 
 void Chunk::addVisibleVertices(int x, int y, int z) {
 
-	if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)
+	if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR || blocks[cubes[GET_CUBE(x, (y + 1), z)]].visibility == VISIBILITY::TRANSPARENT)
 		addTopVertices(x, y, z);
-	if (y > 0 && cubes[GET_CUBE(x, (y - 1), z)] == AIR)
+	if (y > 0 && (cubes[GET_CUBE(x, (y - 1), z)] == AIR || blocks[cubes[GET_CUBE(x, (y - 1), z)]].visibility == VISIBILITY::TRANSPARENT))
 		addBottomVertices(x, y, z);
-	if (x > 0 && cubes[GET_CUBE((x - 1), y, z)] == AIR)
+	if (x > 0 && (cubes[GET_CUBE((x - 1), y, z)] == AIR || blocks[cubes[GET_CUBE((x - 1), y, z)]].visibility == VISIBILITY::TRANSPARENT))
 		addFrontVertices(x, y, z);
-	if (z > 0 && cubes[GET_CUBE(x, y, (z - 1))] == AIR)
+	if (z > 0 && (cubes[GET_CUBE(x, y, (z - 1))] == AIR || blocks[cubes[GET_CUBE(x, y, (z - 1))]].visibility == VISIBILITY::TRANSPARENT))
 		addLeftVertices(x, y, z);
-	if (x < CHUNK_SIZE - 1 && cubes[GET_CUBE((x + 1), y, z)] == AIR)
+	if (x < CHUNK_SIZE - 1 && (cubes[GET_CUBE((x + 1), y, z)] == AIR || blocks[cubes[GET_CUBE((x + 1), y, z)]].visibility == VISIBILITY::TRANSPARENT))
 		addBackVertices(x, y, z);
-	if (z < CHUNK_SIZE - 1 && cubes[GET_CUBE(x, y, (z + 1))] == AIR)
+	if (z < CHUNK_SIZE - 1 && (cubes[GET_CUBE(x, y, (z + 1))] == AIR || blocks[cubes[GET_CUBE(x, y, (z + 1))]].visibility == VISIBILITY::TRANSPARENT))
 		addRightVertices(x, y, z);
 }
 
 void Chunk::addVisibleBorderVertices() {
 	for (int y = 0; y < 255; y++)
 		for (int x = 0; x < CHUNK_SIZE; x++) {
-			if (cubes[GET_CUBE(0, y, x)] && frontNeighbour && frontNeighbour->cubes[GET_CUBE(15, y, x)] == AIR)
+			if (cubes[GET_CUBE(0, y, x)] && frontNeighbour && (frontNeighbour->cubes[GET_CUBE(15, y, x)] == AIR || blocks[frontNeighbour->cubes[GET_CUBE(15, y, x)]].visibility == VISIBILITY::TRANSPARENT))
 				addFrontVertices(0, y, x);
-			if (cubes[GET_CUBE(15, y, x)] && backNeighbour && backNeighbour->cubes[GET_CUBE(0, y, x)] == AIR)
+			if (cubes[GET_CUBE(15, y, x)] && backNeighbour && (backNeighbour->cubes[GET_CUBE(0, y, x)] == AIR || blocks[backNeighbour->cubes[GET_CUBE(0, y, x)]].visibility == VISIBILITY::TRANSPARENT))
 				addBackVertices(15, y, x);
-			if (cubes[GET_CUBE(x, y, 15)] && rightNeighbour && rightNeighbour->cubes[GET_CUBE(x, y, 0)] == AIR)
+			if (cubes[GET_CUBE(x, y, 15)] && rightNeighbour && (rightNeighbour->cubes[GET_CUBE(x, y, 0)] == AIR || blocks[rightNeighbour->cubes[GET_CUBE(x, y, 0)]].visibility == VISIBILITY::TRANSPARENT))
 				addRightVertices(x, y, 15);
-			if (cubes[GET_CUBE(x, y, 0)] && leftNeighbour && leftNeighbour->cubes[GET_CUBE(x, y, 15)] == AIR)
+			if (cubes[GET_CUBE(x, y, 0)] && leftNeighbour && (leftNeighbour->cubes[GET_CUBE(x, y, 15)] == AIR || blocks[leftNeighbour->cubes[GET_CUBE(x, y, 15)]].visibility == VISIBILITY::TRANSPARENT))
 				addLeftVertices(x, y, 0);
 		}
 	verticesNumber = (unsigned int)mesh.size();

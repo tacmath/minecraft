@@ -15,16 +15,6 @@
 // maybe have a configData that contains all configs data and then distribute the data to eatch modules that need the data
 
 typedef std::unordered_map<std::string, SoundBuffers> SoundsData;
-/*
-struct SoundData {
-	std::string					name;
-	SoundBuffers				sounds;
-
-	void clear() {
-		name.clear();
-		sounds.clear();
-	}
-};*/
 
 struct BlockData {
 	std::string					name;
@@ -32,6 +22,7 @@ struct BlockData {
 	unsigned					topTexID;
 	unsigned					sideTexID;
 	unsigned					bottomTexID;
+	bool						transparent;
 	std::string					breakSound;
 	std::string					stepSound;
 
@@ -40,6 +31,7 @@ struct BlockData {
 		topTexID = 0;
 		sideTexID = 0;
 		bottomTexID = 0;
+		transparent = false;
 	}
 
 	void clear() {
@@ -47,6 +39,7 @@ struct BlockData {
 		topTexID = 0;
 		sideTexID = 0;
 		bottomTexID = 0;
+		transparent = false;
 		name.clear();
 		breakSound.clear();
 		stepSound.clear();

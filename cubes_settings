@@ -45,6 +45,7 @@ Name OakLeaves
 	Bottom	oak/leaves_oak.png
 	Break	Grass
 	Step	GrassStep
+	Transparent
 
 Name OakLog
 	ID		7

@@ -17,10 +17,16 @@ enum BLOCK {
 	BEDROCK
 };
 
+enum VISIBILITY {
+	OPAQUE,
+	TRANSPARENT
+};
+
 struct Block {
 	uint8_t			top;
 	uint8_t			side;
 	uint8_t			bottom;
+	uint8_t			visibility;
 	SoundBuffers	breakSounds; // a la place faire un shared_ptr<SoundBuffers> partager entre tout les block qui en on besoin
 	SoundBuffers	stepSounds;
 	const SoundSources<MAX_SOUND_SOURCES> *soundSources; //maybe use a shared_ptr or shared_ptr and weak_ptr or set it as static in Sound class
@@ -71,6 +77,7 @@ struct Block {
 		side = 0;
 		bottom = 0;
 		soundSources = 0;
+		visibility = VISIBILITY::OPAQUE;
 	}
 
 	void Delete() {

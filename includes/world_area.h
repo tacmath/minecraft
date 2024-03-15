@@ -86,6 +86,7 @@ private:
     void initChunks(unsigned radius);
     void fillLoadedChunks(std::vector<Chunk*>& chunks, const glm::vec3 &position);
     void sortChunksLoading(const glm::vec3& position, const Camera &camera);
+    void sortChunks(const glm::vec3& position);
     void loadNewChunks(const glm::vec3& position);
 };
 

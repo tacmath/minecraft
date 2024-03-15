@@ -126,5 +126,6 @@ void main()
     #ifdef SHADOW
     light *= (1.0f - ShadowCalculation() * 0.5f * timeCycle);
     #endif
-    FragColor = vec4(vec3(texture(atlas, texCoord)) * light, 1.0f);
+    vec4 color = texture(atlas, texCoord);
+    FragColor = vec4(color.xyz * light, color.w);
 }

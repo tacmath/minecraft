@@ -65,8 +65,8 @@ void Application::EveryFrames(float time, float latency) {
 
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     
-    worldArea.Draw();
     background.Draw();
+    worldArea.Draw();
     UI.Draw(player);
     menu.Draw();
 

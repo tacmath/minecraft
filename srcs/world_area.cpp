@@ -25,9 +25,11 @@ WorldArea::~WorldArea(void) {
 
 void WorldArea::Draw(void) {
     glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
     chunkShader.Activate();
     for (size_t n = 0; n < chunks.size(); n++)
         chunks[n]->DrawVisible(chunkShader);
+    glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 }
 
@@ -79,6 +81,16 @@ void WorldArea::sortChunksLoading(const glm::vec3& position, const Camera& camer
      });
 }
 
+void WorldArea::sortChunks(const glm::vec3& position) {
+    for (size_t n = 0; n < chunks.size(); n++)
+        chunks[n]->playerProximity = abs(chunks[n]->posx - ((int)position.x >> 4)) + abs(chunks[n]->posz - ((int)position.z >> 4));
+
+    std::sort(chunks.begin(), chunks.end(), [](Chunk* a, Chunk* b) {
+        return (a->playerProximity > b->playerProximity);
+        });
+}
+
+
 
 void WorldArea::loadNewChunks(const glm::vec3 &position) {
     int playerPosx, playerPosz, maxChunk;
@@ -110,6 +122,7 @@ void WorldArea::LoadChunks(const glm::vec3 &position, const Camera& camera) {
     loadNewChunks(position);
 
     sortChunksLoading(position, camera);
+    sortChunks(position);
 
     thread.LoadChunk(chunksLoading);
     thread.CreateMesh(chunks, chunksLoading);

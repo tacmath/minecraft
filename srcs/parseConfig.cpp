@@ -85,6 +85,8 @@ static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures)
     for (std::string line; std::getline(settingsFile, line); ) {
         splitLine = split(line);
         lineNb++;
+        if (splitLine.size() == 1 && splitLine[0] == "Transparent")
+            blockData.transparent = true;
         if (splitLine.size() <= 1)
             continue;
         if (splitLine[0] == "Name") {
@@ -116,6 +118,7 @@ static Block blockDataMapper(const BlockData& blockData, const  SoundsData& soun
     Block block;
 
     block.SetTextures(blockData.topTexID, blockData.sideTexID, blockData.bottomTexID);
+    block.visibility = (blockData.transparent) ? VISIBILITY::TRANSPARENT : VISIBILITY::OPAQUE;
     auto soundData = soundsData.find(blockData.breakSound);
     if (soundData != soundsData.end()) {
         block.breakSounds = soundData->second;
