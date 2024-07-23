@@ -3,8 +3,8 @@
 
 void Chunk::addVisibleVertices(int x, int y, int z) {
 
-	if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)
-		addTopVertices(x, y, z);
+//	if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)
+//		addTopVertices(x, y, z, glm::ivec2(1, 1));
 	if (y > 0 && cubes[GET_CUBE(x, (y - 1), z)] == AIR)
 		addBottomVertices(x, y, z);
 	if (x > 0 && cubes[GET_CUBE((x - 1), y, z)] == AIR)
@@ -15,6 +15,21 @@ void Chunk::addVisibleVertices(int x, int y, int z) {
 		addBackVertices(x, y, z);
 	if (z < CHUNK_SIZE - 1 && cubes[GET_CUBE(x, y, (z + 1))] == AIR)
 		addRightVertices(x, y, z);
+}
+
+void Chunk::topGreedyMeshing(int y) {
+	u_int8_t chunkSlice[CHUNK_SIZE * CHUNK_SIZE];
+
+	bzero(chunkSlice, CHUNK_SIZE * CHUNK_SIZE);
+	for (int x = 0; x < CHUNK_SIZE; x++) {
+		for (int z = 0; z < CHUNK_SIZE; z++) {
+			if ((cubes[GET_CUBE(x, y, z)] != AIR && !chunkSlice[((x) << 4) | (z)]) &&
+				(y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)) {
+				addTopVertices(x, y, z, glm::ivec2(1, 1));
+				chunkSlice[((x) << 4) | (z)] = 1;
+			}
+		}
+	}
 }
 
 void Chunk::addVisibleBorderVertices() {
@@ -87,7 +102,7 @@ inline void fillFlippedQuad(int64_t *vertices, int64_t *result) {
 	result[5] = vertices[2];
 }
 
-void Chunk::addTopVertices(const int x, const int y, const int z) {
+void Chunk::addTopVertices(const int x, const int y, const int z, const glm::ivec2 size) {
 	int textureID= blocks[cubes[GET_CUBE(x, y, z)]].top;
 	int sideAO[4];
 	int64_t vertices[4];
@@ -95,10 +110,10 @@ void Chunk::addTopVertices(const int x, const int y, const int z) {
 	getSideAO(x, y + 1, z, sideAO, 1);
 	for (int n = 0; n < 4; n++)
 		sideAO[n] <<= 28;
-	vertices[0] = sideAO[0] | PACK_VERTEX_POS( x,		(y + 1),  z)		| PACK_VERTEX_DATA(textureID, 0, 0, 0);  
-	vertices[1] = sideAO[1] | PACK_VERTEX_POS( x,		(y + 1), (z + 1))	| PACK_VERTEX_DATA(textureID, 1, 0, 0);  
-	vertices[2] = sideAO[2] | PACK_VERTEX_POS((x + 1), (y + 1),  z)			| PACK_VERTEX_DATA(textureID, 0, 1, 0);  
-	vertices[3] = sideAO[3] | PACK_VERTEX_POS((x + 1), (y + 1), (z + 1))	| PACK_VERTEX_DATA(textureID, 1, 1, 0);  
+	vertices[0] = /*sideAO[0] |*/ PACK_VERTEX_POS( x,		(y + 1),  z)		| PACK_VERTEX_DATA(textureID, 0, 0, 0);  
+	vertices[1] = /*sideAO[1] |*/ PACK_VERTEX_POS( x,		(y + 1), (z + size.y))	| PACK_VERTEX_DATA(textureID, 1, 0, 0);  
+	vertices[2] = /*sideAO[2] |*/ PACK_VERTEX_POS((x + size.x), (y + 1),  z)			| PACK_VERTEX_DATA(textureID, 0, 1, 0);  
+	vertices[3] = /*sideAO[3] |*/ PACK_VERTEX_POS((x + size.x), (y + 1), (z + size.y))	| PACK_VERTEX_DATA(textureID, 1, 1, 0);  
 	
 	size_t verticeNb = mesh.size();
 	mesh.resize(verticeNb + 6);

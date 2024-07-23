@@ -173,7 +173,10 @@ public:
 	// set player proximity
 	void SetPlayerProximity(const glm::vec3 &playerPos);
 private:
-	void addTopVertices(const int x, const int y, const int z);
+	// generate part of the mesh of the chunk using greedy meshing algorithm
+	void topGreedyMeshing(int y);
+	// add the vertices of a cube
+	void addTopVertices(const int x, const int y, const int z, const glm::ivec2 size);
 	void addBottomVertices(const int x, const int y, const int z);
 	void addFrontVertices(const int x, const int y, const int z);
 	void addBackVertices(const int x, const int y, const int z);

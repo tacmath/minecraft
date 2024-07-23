@@ -41,7 +41,6 @@ FRAMEWORK_INC = -I libraries/include -I libraries/imgui/ -I libraries/imgui/back
 
 NAME_SRC=	camera.cpp\
 			chunk.cpp\
-			cubeMap.cpp\
 			cubeMesh.cpp\
 			menu.cpp\
 			sound.cpp\
@@ -106,13 +105,13 @@ $(NAME) : $(OBJS)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp $(HEADER) Makefile
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
-	@$(GPP) -I $(INC_PATH) $(FRAMEWORK_INC) -c $< -o $@
+	$(GPP) -I $(INC_PATH) $(FRAMEWORK_INC) -c $< -o $@
 	@$(eval I=$(shell echo $$(($(I)+1))))
 	@printf "\033[2K\r${G}$(DARK_BLUE)>>\t\t\t\t$(I)/$(shell echo $(NAME_SRC_LEN)) ${N}$(BLUE)$<\033[36m \033[0m"
 
 $(OBJ_PATH)/%.o: %.c $(HEADER) Makefile
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
-	@$(CC) $(FRAMEWORK_INC) -c $< -o $@
+	$(CC) $(FRAMEWORK_INC) -c $< -o $@
 
 $(OBJ_PATH)/%.o:$(IMGUI_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

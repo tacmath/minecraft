@@ -5,7 +5,7 @@
 
 #if DEBUG_MODE == 1
 #define ON_DEBUG(x) x
-#define RENDERING_INFO 0
+#define RENDERING_INFO 1
 #else
 #define ON_DEBUG(x)
 #endif // DEBUG_MODE == 1

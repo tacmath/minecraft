@@ -1,6 +1,7 @@
 #ifndef AABB_CLASS_H
 #define AABB_CLASS_H
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/vec3.hpp>
 #include <glm/gtx/string_cast.hpp>
 

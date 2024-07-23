@@ -74,11 +74,13 @@ void Chunk::Generate() {
 // generate a mesh based on the chunk cube data 
 void Chunk::createMeshData() {
 	mesh.resize(0);
-	for (int y = 0; y < 255; y++)
+	for (int y = 0; y < 255; y++) {
+		topGreedyMeshing(y);
 		for (int x = 0; x < CHUNK_SIZE; x++)
 			for (int z = 0; z < CHUNK_SIZE; z++)
 				if (cubes[GET_CUBE(x, y, z)])
 					addVisibleVertices(x, y, z);
+	}
 
 	verticesNumber = (unsigned int)mesh.size();
 	addVisibleBorderVertices();
