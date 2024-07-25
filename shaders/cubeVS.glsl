@@ -26,13 +26,13 @@ void main()
 	uint x = (vertex >> 8u) & 0x1Fu;		// 5 bits
 	uint z = (vertex >> 13u) & 0x1Fu;		// 5 bits
 
-	texCoord.x = ((data >> 8u) & 15u); // test to use a padding between textures
-	texCoord.y = ((data >> 12u) & 15u); // 4 bits
+	texCoord.x = ((data >> 8u) & 0x1Fu); // test to use a padding between textures
+	texCoord.y = ((data >> 13u) & 0x1Fu); // 5 bits
 	texCoord.z = data & 0xFFu; // 8 bits
 
 	luminosity = 1.0f - (((vertex >> 28u) & 0xFu) / 3.0f) * 0.8f;
 
-	normal = cubeNormal[(data >> 16u) & 0xFu];
+	normal = cubeNormal[(data >> 18u) & 0xFu];
 
 	fragPos = vec3(x + chunkPos.x, y, z + chunkPos.y);
 	

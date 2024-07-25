@@ -41,11 +41,11 @@
 	luminosity	|	 		 	|	posZ	|	posX	|	  posY
 
 	vertex data :
-	000000000000	|	0000	|	0000	|	0000	|	00000000
+	0000000000		|	0000	|	00000	|	00000	|	00000000
 			 		|  normal	|	textY	|	textX	|	 textID
 */
 #define PACK_VERTEX_POS(x, y, z) ((y) | ((x) << 8) | ((z) << 13))
-#define PACK_VERTEX_DATA(textID, textx, texty, normal) ((int64_t)((textID) | (textx) <<  8 | (texty) << 12 | (normal) << 16) << 32)
+#define PACK_VERTEX_DATA(textID, textx, texty, normal) ((int64_t)((textID) | (textx) <<  8 | (texty) << 13 | (normal) << 18) << 32)
 
 // get the offset of a cube based on the position in the chunk
 #define GET_CUBE(x, y, z) (((y) << 8) | ((x) << 4) | (z))
