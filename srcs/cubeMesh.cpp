@@ -31,7 +31,7 @@ void Chunk::topGreedyMeshing(int y) {
 				chunkSlice[x][z] = 1;
 				for (sizex = 1; x + sizex < CHUNK_SIZE; sizex++) {
 					if (cubes[GET_CUBE(x + sizex, y, z)] == type && !chunkSlice[x + sizex][z] &&
-						(y == 255 || cubes[GET_CUBE(x + sizex, (y + 1), z)] == AIR)) {
+						(y == 255 || cubes[GET_CUBE(x + sizex, (y + 1), z)] == AIR)) { // for top and bottom do y + ? >= 0 && y + ? <= 255
 						chunkSlice[x + sizex][z] = 1;
 					}
 					else
