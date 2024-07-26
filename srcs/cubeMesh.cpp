@@ -1,12 +1,14 @@
 #include "chunk.h"
 #include "blocks.h"
 
+#define addTopVertices addVertices<Block::TOP, 0>
+
 void Chunk::addVisibleVertices(int x, int y, int z) {
 
 //	if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)
 //		addTopVertices(x, y, z, glm::ivec2(1, 1));
-	if (y > 0 && cubes[GET_CUBE(x, (y - 1), z)] == AIR)
-		addBottomVertices(x, y, z);
+//	if (y > 0 && cubes[GET_CUBE(x, (y - 1), z)] == AIR)
+//		addBottomVertices(x, y, z);
 	if (x > 0 && cubes[GET_CUBE((x - 1), y, z)] == AIR)
 		addFrontVertices(x, y, z);
 	if (z > 0 && cubes[GET_CUBE(x, y, (z - 1))] == AIR)
@@ -17,43 +19,60 @@ void Chunk::addVisibleVertices(int x, int y, int z) {
 		addRightVertices(x, y, z);
 }
 
-void Chunk::topGreedyMeshing(int y) {
-	u_int8_t chunkSlice[CHUNK_SIZE][CHUNK_SIZE];
+struct MeshTopSide {
+	const int limit = 255;
+	const int y = 1;
+};
+
+template <typename sideType, int Y>
+glm::ivec2 Chunk::GreedyMeshing(std::array<std::array<u_int8_t, CHUNK_SIZE>, CHUNK_SIZE> &chunkSlice, int x, int y, int z) {
 	int sizex, sizez, type;
 
+	if ((cubes[GET_CUBE(x, y, z)] != AIR && !chunkSlice[x][z]) &&
+		(y + Y >= 0 && y + Y <= 255 && cubes[GET_CUBE(x, (y + Y), z)] == AIR)) {
+		type = cubes[GET_CUBE(x, y, z)];
+		chunkSlice[x][z] = 1;
+		for (sizex = 1; x + sizex < CHUNK_SIZE; sizex++) {
+			if (cubes[GET_CUBE(x + sizex, y, z)] == type && !chunkSlice[x + sizex][z] &&
+				(y + Y >= 0 && y + Y <= 255 && cubes[GET_CUBE(x + sizex, (y + Y), z)] == AIR)) { // for top and bottom do y + ? >= 0 && y + ? <= 255
+				chunkSlice[x + sizex][z] = 1;
+			}
+			else
+				break;
+		}
+		for (sizez = 1; z + sizez < CHUNK_SIZE; sizez++) {
+			bool valid = true;
+			for (int n = 0; n < sizex; n++) {
+				if (cubes[GET_CUBE(x + n, y, z + sizez)] != type || chunkSlice[x + n][z + sizez] ||
+					(y + Y < 0 || y + Y > 255 || cubes[GET_CUBE(x + n, (y + 1), z + sizez)] != AIR)) {
+					valid = false;
+					break;
+				}
+			}
+			if (valid) {
+				for (int n = 0; n < sizex; n++)
+					chunkSlice[x + n][z + sizez] = 1;
+			}
+			else
+				break;
+		}
+		return glm::ivec2(sizex, sizez);
+	}
+	return glm::ivec2(0, 0);
+}
 
-	bzero(chunkSlice, CHUNK_SIZE * CHUNK_SIZE);
+void Chunk::topGreedyMeshing(int y) {
+	std::array<std::array<std::array<u_int8_t, CHUNK_SIZE>, CHUNK_SIZE>, 2> chunkSlice;
+	glm::ivec2 size;
+
+	bzero(&chunkSlice, CHUNK_SIZE * CHUNK_SIZE * 2);
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int z = 0; z < CHUNK_SIZE; z++) {
-			if ((cubes[GET_CUBE(x, y, z)] != AIR && !chunkSlice[x][z]) &&
-				(y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)) {
-				type = cubes[GET_CUBE(x, y, z)];
-				chunkSlice[x][z] = 1;
-				for (sizex = 1; x + sizex < CHUNK_SIZE; sizex++) {
-					if (cubes[GET_CUBE(x + sizex, y, z)] == type && !chunkSlice[x + sizex][z] &&
-						(y == 255 || cubes[GET_CUBE(x + sizex, (y + 1), z)] == AIR)) { // for top and bottom do y + ? >= 0 && y + ? <= 255
-						chunkSlice[x + sizex][z] = 1;
-					}
-					else
-						break;
-				}
-				for (sizez = 1; z + sizez < CHUNK_SIZE; sizez++) {
-					bool valid = true;
-					for (int n = 0; n < sizex; n++) {
-						if (cubes[GET_CUBE(x + n, y, z + sizez)] != type || chunkSlice[x + n][z + sizez] ||
-							(y != 255 && cubes[GET_CUBE(x + n, (y + 1), z + sizez)] != AIR)) {
-							valid = false;
-							break;
-						}
-					}
-					if (valid) {
-						for (int n = 0; n < sizex; n++)
-							chunkSlice[x + n][z + sizez] = 1;
-					}
-					else
-						break;
-				}
-				addTopVertices(x, y, z, glm::ivec2(sizex, sizez));
+			if (cubes[GET_CUBE(x, y, z)] != AIR) {
+				if ((size = GreedyMeshing<struct MeshTopSide, 1>(chunkSlice[0], x, y, z)).x)
+					addTopVertices(x, y, z, size);
+				if ((size = GreedyMeshing<struct MeshTopSide, -1>(chunkSlice[1], x, y, z)).x)
+					addBottomVertices(x, y, z, size);
 			}
 		}
 	}
@@ -129,48 +148,49 @@ inline void fillFlippedQuad(int64_t *vertices, int64_t *result) {
 	result[5] = vertices[2];
 }
 
-void Chunk::addTopVertices(const int x, const int y, const int z, const glm::ivec2 size) {
-	int textureID= blocks[cubes[GET_CUBE(x, y, z)]].top;
+template <Block::TEXTURE_TYPE TYPE, int NORMAL>
+void Chunk::addVertices(const int x, const int y, const int z, const glm::ivec2 size) {
+	int textureID= blocks[cubes[GET_CUBE(x, y, z)]].GetTexture(TYPE);
 	int sideAO[4];
 	int64_t vertices[4];
 
-	getSideAO(x, y + 1, z, sideAO, 1);
-	for (int n = 0; n < 4; n++)
-		sideAO[n] <<= 28;
-	vertices[0] = /*sideAO[0] |*/ PACK_VERTEX_POS( x,		(y + 1),  z)		| PACK_VERTEX_DATA(textureID, 0, 0, 0);  
-	vertices[1] = /*sideAO[1] |*/ PACK_VERTEX_POS( x,		(y + 1), (z + size.y))	| PACK_VERTEX_DATA(textureID, size.y, 0, 0);  
-	vertices[2] = /*sideAO[2] |*/ PACK_VERTEX_POS((x + size.x), (y + 1),  z)			| PACK_VERTEX_DATA(textureID, 0, size.x, 0);  
-	vertices[3] = /*sideAO[3] |*/ PACK_VERTEX_POS((x + size.x), (y + 1), (z + size.y))	| PACK_VERTEX_DATA(textureID, size.y, size.x, 0);  
+	//getSideAO(x, y + 1, z, sideAO, 1);
+	//for (int n = 0; n < 4; n++)
+	//	sideAO[n] <<= 28;
+	vertices[0] = /*sideAO[0] |*/ PACK_VERTEX_POS( x,		(y + 1),  z)				| PACK_VERTEX_DATA(textureID, 0, 0, NORMAL);  
+	vertices[1] = /*sideAO[1] |*/ PACK_VERTEX_POS( x,		(y + 1), (z + size.y))		| PACK_VERTEX_DATA(textureID, size.y, 0, NORMAL);  
+	vertices[2] = /*sideAO[2] |*/ PACK_VERTEX_POS((x + size.x), (y + 1),  z)			| PACK_VERTEX_DATA(textureID, 0, size.x, NORMAL);  
+	vertices[3] = /*sideAO[3] |*/ PACK_VERTEX_POS((x + size.x), (y + 1), (z + size.y))	| PACK_VERTEX_DATA(textureID, size.y, size.x, NORMAL);  
 	
 	size_t verticeNb = mesh.size();
 	mesh.resize(verticeNb + 6);
 
-	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+//	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
 		fillQuad(vertices, &mesh[verticeNb]);
-	else
-		fillFlippedQuad(vertices, &mesh[verticeNb]);
+//	else
+//		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }
 
-void Chunk::addBottomVertices(const int x, const int y, const int z) {
+void Chunk::addBottomVertices(const int x, const int y, const int z, const glm::ivec2 size) {
 	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].bottom;
 	int sideAO[4];
 	int64_t vertices[4];
 
-	getSideAO(x, y - 1, z, sideAO, 1);
-	for (int n = 0; n < 4; n++)
-		sideAO[n] <<= 28;
-	vertices[0] = sideAO[0] | PACK_VERTEX_POS(x, y, z) 				| PACK_VERTEX_DATA(textureID, 0, 0, 1);  
-	vertices[2] = sideAO[1] | PACK_VERTEX_POS(x, y, (z + 1))		| PACK_VERTEX_DATA(textureID, 1, 0, 1);  
-	vertices[1] = sideAO[2] | PACK_VERTEX_POS((x + 1), y, z)		| PACK_VERTEX_DATA(textureID, 0, 1, 1);  
-	vertices[3] = sideAO[3] | PACK_VERTEX_POS((x + 1), y, (z + 1))	| PACK_VERTEX_DATA(textureID, 1, 1, 1);  
+	//getSideAO(x, y - 1, z, sideAO, 1);
+//	for (int n = 0; n < 4; n++)
+//		sideAO[n] <<= 28;
+	vertices[0] = /*sideAO[0] |*/ PACK_VERTEX_POS(x, y, z) 				| PACK_VERTEX_DATA(textureID, 0, 0, 1);  
+	vertices[2] = /*sideAO[1] |*/ PACK_VERTEX_POS(x, y, (z + size.y))		| PACK_VERTEX_DATA(textureID, size.y, 0, 1);  
+	vertices[1] = /*sideAO[2] |*/ PACK_VERTEX_POS((x + size.x), y, z)		| PACK_VERTEX_DATA(textureID, 0, size.x, 1);  
+	vertices[3] = /*sideAO[3] |*/ PACK_VERTEX_POS((x + size.x), y, (z + size.y))	| PACK_VERTEX_DATA(textureID, size.y, size.x, 1);  
 
 	size_t verticeNb = mesh.size();
 	mesh.resize(verticeNb + 6);
 
-	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
+//	if (sideAO[0] + sideAO[3] > sideAO[1] + sideAO[2])
 		fillQuad(vertices, &mesh[verticeNb]);
-	else
-		fillFlippedQuad(vertices, &mesh[verticeNb]);
+//	else
+//		fillFlippedQuad(vertices, &mesh[verticeNb]);
 }
 
 void Chunk::addFrontVertices(const int x, const int y, const int z) {

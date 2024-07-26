@@ -18,6 +18,7 @@ enum BLOCK {
 };
 
 struct Block {
+	enum TEXTURE_TYPE {TOP, SIDE, BOTTOM};
 	uint8_t			top;
 	uint8_t			side;
 	uint8_t			bottom;
@@ -28,6 +29,20 @@ struct Block {
 	Block() {
 		Clean();
 	};
+
+	uint8_t GetTexture(TEXTURE_TYPE type) {
+		switch (type)
+		{
+		case TOP:
+			return top;
+		case SIDE:
+			return side;
+		case BOTTOM:
+			return bottom;
+		default:
+			return 0;
+		}
+	}
 
 	void SetTextures(uint8_t top, uint8_t side, uint8_t bottom) {
 		this->top = top;
