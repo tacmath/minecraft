@@ -174,18 +174,18 @@ public:
 	void SetPlayerProximity(const glm::vec3 &playerPos);
 private:
 	// generate part of the mesh of the chunk using greedy meshing algorithm
-	template <typename sideType, int Y>
-	glm::ivec2 GreedyMeshing(std::array<std::array<u_int8_t, CHUNK_SIZE>, CHUNK_SIZE> &chunkSlice, int x, int y, int z);
+	template <int Y>
+	glm::ivec2 GreedyMeshingY(std::array<std::array<uint8_t, CHUNK_SIZE>, CHUNK_SIZE> &chunkSlice, int x, int y, int z);
 	void topGreedyMeshing(int y);
 	// add the vertices of a cube
-	template <Block::TEXTURE_TYPE TYPE, int NORMAL>
+	template <Block::TEXTURE_TYPE TYPE, typename XYZto2D, int OFFSET, int NORMAL, bool CW>
 	void addVertices(const int x, const int y, const int z, const glm::ivec2 size);
 	//void addTopVertices(const int x, const int y, const int z, const glm::ivec2 size);
-	void addBottomVertices(const int x, const int y, const int z, const glm::ivec2 size);
-	void addFrontVertices(const int x, const int y, const int z);
+	//void addBottomVertices(const int x, const int y, const int z, const glm::ivec2 size);
+/*	void addFrontVertices(const int x, const int y, const int z);
 	void addBackVertices(const int x, const int y, const int z);
 	void addRightVertices(const int x, const int y, const int z);
-	void addLeftVertices(const int x, const int y, const int z);
+	void addLeftVertices(const int x, const int y, const int z);*/
 
 	//store in result the AO value of each corner of a side
 	void getSideAO(int x, int y, int z, int *result, int pivot);
