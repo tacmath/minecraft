@@ -176,7 +176,14 @@ private:
 	// generate part of the mesh of the chunk using greedy meshing algorithm
 	template <int Y>
 	glm::ivec2 GreedyMeshingY(std::array<std::array<uint8_t, CHUNK_SIZE>, CHUNK_SIZE> &chunkSlice, int x, int y, int z);
-	void topGreedyMeshing(int y);
+	template <int X>
+	glm::ivec2 GreedyMeshingX(std::array<std::array<uint8_t, 256>, CHUNK_SIZE>& chunkSlice, int x, int y, int z);
+	template <int Z>
+	glm::ivec2 GreedyMeshingZ(std::array<std::array<uint8_t, 256>, CHUNK_SIZE>& chunkSlice, int x, int y, int z);
+	void YGreedyMeshing(int y);
+	void XGreedyMeshing(int x);
+	void ZGreedyMeshing(int z);
+	void GreedyMeshALL();
 	// add the vertices of a cube
 	template <Block::TEXTURE_TYPE TYPE, typename XYZto2D, int OFFSET, int NORMAL, bool CW>
 	void addVertices(const int x, const int y, const int z, const glm::ivec2 size);
