@@ -203,53 +203,43 @@ glm::ivec2 Chunk::GreedyMeshingZ(std::array<std::array<uint8_t, 256>, CHUNK_SIZE
 	return glm::ivec2(0, 0);
 }
 
-void Chunk::YGreedyMeshing(int y) {
-	std::array<std::array<std::array<uint8_t, CHUNK_SIZE>, CHUNK_SIZE>, 2> chunkSlice;
+// generate a greedy mesh based on the chunk cube data
+void Chunk::GreedyMeshALL() {
+
+	std::array<std::array<std::array<uint8_t, 256>, CHUNK_SIZE>, 4>			chunkSlice;
+	std::array<std::array<std::array<uint8_t, CHUNK_SIZE>, CHUNK_SIZE>, 2>	chunkSliceY;
 	glm::ivec2 size;
 
-	memset(&chunkSlice, 0, CHUNK_SIZE * CHUNK_SIZE * 2);
 	for (int x = 0; x < CHUNK_SIZE; x++) {
+		memset(&chunkSlice, 0, CHUNK_SIZE * 256 * 4);
 		for (int z = 0; z < CHUNK_SIZE; z++) {
-			if (cubes[GET_CUBE(x, y, z)] != AIR) {
-				if ((size = GreedyMeshingY<1>(chunkSlice[0], x, y, z)).x)
-					addTopVertices(x, y, z, size);
-				if ((size = GreedyMeshingY<-1>(chunkSlice[1], x, y, z)).x)
-					addBottomVertices(x, y, z, size);
+			for (int y = 0; y < 256; y++) {
+				if (cubes[GET_CUBE(x, y, z)] != AIR) {
+					if ((size = GreedyMeshingX<1>(chunkSlice[0], x, y, z)).x)
+						addBackVertices(x, y, z, size);
+					if ((size = GreedyMeshingX<-1>(chunkSlice[1], x, y, z)).x)
+						addFrontVertices(x, y, z, size);
+				}
+				if (cubes[GET_CUBE(z, y, x)] != AIR) {
+					if ((size = GreedyMeshingZ<1>(chunkSlice[2], z, y, x)).x)
+						addRightVertices(z, y, x, size);
+					if ((size = GreedyMeshingZ<-1>(chunkSlice[3], z, y, x)).x)
+						addLeftVertices(z, y, x, size);
+				}
 			}
 		}
 	}
-}
 
-
-void Chunk::XGreedyMeshing(int x) {
-	std::array<std::array<std::array<uint8_t, 256>, CHUNK_SIZE>, 2> chunkSlice;
-	glm::ivec2 size;
-
-	memset(&chunkSlice, 0, CHUNK_SIZE * 256 * 2);
-	for (int z = 0; z < CHUNK_SIZE; z++) {
-		for (int y = 0; y < 256; y++) {
-			if (cubes[GET_CUBE(x, y, z)] != AIR) {
-				if ((size = GreedyMeshingX<1>(chunkSlice[0], x, y, z)).x)
-					addBackVertices(x, y, z, size);
-				if ((size = GreedyMeshingX<-1>(chunkSlice[1], x, y, z)).x)
-					addFrontVertices(x, y, z, size);
-			}
-		}
-	}
-}
-
-void Chunk::ZGreedyMeshing(int z) {
-	std::array<std::array<std::array<uint8_t, 256>, CHUNK_SIZE>, 2> chunkSlice;
-	glm::ivec2 size;
-
-	memset(&chunkSlice, 0, CHUNK_SIZE * 256 * 2);
-	for (int x = 0; x < CHUNK_SIZE; x++) {
-		for (int y = 0; y < 256; y++) {
-			if (cubes[GET_CUBE(x, y, z)] != AIR) {
-				if ((size = GreedyMeshingZ<1>(chunkSlice[0], x, y, z)).x)
-					addRightVertices(x, y, z, size);
-				if ((size = GreedyMeshingZ<-1>(chunkSlice[1], x, y, z)).x)
-					addLeftVertices(x, y, z, size);
+	for (int y = 0; y < 255; y++) {
+		memset(&chunkSliceY, 0, CHUNK_SIZE * CHUNK_SIZE * 2);
+		for (int x = 0; x < CHUNK_SIZE; x++) {
+			for (int z = 0; z < CHUNK_SIZE; z++) {
+				if (cubes[GET_CUBE(x, y, z)] != AIR) {
+					if ((size = GreedyMeshingY<1>(chunkSliceY[0], x, y, z)).x)
+						addTopVertices(x, y, z, size);
+					if ((size = GreedyMeshingY<-1>(chunkSliceY[1], x, y, z)).x)
+						addBottomVertices(x, y, z, size);
+				}
 			}
 		}
 	}

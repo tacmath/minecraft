@@ -71,16 +71,6 @@ void Chunk::Generate() {
 	status = CHUNK_DATA_LOADED;
 }
 
-// generate a greedy mesh based on the chunk cube data
-void Chunk::GreedyMeshALL() {
-	for (int x = 0; x < CHUNK_SIZE; x++) {
-		XGreedyMeshing(x);
-		ZGreedyMeshing(x);
-	}
-	for (int y = 0; y < 255; y++)
-		YGreedyMeshing(y);
-}
-
 // generate a mesh based on the chunk cube data 
 void Chunk::createMeshData() {
 	mesh.resize(0);
