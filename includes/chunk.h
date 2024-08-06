@@ -184,12 +184,6 @@ private:
 	// add the vertices of a cube
 	template <Block::TEXTURE_TYPE TYPE, typename XYZto2D, int OFFSET, int NORMAL, bool CW>
 	void addVertices(const int x, const int y, const int z, const glm::ivec2 size);
-	//void addTopVertices(const int x, const int y, const int z, const glm::ivec2 size);
-	//void addBottomVertices(const int x, const int y, const int z, const glm::ivec2 size);
-/*	void addFrontVertices(const int x, const int y, const int z);
-	void addBackVertices(const int x, const int y, const int z);
-	void addRightVertices(const int x, const int y, const int z);
-	void addLeftVertices(const int x, const int y, const int z);*/
 
 	//store in result the AO value of each corner of a side
 	void getSideAO(int x, int y, int z, int *result, int pivot);
