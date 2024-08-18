@@ -75,6 +75,18 @@ inline void fillQuad(int64_t *vertices, int64_t *result) {
 	result[5] = vertices[3];
 }
 
+inline void fillQuadCCW(int64_t* vertices, int64_t* result) {
+	//first triangle
+	result[0] = vertices[0];
+	result[1] = vertices[2];
+	result[2] = vertices[1];
+
+	//second triangle
+	result[3] = vertices[1];
+	result[4] = vertices[2];
+	result[5] = vertices[3];
+}
+
 inline void fillFlippedQuad(int64_t *vertices, int64_t *result) {
 	//first triangle
 	result[0] = vertices[0];
@@ -85,6 +97,31 @@ inline void fillFlippedQuad(int64_t *vertices, int64_t *result) {
 	result[3] = vertices[0];
 	result[4] = vertices[3];
 	result[5] = vertices[2];
+}
+
+void Chunk::addGrassVertices(const int x, const int y, const int z) {
+	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].side;
+	int64_t vertices[8];
+
+	
+	vertices[0] = PACK_VERTEX_POS(x + 1, y, z + 1)		| PACK_VERTEX_DATA(textureID, 0, 0, 0);
+	vertices[1] = PACK_VERTEX_POS(x + 1, y + 1, z + 1)	| PACK_VERTEX_DATA(textureID, 0, 1, 0);
+	vertices[2] = PACK_VERTEX_POS(x, y, z)				| PACK_VERTEX_DATA(textureID, 1, 0, 0);
+	vertices[3] = PACK_VERTEX_POS(x, y + 1, z)			| PACK_VERTEX_DATA(textureID, 1, 1, 0);
+
+	
+	vertices[4] = PACK_VERTEX_POS(x + 1, y + 1, z)	| PACK_VERTEX_DATA(textureID, 1, 1, 0);
+	vertices[5] = PACK_VERTEX_POS(x, y + 1, z + 1)	| PACK_VERTEX_DATA(textureID, 0, 1, 0);
+	vertices[6] = PACK_VERTEX_POS(x + 1, y, z)		| PACK_VERTEX_DATA(textureID, 1, 0, 0);
+	vertices[7] = PACK_VERTEX_POS(x, y, z + 1)		| PACK_VERTEX_DATA(textureID, 0, 0, 0);
+
+	size_t verticeNb = mesh.size();
+	mesh.resize(verticeNb + 24);
+
+	fillQuad(vertices, &mesh[verticeNb]);
+	fillQuad(&vertices[4], &mesh[verticeNb + 6]);
+	fillQuadCCW(vertices, &mesh[verticeNb + 12]);
+	fillQuadCCW(&vertices[4], &mesh[verticeNb + 18]);
 }
 
 void Chunk::addTopVertices(const int x, const int y, const int z) {
