@@ -121,11 +121,18 @@ float ShadowCalculation()
 
 void main()
 {
+    vec4 color = texture(atlas, texCoord);
+
+    #ifdef CUTOUT
+    if (color.w < 0.5f)
+        discard;
+    #endif
+
     float light = dayLightLevel * luminosity;
 
     #ifdef SHADOW
     light *= (1.0f - ShadowCalculation() * 0.5f * timeCycle);
     #endif
-    vec4 color = texture(atlas, texCoord);
-    FragColor = vec4(color.xyz * light, color.w);
+    
+    FragColor = vec4(color.xyz * light, 1.0f);
 }

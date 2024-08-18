@@ -25,11 +25,9 @@ WorldArea::~WorldArea(void) {
 
 void WorldArea::Draw(void) {
     glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
     chunkShader.Activate();
     for (size_t n = 0; n < chunks.size(); n++)
         chunks[n]->DrawVisible(chunkShader);
-    glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 }
 
@@ -122,7 +120,7 @@ void WorldArea::LoadChunks(const glm::vec3 &position, const Camera& camera) {
     loadNewChunks(position);
 
     sortChunksLoading(position, camera);
-    sortChunks(position);
+//    sortChunks(position);
 
     thread.LoadChunk(chunksLoading);
     thread.CreateMesh(chunks, chunksLoading);

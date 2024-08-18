@@ -38,6 +38,7 @@ class ChunkGeneration {
     void    dirtPockateExcavator(unsigned char* cubes, int x, int y, int z, int ChunkSize, int radius);
     void    generateCave(int ChunkSize, unsigned char *cubes, int maxHeight, int x, int z, int posx, int posz);
     void    generateTree(int ChunkSize, unsigned char *cubes, int maxHeight, int x, int z, int posx, int posz);
+    void    generateGrass(int ChunkSize, unsigned char* cubes, int ground, int x, int z, int posx, int posz);
     void    treeModel(int ChunkSize, int x, int y, int z, unsigned char *cubes);
     void    generateOre(int ChunkSize, unsigned char *cubes, int ground, int x, int z, int posx, int posz);
     void    generateRiver(int ChunkSize, unsigned char *cubes, int ground, int x, int z, int posx, int posz);

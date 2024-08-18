@@ -220,6 +220,8 @@ void ChunkGeneration::generateDirtPochet(int ChunkSize, unsigned char* cubes, in
 
 }
 
+
+
 void ChunkGeneration::oldGenerate(int ChunkSize, int posx, int posz, unsigned char *cubes) {
     for (int x = 0; x < ChunkSize; x++) {
         for (int z = 0; z < ChunkSize; z++) {
@@ -236,6 +238,7 @@ void ChunkGeneration::oldGenerate(int ChunkSize, int posx, int posz, unsigned ch
             generateDirtPochet(ChunkSize, cubes, height, x, z, posx, posz);
             generateCave(ChunkSize, cubes, height, x, z, posx, posz);
             generateTree(ChunkSize, cubes, height, x, z, posx, posz);
+            generateGrass(ChunkSize, cubes, height, x, z, posx, posz);
             generateRiver(ChunkSize, cubes, height, x, z, posx, posz);
         }
     }
@@ -288,6 +291,13 @@ void  ChunkGeneration::treeModel(int ChunkSize, int x, int y, int z, unsigned ch
         cubes[GET_CUBE(x, (y + 2), z)] = 7;
         cubes[GET_CUBE(x, (y + 3), z)] = 7;
         cubes[GET_CUBE(x, (y + 4), z)] = 7;
+    }
+}
+
+void ChunkGeneration::generateGrass(int ChunkSize, unsigned char* cubes, int ground, int x, int z, int posx, int posz) {
+    float isTree = (float)perlinNoise.noise((posx * ChunkSize + x) * 0.6f, (posz * ChunkSize + z) * 0.6f);
+    if (isTree > 0.65f) {
+        cubes[GET_CUBE(x, ground, z)] = 25;
     }
 }
 

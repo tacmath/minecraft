@@ -158,3 +158,10 @@ Name Lava
 	Top		lava/lava.png
 	Side	lava/lava.png
 	Bottom	lava/lava.png
+
+Name TallGrass
+	ID		25
+	Top		grass/grass.png
+	Side	grass/grass.png
+	Bottom	grass/grass.png
+	Break	Grass
