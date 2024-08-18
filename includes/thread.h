@@ -24,7 +24,7 @@ void MeshThreadRoutine(Thread& meshThread);
 class Thread {
 private:
 	void *memPtr;
-	std::jthread thread;
+	std::thread thread;
 public:
 	Chunk** chunkListLeft;
 	Chunk** chunkListDone;
@@ -43,11 +43,13 @@ public:
 	}
 
 	~Thread() {
+		status = THREAD_DYING;
+		thread.join();
 		free(memPtr);
 	}
 
 	void Launch(void (*routine)(Thread&)) {
-		thread = std::jthread(routine, std::ref(*this));
+		thread = std::thread(routine, std::ref(*this));
 	}
 };
 /*
