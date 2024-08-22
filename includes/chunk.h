@@ -174,7 +174,7 @@ private:
 	void addRightVertices(const int x, const int y, const int z);
 	void addLeftVertices(const int x, const int y, const int z);
 
-	void addGrassVertices(const int x, const int y, const int z);
+	void addFoliageVertices(const int x, const int y, const int z);
 
 	//store in result the AO value of each corner of a side
 	void getSideAO(int x, int y, int z, int *result, int pivot);

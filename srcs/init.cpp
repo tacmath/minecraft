@@ -35,7 +35,7 @@ void WorldArea::Init(const Camera& camera, Sound& sound) {
     std::vector<std::string> textureNames;
 
     parseConfigs(textureNames, sound);
-    Chunk::blocks[AIR].visibility == VISIBILITY::TRANSPARENT;
+    Chunk::blocks[AIR].type = TYPE::TRANSPARENT_BLOCK;
     for (auto& name : textureNames)
         name = "texture/" + name;
     texAtlas.LoadArray(textureNames, 0);

@@ -45,7 +45,7 @@ Name OakLeaves
 	Bottom	oak/leaves_oak.png
 	Break	Grass
 	Step	GrassStep
-	Transparent
+//	Type	Transparent
 
 Name OakLog
 	ID		7
@@ -165,3 +165,4 @@ Name TallGrass
 	Side	grass/grass.png
 	Bottom	grass/grass.png
 	Break	Grass
+	Type	Grass

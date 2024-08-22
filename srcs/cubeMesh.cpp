@@ -3,30 +3,34 @@
 
 void Chunk::addVisibleVertices(int x, int y, int z) {
 
-	if (y == 255 || cubes[GET_CUBE(x, (y + 1), z)] == AIR)//|| blocks[cubes[GET_CUBE(x, (y + 1), z)]].visibility == VISIBILITY::TRANSPARENT)
+	if (y == 255 || blocks[cubes[GET_CUBE(x, (y + 1), z)]].type != TYPE::BLOCK)
 		addTopVertices(x, y, z);
-	if (y > 0 && (cubes[GET_CUBE(x, (y - 1), z)] == AIR))//|| blocks[cubes[GET_CUBE(x, (y - 1), z)]].visibility == VISIBILITY::TRANSPARENT))
+	if (y > 0 && blocks[cubes[GET_CUBE(x, (y - 1), z)]].type != TYPE::BLOCK)
 		addBottomVertices(x, y, z);
-	if (x > 0 && (cubes[GET_CUBE((x - 1), y, z)] == AIR))//|| blocks[cubes[GET_CUBE((x - 1), y, z)]].visibility == VISIBILITY::TRANSPARENT))
+	if (x > 0 && blocks[cubes[GET_CUBE((x - 1), y, z)]].type != TYPE::BLOCK)
 		addFrontVertices(x, y, z);
-	if (z > 0 && (cubes[GET_CUBE(x, y, (z - 1))] == AIR))//|| blocks[cubes[GET_CUBE(x, y, (z - 1))]].visibility == VISIBILITY::TRANSPARENT))
+	if (z > 0 && blocks[cubes[GET_CUBE(x, y, (z - 1))]].type != TYPE::BLOCK)
 		addLeftVertices(x, y, z);
-	if (x < CHUNK_SIZE - 1 && (cubes[GET_CUBE((x + 1), y, z)] == AIR))//|| blocks[cubes[GET_CUBE((x + 1), y, z)]].visibility == VISIBILITY::TRANSPARENT))
+	if (x < CHUNK_SIZE - 1 && blocks[cubes[GET_CUBE((x + 1), y, z)]].type != TYPE::BLOCK)
 		addBackVertices(x, y, z);
-	if (z < CHUNK_SIZE - 1 && (cubes[GET_CUBE(x, y, (z + 1))] == AIR))//|| blocks[cubes[GET_CUBE(x, y, (z + 1))]].visibility == VISIBILITY::TRANSPARENT))
+	if (z < CHUNK_SIZE - 1 && blocks[cubes[GET_CUBE(x, y, (z + 1))]].type != TYPE::BLOCK)
 		addRightVertices(x, y, z);
 }
 
 void Chunk::addVisibleBorderVertices() {
 	for (int y = 0; y < 255; y++)
 		for (int x = 0; x < CHUNK_SIZE; x++) {
-			if (cubes[GET_CUBE(0, y, x)] && frontNeighbour && (frontNeighbour->cubes[GET_CUBE(15, y, x)] == AIR))//|| blocks[frontNeighbour->cubes[GET_CUBE(15, y, x)]].visibility == VISIBILITY::TRANSPARENT))
+			if (cubes[GET_CUBE(0, y, x)] && blocks[cubes[GET_CUBE(0, y, x)]].type != TYPE::FOLIAGE &&
+					frontNeighbour && (blocks[frontNeighbour->cubes[GET_CUBE(15, y, x)]].type != TYPE::BLOCK))
 				addFrontVertices(0, y, x);
-			if (cubes[GET_CUBE(15, y, x)] && backNeighbour && (backNeighbour->cubes[GET_CUBE(0, y, x)] == AIR))//|| blocks[backNeighbour->cubes[GET_CUBE(0, y, x)]].visibility == VISIBILITY::TRANSPARENT))
+			if (cubes[GET_CUBE(15, y, x)] && blocks[cubes[GET_CUBE(15, y, x)]].type != TYPE::FOLIAGE &&
+					backNeighbour && (blocks[backNeighbour->cubes[GET_CUBE(0, y, x)]].type != TYPE::BLOCK))
 				addBackVertices(15, y, x);
-			if (cubes[GET_CUBE(x, y, 15)] && rightNeighbour && (rightNeighbour->cubes[GET_CUBE(x, y, 0)] == AIR))//|| blocks[rightNeighbour->cubes[GET_CUBE(x, y, 0)]].visibility == VISIBILITY::TRANSPARENT))
+			if (cubes[GET_CUBE(x, y, 15)] && blocks[cubes[GET_CUBE(x, y, 15)]].type != TYPE::FOLIAGE &&
+					rightNeighbour && (blocks[rightNeighbour->cubes[GET_CUBE(x, y, 0)]].type != TYPE::BLOCK))
 				addRightVertices(x, y, 15);
-			if (cubes[GET_CUBE(x, y, 0)] && leftNeighbour && (leftNeighbour->cubes[GET_CUBE(x, y, 15)] == AIR))//|| blocks[leftNeighbour->cubes[GET_CUBE(x, y, 15)]].visibility == VISIBILITY::TRANSPARENT))
+			if (cubes[GET_CUBE(x, y, 0)] && blocks[cubes[GET_CUBE(x, y, 0)]].type != TYPE::FOLIAGE &&
+					leftNeighbour && (blocks[leftNeighbour->cubes[GET_CUBE(x, y, 15)]].type != TYPE::BLOCK))
 				addLeftVertices(x, y, 0);
 		}
 	verticesNumber = (unsigned int)mesh.size();
@@ -50,7 +54,7 @@ void Chunk::getSideAO(int x, int y, int z, int* result, int pivot) {
 	*val2 -= 1;
 	for (int n = 0; n < 3; n++) {
 		for (int m = 0; m < 3; m++) {	
-			visibleCubes[n][m] = (char)(GetCube(x, y, z) != AIR);
+			visibleCubes[n][m] = (char)(blocks[GetCube(x, y, z)].type == TYPE::BLOCK);
 			*val2 += 1;
 		}
 		*val1 += 1;
@@ -99,7 +103,7 @@ inline void fillFlippedQuad(int64_t *vertices, int64_t *result) {
 	result[5] = vertices[2];
 }
 
-void Chunk::addGrassVertices(const int x, const int y, const int z) {
+void Chunk::addFoliageVertices(const int x, const int y, const int z) {
 	int textureID = blocks[cubes[GET_CUBE(x, y, z)]].side;
 	int64_t vertices[8];
 

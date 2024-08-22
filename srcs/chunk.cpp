@@ -78,8 +78,8 @@ void Chunk::createMeshData() {
 		for (int x = 0; x < CHUNK_SIZE; x++)
 			for (int z = 0; z < CHUNK_SIZE; z++)
 				if (cubes[GET_CUBE(x, y, z)]) {
-					if (cubes[GET_CUBE(x, y, z)] == 25)
-						addGrassVertices(x, y, z);
+					if (blocks[cubes[GET_CUBE(x, y, z)]].type == TYPE::FOLIAGE)
+						addFoliageVertices(x, y, z);
 					else
 						addVisibleVertices(x, y, z);
 				}

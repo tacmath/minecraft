@@ -58,7 +58,7 @@ int GetColliders(AABB area, std::vector<AABB> &colliders) { // changer pour qu'i
     for (z = 0; z < size.z; z++)
         for (y = 0; y < size.y; y++)
             for (x = 0; x < size.x; x++)
-                if (chunk->GetCube(start.x + x, start.y + y, start.z + z) != AIR) {
+                if (Chunk::blocks[chunk->GetCube(start.x + x, start.y + y, start.z + z)].type == TYPE::BLOCK) {
                     colliders.push_back(AABB::unit().translate(area.min + glm::vec3(x, y, z)));
 					n++;
 				}

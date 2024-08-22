@@ -85,8 +85,6 @@ static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures)
     for (std::string line; std::getline(settingsFile, line); ) {
         splitLine = split(line);
         lineNb++;
-        if (splitLine.size() == 1 && splitLine[0] == "Transparent")
-            blockData.transparent = true;
         if (splitLine.size() <= 1)
             continue;
         if (splitLine[0] == "Name") {
@@ -104,6 +102,12 @@ static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures)
             blockData.breakSound = splitLine[1];
         else if (splitLine[0] == "Step")
             blockData.stepSound = splitLine[1];
+        else if (splitLine[0] == "Type") {
+            if (splitLine[1] == "Transparent")
+                blockData.blockType = BlockData::TRANSPARENT_BLOCK;
+            if (splitLine[1] == "Grass")
+                blockData.blockType = BlockData::FOLIAGE;
+        }
         else {
             std::cerr << CUBES_SETTING_FILE << " : Line " << lineNb
                 << " : The keyWord '" << splitLine[0] << "' is not valid" << std::endl;
@@ -114,11 +118,22 @@ static std::vector<BlockData> parseBlockData(std::vector<std::string>& textures)
     return blocksData;
 }
 
+static TYPE blockTypeToType(BlockData::BLOCK_TYPE type) {
+    switch (type)
+    {
+    case BLOCK:             return TYPE::BLOCK;
+    case TRANSPARENT_BLOCK: return TYPE::TRANSPARENT_BLOCK;
+    case FOLIAGE:           return TYPE::FOLIAGE;
+    default:
+        return TYPE::BLOCK;
+    }
+}
+
 static Block blockDataMapper(const BlockData& blockData, const  SoundsData& soundsData, const Sound& sound) {
     Block block;
 
     block.SetTextures(blockData.topTexID, blockData.sideTexID, blockData.bottomTexID);
-    block.visibility = (blockData.transparent) ? VISIBILITY::TRANSPARENT : VISIBILITY::OPAQUE;
+    block.type = blockTypeToType(blockData.blockType);
     auto soundData = soundsData.find(blockData.breakSound);
     if (soundData != soundsData.end()) {
         block.breakSounds = soundData->second;

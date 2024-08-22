@@ -16,13 +16,19 @@
 
 typedef std::unordered_map<std::string, SoundBuffers> SoundsData;
 
+
 struct BlockData {
+	enum BLOCK_TYPE {
+		BLOCK,
+		TRANSPARENT_BLOCK,
+		FOLIAGE
+	};
 	std::string					name;
 	unsigned					id;
 	unsigned					topTexID;
 	unsigned					sideTexID;
 	unsigned					bottomTexID;
-	bool						transparent;
+	BLOCK_TYPE					blockType;
 	std::string					breakSound;
 	std::string					stepSound;
 
@@ -31,7 +37,7 @@ struct BlockData {
 		topTexID = 0;
 		sideTexID = 0;
 		bottomTexID = 0;
-		transparent = false;
+		blockType = BLOCK;
 	}
 
 	void clear() {
@@ -39,7 +45,7 @@ struct BlockData {
 		topTexID = 0;
 		sideTexID = 0;
 		bottomTexID = 0;
-		transparent = false;
+		blockType = BLOCK;
 		name.clear();
 		breakSound.clear();
 		stepSound.clear();
