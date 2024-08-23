@@ -84,6 +84,14 @@ struct Block {
 	void Delete() {
 
 	}
+
+	bool isSolid() {
+		return type == TYPE::BLOCK || type == TYPE::TRANSPARENT_BLOCK;
+	}
+
+	bool isCutout() {
+		return type == TYPE::TRANSPARENT_BLOCK || type == TYPE::FOLIAGE;
+	}
 };
 
 #endif

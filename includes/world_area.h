@@ -40,8 +40,10 @@ private:
     //LOAD_DISTANCE of the data
     unsigned dataLoadDistance;
 
-    //chunk shader
+    //chunk shaders
     Shader  chunkShader;  //maybe set as static
+    Shader  chunkCutoutShader;
+
     // texture atlas
     Texture texAtlas;
 
@@ -81,7 +83,7 @@ public:
     std::vector<Chunk*>& GetChunks();
 
     Shader& GetShader();
-
+    Shader& GetCutoutShader();
 private:
     void initChunks(unsigned radius);
     void fillLoadedChunks(std::vector<Chunk*>& chunks, const glm::vec3 &position);

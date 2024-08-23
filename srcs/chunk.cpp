@@ -12,11 +12,12 @@ ChunkGeneration Chunk::globalChunkGeneration;
 Chunk::Chunk() {
 	//	std::cout << "constructor called" << std::endl;
 	isVisible = false;
-	verticesNumber = 0;
 	posx = 0;
 	posz = 0;
 	cubes = 0;
 	VBO = 0;
+	verticesNumber = 0;
+	cutoutVerticesNumber = 0;
 	status = CHUNK_UNLOADED;
 	threadStatus = CHUNK_NOT_PROCESSING;
 	neighbour = &frontNeighbour;
@@ -74,6 +75,7 @@ void Chunk::Generate() {
 // generate a mesh based on the chunk cube data 
 void Chunk::createMeshData() {
 	mesh.resize(0);
+	cutoutMesh.resize(0);
 	for (int y = 0; y < 255; y++)
 		for (int x = 0; x < CHUNK_SIZE; x++)
 			for (int z = 0; z < CHUNK_SIZE; z++)
@@ -84,8 +86,9 @@ void Chunk::createMeshData() {
 						addVisibleVertices(x, y, z);
 				}
 
-	verticesNumber = (unsigned int)mesh.size();
 	addVisibleBorderVertices();
+	verticesNumber = (unsigned)mesh.size();
+	cutoutVerticesNumber = (unsigned)cutoutMesh.size();
 	status = CHUNK_LOADED;
 }
 
@@ -111,6 +114,26 @@ void Chunk::Bind() {
 
 	glVertexArrayVertexBuffer(vao.ID, 0, VBO, 0, sizeof(int64_t));
 
+	if (!cutoutVerticesNumber) {
+		threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
+		return;
+	}
+
+	vaoCutout.Gen();
+
+	glCreateBuffers(1, &vboCutout);
+	glNamedBufferData(vboCutout, sizeof(int64_t) * cutoutVerticesNumber, (void*)(&cutoutMesh[0]), GL_STATIC_DRAW);
+
+	glEnableVertexArrayAttrib(vaoCutout.ID, 0);
+	glVertexArrayAttribBinding(vaoCutout.ID, 0, 0);
+	glVertexArrayAttribIFormat(vaoCutout.ID, 0, 1, GL_UNSIGNED_INT, 0);
+
+	glEnableVertexArrayAttrib(vaoCutout.ID, 1);
+	glVertexArrayAttribBinding(vaoCutout.ID, 1, 0);
+	glVertexArrayAttribIFormat(vaoCutout.ID, 1, 1, GL_UNSIGNED_INT, sizeof(int32_t));
+
+	glVertexArrayVertexBuffer(vaoCutout.ID, 0, vboCutout, 0, sizeof(int64_t));
+
 	threadStatus &= 0xF; // remove the CHUNK_PROCESSING byte and keep the rest
 	mesh.clear();
 }
@@ -119,10 +142,14 @@ void Chunk::Update() {
 	if (threadStatus & CHUNK_PROCESSING || status < CHUNK_LOADED) // almost never needed be we nerver know
 		return;
 	mesh.clear();
+	cutoutMesh.clear();
 	createMeshData();
-	addVisibleBorderVertices();
 	if (verticesNumber)
 		glNamedBufferData(VBO, sizeof(int64_t) * verticesNumber, (void*)(&mesh[0]), GL_STATIC_DRAW);
+	if (cutoutVerticesNumber)
+		glNamedBufferData(vboCutout, sizeof(int64_t) * cutoutVerticesNumber, (void*)(&cutoutMesh[0]), GL_STATIC_DRAW);
+	mesh.clear();
+	cutoutMesh.clear();
 }
 
 void Chunk::UpdateCube(int x, int z) { // maybe use a switch case

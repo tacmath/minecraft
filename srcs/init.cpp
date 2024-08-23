@@ -49,4 +49,8 @@ void WorldArea::initUniforms(const Camera &camera) {
     chunkShader.setInt("shadowMap", 3);
     chunkShader.setMat4("projection", camera.projection);
     chunkShader.setMat4("view", camera.view);
+    chunkCutoutShader.setInt("atlas", 0);
+    chunkCutoutShader.setInt("shadowMap", 3);
+    chunkCutoutShader.setMat4("projection", camera.projection);
+    chunkCutoutShader.setMat4("view", camera.view);
 }

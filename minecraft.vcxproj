@@ -223,7 +223,6 @@
     <None Include="shaders\quadFS.glsl" />
     <None Include="shaders\quadVS.glsl" />
     <None Include="shaders\shadowFS.glsl" />
-    <None Include="shaders\shadowGS.glsl" />
     <None Include="shaders\shadowVS.glsl" />
     <None Include="shaders\cubeVS.glsl" />
     <None Include="shaders\cubeFS.glsl" />

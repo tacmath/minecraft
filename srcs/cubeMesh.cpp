@@ -119,13 +119,13 @@ void Chunk::addFoliageVertices(const int x, const int y, const int z) {
 	vertices[6] = PACK_VERTEX_POS(x + 1, y, z)		| PACK_VERTEX_DATA(textureID, 1, 0, 0);
 	vertices[7] = PACK_VERTEX_POS(x, y, z + 1)		| PACK_VERTEX_DATA(textureID, 0, 0, 0);
 
-	size_t verticeNb = mesh.size();
-	mesh.resize(verticeNb + 24);
+	size_t verticeNb = cutoutMesh.size();
+	cutoutMesh.resize(verticeNb + 24);
 
-	fillQuad(vertices, &mesh[verticeNb]);
-	fillQuad(&vertices[4], &mesh[verticeNb + 6]);
-	fillQuadCCW(vertices, &mesh[verticeNb + 12]);
-	fillQuadCCW(&vertices[4], &mesh[verticeNb + 18]);
+	fillQuad(vertices, &cutoutMesh[verticeNb]);
+	fillQuad(&vertices[4], &cutoutMesh[verticeNb + 6]);
+	fillQuadCCW(vertices, &cutoutMesh[verticeNb + 12]);
+	fillQuadCCW(&vertices[4], &cutoutMesh[verticeNb + 18]);
 }
 
 void Chunk::addTopVertices(const int x, const int y, const int z) {

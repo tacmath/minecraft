@@ -62,13 +62,16 @@ private:
 
 	//the mesh is an array containing vertex position and other information in an unsigned int
 	std::vector<int64_t> mesh;
-	// the number of all the vertices
-	unsigned int verticesNumber;
+	std::vector<int64_t> cutoutMesh;
+
+	//vertices numbers
+	unsigned verticesNumber;
+	unsigned cutoutVerticesNumber;
 
 	// vertex array object
-	VAO vao;
+	VAO vao, vaoCutout;
 	// vertex buffer object ID
-	GLuint VBO;
+	GLuint VBO, vboCutout;			//maybe use same vao and vbo but have an cutout index for draw
 
 public:
 	static Block blocks[MAX_BLOCK_NB];
@@ -134,6 +137,11 @@ public:
 			shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
 			glDrawArrays(GL_TRIANGLES, 0, verticesNumber);
 		}
+		if (vaoCutout.ID != 0) {
+			vaoCutout.Bind();
+			shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
+			glDrawArrays(GL_TRIANGLES, 0, cutoutVerticesNumber);
+		}
 	}
 
 	// Draw the chunk if visible
@@ -142,6 +150,15 @@ public:
 			vao.Bind();
 			shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
 			McDrawArrays(GL_TRIANGLES, 0, verticesNumber);
+		}
+	}
+
+	// Draw Cutout of the chunk if visible
+	void DrawVisibleCutout(Shader& shader) {
+		if (isVisible && vaoCutout.ID != 0) {
+			vaoCutout.Bind();
+			shader.setVec2("chunkPos", (float)(posx << 4), (float)(posz << 4));
+			McDrawArrays(GL_TRIANGLES, 0, cutoutVerticesNumber);
 		}
 	}
 

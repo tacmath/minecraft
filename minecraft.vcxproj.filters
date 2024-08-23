@@ -271,9 +271,6 @@
     <None Include="shaders\shadowFS.glsl">
       <Filter>Fichiers de ressources\shaders</Filter>
     </None>
-    <None Include="shaders\shadowGS.glsl">
-      <Filter>Fichiers de ressources\shaders</Filter>
-    </None>
     <None Include="shaders\shadowVS.glsl">
       <Filter>Fichiers de ressources\shaders</Filter>
     </None>

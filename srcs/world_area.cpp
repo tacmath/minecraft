@@ -6,6 +6,9 @@ WorldArea::WorldArea(void) {
 
     chunkShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
 
+    shaderOption.push_back("CUTOUT");
+    chunkCutoutShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+
     dataLoadDistance = DATA_LOAD_DISTANCE(RENDER_DISTANCE);
     loadedChunks = (Chunk**)calloc((dataLoadDistance << 1) * (dataLoadDistance << 1), sizeof(Chunk*));
     if (!loadedChunks)
@@ -21,6 +24,7 @@ WorldArea::~WorldArea(void) {
         delete chunksLoading[n];
     free(loadedChunks);
     chunkShader.Delete();
+    chunkCutoutShader.Delete();
 }
 
 void WorldArea::Draw(void) {
@@ -28,6 +32,9 @@ void WorldArea::Draw(void) {
     chunkShader.Activate();
     for (size_t n = 0; n < chunks.size(); n++)
         chunks[n]->DrawVisible(chunkShader);
+    chunkCutoutShader.Activate();
+    for (size_t n = 0; n < chunks.size(); n++)
+        chunks[n]->DrawVisibleCutout(chunkCutoutShader);
     glDisable(GL_CULL_FACE);
 }
 
@@ -35,6 +42,7 @@ void WorldArea::Draw(void) {
 //load the view matrix in all the shaders
 void WorldArea::LoadViewMatrix(const Camera& camera) {
     chunkShader.setMat4("view", camera.view);
+    chunkCutoutShader.setMat4("view", camera.view);
 }
 
 
@@ -152,13 +160,22 @@ void WorldArea::UpdateRenderDistance(unsigned newRenderDistance) {
 }
 
 void WorldArea::ReloadShader(bool wireframeMode, std::vector<std::string> shaderOption) {
-    Shader newShader;
+    Shader newShader, newCutoutShader;
     
     if (wireframeMode)
         newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
     else
         newShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+
     chunkShader = std::move(newShader);
+
+    shaderOption.push_back("CUTOUT");
+    if (wireframeMode)
+        newCutoutShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/wireFrameFS.glsl", "shaders/wireFrameGS.glsl");
+    else
+        newCutoutShader.Load(shaderOption, "shaders/cubeVS.glsl", "shaders/cubeFS.glsl");
+
+    chunkCutoutShader = std::move(newCutoutShader);
 }
 
 std::vector<Chunk*>& WorldArea::GetChunks() {
@@ -167,4 +184,8 @@ std::vector<Chunk*>& WorldArea::GetChunks() {
 
 Shader& WorldArea::GetShader() {
     return chunkShader;
+}
+
+Shader& WorldArea::GetCutoutShader() {
+    return chunkCutoutShader;
 }

@@ -118,7 +118,9 @@ void Application::SetCallbacks() {
 
     background.sun.SetUpdateCallback([&](glm::vec3 &sunPosition) {
         Shader& chunkShader = worldArea.GetShader();
+        Shader& chunkCutoutShader = worldArea.GetCutoutShader();
         chunkShader.setFloat("dayLightLevel", (1.0f - (1.0f - glm::smoothstep(0.0f, 0.5f, sunPosition.y)) * 0.7f));
+        chunkCutoutShader.setFloat("dayLightLevel", (1.0f - (1.0f - glm::smoothstep(0.0f, 0.5f, sunPosition.y)) * 0.7f));
         
         background.LoadSunPos(sunPosition);
 
@@ -127,6 +129,8 @@ void Application::SetCallbacks() {
             position = -position;
         chunkShader.setVec3("lightDir", position);
         chunkShader.setFloat("timeCycle", glm::smoothstep(0.05f, 0.4f, position.y));
+        chunkCutoutShader.setVec3("lightDir", position);
+        chunkCutoutShader.setFloat("timeCycle", glm::smoothstep(0.05f, 0.4f, position.y));
 
         if (position.y < 1)
             shadow.GenerateShadowMap(position);

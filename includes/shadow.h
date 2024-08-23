@@ -77,6 +77,7 @@ public:
         };
 
         shadowShader.Load("shaders/shadowVS.glsl", "shaders/shadowFS.glsl");
+        shadowShader.setInt("atlas", 0);
     }
 
     void Delete() {
@@ -202,6 +203,7 @@ private:
         }
 
         chunkShader.setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, biasLightSpaceMatrices);
+        worldArea->GetCutoutShader().setMat4("lightSpaceMatrices", SHADOW_CASCADE_NB, biasLightSpaceMatrices);
     }
 
     void renderChunks(glm::mat4 &mvp) {
@@ -211,7 +213,7 @@ private:
         frustum.calculate(mvp);
         for (size_t n = 0; n < chunks.size(); n++) {
             chunk = chunks[n];
-            if (frustum.chunkIsVisible(chunk->posx, chunk->posz) /* && playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 32)*/) //upgrade the frustum culling speed with a quad tree or just less chunk to prosess 
+            if (frustum.chunkIsVisible(chunk->posx, chunk->posz) /* && playerCam->frustum.chunkIsVisible(chunk->posx, chunk->posz, 32)*/) //upgrade the frustum culling speed with a quad tree or just less chunk to prosess
                 chunk->Draw(shadowShader);
         }
     }
